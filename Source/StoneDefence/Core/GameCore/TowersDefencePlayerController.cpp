@@ -12,9 +12,22 @@ ATowersDefencePlayerController::ATowersDefencePlayerController()
 void ATowersDefencePlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	float ScreenSpeed = 20.f;
+	ScreenMoveUnits.ListenScreenMove(this, ScreenSpeed);
 }
 
 void ATowersDefencePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetInputModeGameAndUI();
+}
+
+void ATowersDefencePlayerController::SetInputModeGameAndUI()
+{
+	FInputModeGameAndUI InputMode;
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+	InputMode.SetHideCursorDuringCapture(false);
+
+	SetInputMode(InputMode);
 }

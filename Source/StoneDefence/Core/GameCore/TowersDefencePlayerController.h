@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Tool/ScreenMove.h"
 #include "TowersDefencePlayerController.generated.h"
+
 
 /**
  * 
@@ -20,4 +22,9 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void BeginPlay() override;
+
+	void SetInputModeGameAndUI();
+
+protected:
+	FScreenMoveUnits ScreenMoveUnits;
 };
