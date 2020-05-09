@@ -33,7 +33,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//void Zoom(bool bDirection, float ZoomSpeed);
+	void Zoom(bool bDirection, float ZoomSpeed);
 
-	//float GetTargetArmLength() const;
+	float GetTargetArmLength() const;
 };

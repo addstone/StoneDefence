@@ -40,29 +40,29 @@ void ATowerDefenceGameCamera::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 }
 
-//void ATowerDefenceGameCamera::Zoom(bool bDirection, float ZoomSpeed)
-//{
-//	float MiniTargetArmLength = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MiniTargetArmLength;
-//	float MaxTargetArmLength = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxTargetArmLength;
-//
-//	if (bDirection)
-//	{
-//		if (CameraBoom->TargetArmLength > MiniTargetArmLength)
-//		{
-//			CameraBoom->TargetArmLength -= ZoomSpeed * 2;
-//		}
-//	}
-//	else
-//	{
-//		if (CameraBoom->TargetArmLength < MaxTargetArmLength)
-//		{
-//			CameraBoom->TargetArmLength += ZoomSpeed * 2;
-//		}
-//	}
-//}
+void ATowerDefenceGameCamera::Zoom(bool bDirection, float ZoomSpeed)
+{
+	//float MiniTargetArmLength = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MiniTargetArmLength;
+	//float MaxTargetArmLength = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxTargetArmLength;
 
-//float ATowerDefenceGameCamera::GetTargetArmLength() const
-//{
-//	return CameraBoom->TargetArmLength;
-//}
+	if (bDirection)
+	{
+		if (CameraBoom->TargetArmLength > 400)
+		{
+			CameraBoom->TargetArmLength -= ZoomSpeed * 2;
+		}
+	}
+	else
+	{
+		if (CameraBoom->TargetArmLength < 800)
+		{
+			CameraBoom->TargetArmLength += ZoomSpeed * 2;
+		}
+	}
+}
+
+float ATowerDefenceGameCamera::GetTargetArmLength() const
+{
+	return CameraBoom->TargetArmLength;
+}
 

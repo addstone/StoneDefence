@@ -14,4 +14,8 @@ class STONEDEFENCE_API UUI_MainHall : public UUI_RuleOfTheWidget
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(meta = (BindWidget))
+		class UUI_HallMenuSystem *HallMenuSystem;
+public:
+	virtual void NativeConstruct() override;
 };
