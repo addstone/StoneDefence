@@ -14,4 +14,10 @@ class STONEDEFENCE_API ATowersDefencePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	ATowersDefencePlayerController();
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void BeginPlay() override;
 };

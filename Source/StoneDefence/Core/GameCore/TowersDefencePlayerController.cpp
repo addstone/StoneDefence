@@ -3,3 +3,18 @@
 
 #include "TowersDefencePlayerController.h"
 
+ATowersDefencePlayerController::ATowersDefencePlayerController()
+{
+	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+}
+
+void ATowersDefencePlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
+void ATowersDefencePlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
