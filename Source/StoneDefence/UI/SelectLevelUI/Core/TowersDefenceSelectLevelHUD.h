@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "TowersDefenceSelectLevelHUD.generated.h"
 
+class UUI_SelectLevelMain;
+
 /**
  * 
  */
@@ -14,4 +16,11 @@ class STONEDEFENCE_API ATowersDefenceSelectLevelHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+public:
+	ATowersDefenceSelectLevelHUD();
+
+	virtual void BeginPlay() override;
+private:
+	TSubclassOf<UUI_SelectLevelMain> SelectMainClass;
+	UUI_SelectLevelMain *SelectLevelMain;
 };
