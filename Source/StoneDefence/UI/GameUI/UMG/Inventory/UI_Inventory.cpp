@@ -12,7 +12,7 @@ void UUI_Inventory::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	LayoutInventroySlot(7, 3);
+	LayoutInventroySlot(3, 7);
 }
 
 void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)

@@ -48,7 +48,7 @@ void ATowersDefencePlayerController::MouseWheelUP()
 	ATowerDefenceGameCamera *ZoomCamera = Cast<ATowerDefenceGameCamera>(GetPawn());
 	if (ZoomCamera)
 	{
-		ZoomCamera->Zoom(false, WheelValue);
+		ZoomCamera->Zoom(true, WheelValue);
 	}
 }
 
@@ -57,6 +57,6 @@ void ATowersDefencePlayerController::MouseWheelDown()
 	ATowerDefenceGameCamera *ZoomCamera = Cast<ATowerDefenceGameCamera>(GetPawn());
 	if (ZoomCamera)
 	{
-		ZoomCamera->Zoom(true, WheelValue);
+		ZoomCamera->Zoom(false, WheelValue);
 	}
 }
