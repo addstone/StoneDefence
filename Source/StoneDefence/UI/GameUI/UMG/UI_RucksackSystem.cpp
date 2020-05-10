@@ -2,4 +2,9 @@
 
 
 #include "UI_RucksackSystem.h"
+#include "Inventory/UI_Inventory.h"
 
+void UUI_RucksackSystem::NativeConstruct()
+{
+	Super::NativeConstruct();
+}

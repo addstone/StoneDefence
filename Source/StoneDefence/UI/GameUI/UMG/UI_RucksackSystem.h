@@ -6,6 +6,7 @@
 #include "Drop/UI_NativeOnDrop.h"
 #include "UI_RucksackSystem.generated.h"
 
+class UUI_Inventory;
 /**
  * 
  */
@@ -13,5 +14,11 @@ UCLASS()
 class STONEDEFENCE_API UUI_RucksackSystem : public UUI_NativeOnDrop
 {
 	GENERATED_BODY()
+
+	UPROPERTY(meta = (BindWidget))
+		UUI_Inventory *Inventory;
+
+public:
+	virtual void NativeConstruct() override;
 	
 };

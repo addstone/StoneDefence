@@ -2,4 +2,16 @@
 
 
 #include "UI_SkillSlot.h"
+#include "Components/Button.h"
 
+void UUI_SkillSlot::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	ClickButton->OnClicked.AddDynamic(this, &UUI_SkillSlot::OnClickedWidget);
+}
+
+void UUI_SkillSlot::OnClickedWidget()
+{
+
+}
