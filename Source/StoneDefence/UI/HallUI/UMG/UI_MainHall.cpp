@@ -10,9 +10,6 @@
 #include "UI_TutoriaSystem.h"
 #include "Components/SizeBox.h"
 
-
-CreateAssistWidget<UUI_MainHall, UUI_ArchivesSystem>(this, ArchivesSystemClass, BoxList);
-
 template<class T, class UserObject>
 UserObject *CreateAssistWidget(T* ThisClass, UClass *AssistClass, USizeBox *WidgetArray)
 {
