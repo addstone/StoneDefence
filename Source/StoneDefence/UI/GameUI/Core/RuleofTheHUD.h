@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "RuleofTheHUD.generated.h"
 
+class UUI_MainScreen;
+class UUI_NativeOnDrop;
 /**
  * 
  */
@@ -14,4 +16,15 @@ class STONEDEFENCE_API ARuleofTheHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+public:
+	ARuleofTheHUD();
+
+	virtual void BeginPlay() override;
+	void UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD);
+	void UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, bool bInCD);
+private:
+	TSubclassOf<UUI_MainScreen> MainScreenClass;
+	TSubclassOf<UUI_NativeOnDrop> NativeOnDropClass;
+	UUI_MainScreen *MainScreen;
+	UUI_NativeOnDrop *NativeOnDropPtr;
 };

@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "TowersDefenceHallHUD.generated.h"
 
+class UUI_MainHall;
 /**
  * 
  */
@@ -13,5 +14,12 @@ UCLASS()
 class STONEDEFENCE_API ATowersDefenceHallHUD : public AHUD
 {
 	GENERATED_BODY()
+public:
+	ATowersDefenceHallHUD();
+
+	virtual void BeginPlay() override;
 	
+private:
+	TSubclassOf<UUI_MainHall> MainHallClass;
+	UUI_MainHall *MainHall;
 };

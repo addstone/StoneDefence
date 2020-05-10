@@ -8,7 +8,29 @@ public class StoneDefence : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "StoneToolClass",
+            "SimpleScreenLoading",
+            "Slate",
+            "SlateCore",
+            "UMG",
+            //"SimpleScreenMove",
+            "ApexDestruction",
+            "SimpleScreenLoading",
+            "SimpleArchives",
+            "SimpleGameSettings",
+            "SimpleTutoria",
+            "AIModule",
+            //"SimpleDrawText",
+            "RawMesh",
+            "ImageWrapper",
+            //"SimplePopup",
+            "Landscape"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

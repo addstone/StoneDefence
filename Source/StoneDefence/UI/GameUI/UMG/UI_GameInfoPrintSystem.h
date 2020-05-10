@@ -6,6 +6,8 @@
 #include "Drop/UI_NativeOnDrop.h"
 #include "UI_GameInfoPrintSystem.generated.h"
 
+class UTextBlock;
+
 /**
  * 
  */
@@ -13,5 +15,12 @@ UCLASS()
 class STONEDEFENCE_API UUI_GameInfoPrintSystem : public UUI_NativeOnDrop
 {
 	GENERATED_BODY()
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* TDGameLog;
+
+public:
+
+	virtual void NativeConstruct()override;
 	
 };

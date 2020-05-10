@@ -3,3 +3,7 @@
 
 #include "UI_GameInfoPrintSystem.h"
 
+void UUI_GameInfoPrintSystem::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
