@@ -29,7 +29,8 @@ public class StoneDefence : ModuleRules
             "RawMesh",
             "ImageWrapper",
             //"SimplePopup",
-            "Landscape"});
+            "Landscape"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../../Core/UI_RuleOfTheWidget.h"
+#include "Components/Button.h"
 #include "UI_HallMenuSystem.generated.h"
 
 class UButton;
@@ -42,21 +43,13 @@ class STONEDEFENCE_API UUI_HallMenuSystem : public UUI_RuleOfTheWidget
 public:
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
-	void BindGameStart();
-	UFUNCTION()
-	void BindSecretTerritory();
-	UFUNCTION()
-	void BindHistory();
-	UFUNCTION()
-	void BindGameSettings();
-	UFUNCTION()
-	void BindTutorialWebsite();
-	UFUNCTION()
-	void BindBrowser();
-	UFUNCTION()
-	void BindSpecialContent();
-	UFUNCTION()
-	void BindQuitGame();
+	void BindGameStart(FOnButtonClickedEvent ClickedEvent);
+	void BindSecretTerritory(FOnButtonClickedEvent ClickedEvent);
+	void BindHistory(FOnButtonClickedEvent ClickedEvent);
+	void BindGameSettings(FOnButtonClickedEvent ClickedEvent);
+	void BindTutorialWebsite(FOnButtonClickedEvent ClickedEvent);
+	void BindBrowser(FOnButtonClickedEvent ClickedEvent);
+	void BindSpecialContent(FOnButtonClickedEvent ClickedEvent);
+	void BindQuitGame(FOnButtonClickedEvent ClickedEvent);
 	
 };
