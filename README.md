@@ -1,4 +1,10 @@
 # StoneDefence
+* ue版本  4.24.3
+* vs版本  2017
+* 每一个commit对应一小节
+* 欢迎PR
+
+---
 
 Developed with Unreal Engine 4
 
