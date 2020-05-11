@@ -8,7 +8,9 @@
 #include "../../Core/GameCore/TowersDefencePlayerController.h"
 #include "../../Core/GameCore/TowersDefenceGameState.h"
 #include "../../Core/GameCore/TowersDefencePlayerState.h"
+#include "../../StoneDefenceType.h"
 #include "RuleOfTheCharacter.generated.h"
+
 
 
 class UBoxComponent;
@@ -69,4 +71,6 @@ public:
 public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Attrubute")
 		bool IsActive() { return !IsDeath(); }
+
+	virtual EGameCharacterType::Type GetCharacterType();
 };

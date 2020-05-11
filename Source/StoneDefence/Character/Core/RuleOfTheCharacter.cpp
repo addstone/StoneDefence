@@ -69,3 +69,8 @@ bool ARuleOfTheCharacter::IsTeam()
 {
 	return false;
 }
+
+EGameCharacterType::Type ARuleOfTheCharacter::GetCharacterType()
+{
+	return EGameCharacterType::Type::MAX;
+}

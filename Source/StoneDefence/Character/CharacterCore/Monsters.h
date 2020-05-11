@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "../Core/RuleOfTheCharacter.h"
+#include "../../StoneDefenceType.h"
 #include "Monsters.generated.h"
+
 
 /**
  * 
@@ -21,4 +23,6 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual EGameCharacterType::Type GetCharacterType();
 };

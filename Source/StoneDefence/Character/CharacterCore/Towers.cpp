@@ -17,6 +17,11 @@ ATowers::ATowers()
 	ParticleMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
+EGameCharacterType::Type ATowers::GetCharacterType()
+{
+	return EGameCharacterType::Type::TOWER;
+}
+
 float ATowers::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);

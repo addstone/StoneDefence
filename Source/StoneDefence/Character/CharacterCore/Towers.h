@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "../Core/RuleOfTheCharacter.h"
+#include "../../StoneDefenceType.h"
 #include "Towers.generated.h"
+
 
 class UParticleSystemComponent;
 class UStaticMeshComponent;
@@ -31,6 +33,8 @@ public:
 
 public:
 	ATowers();
+
+	virtual EGameCharacterType::Type GetCharacterType();
 
 protected:
 
