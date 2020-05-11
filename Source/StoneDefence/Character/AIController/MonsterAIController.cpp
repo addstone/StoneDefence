@@ -75,3 +75,8 @@ AActor * AMonsterAIController::FindTarget()
 	return NorTowers;
 
 }
+
+void AMonsterAIController::AttackTarget(ARuleOfTheCharacter *InTarget)
+{
+
+}

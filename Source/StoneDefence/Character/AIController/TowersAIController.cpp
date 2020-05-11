@@ -76,16 +76,23 @@ void ATowersAIController::BTService_FindTarget()
 					}
 				}
 			}
-
-			if (TArrayMonsters.Num() > 0)
-			{
-				Towers->bAttack = true;
-			}
-			else
-			{
-				Towers->bAttack = false;
-			}
+			AttackTarget(Target.Get());
 		}
 	}
 
+}
+
+void ATowersAIController::AttackTarget(ARuleOfTheCharacter *InTarget)
+{
+	if (ATowers *Towers = GetPawn<ATowers>())
+	{
+		if (TArrayMonsters.Num() > 0)
+		{
+			Towers->bAttack = true;
+		}
+		else
+		{
+			Towers->bAttack = false;
+		}
+	}
 }

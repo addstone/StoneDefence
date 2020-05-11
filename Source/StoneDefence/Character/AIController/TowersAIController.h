@@ -6,6 +6,7 @@
 #include "../Core/RuleOfTheAIController.h"
 #include "TowersAIController.generated.h"
 
+class ARuleOfTheCharacter;
 /**
  * 
  */
@@ -26,6 +27,7 @@ public:
 protected:
 
 	void BTService_FindTarget();
+	virtual void AttackTarget(ARuleOfTheCharacter *InTarget);
 
 protected:
 
