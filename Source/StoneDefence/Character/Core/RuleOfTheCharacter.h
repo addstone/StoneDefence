@@ -63,4 +63,8 @@ public:
 
 	FORCEINLINE USceneComponent *GetHommingPoint() const { return HomePoint; }
 	FORCEINLINE UArrowComponent *GetFirePoint() const { return OpenFriePoint; }
+
+public:
+	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Attrubute")
+		bool IsActive() { return !IsDeath(); }
 };
