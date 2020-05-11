@@ -1,4 +1,10 @@
 # StoneDefence
+* ue版本  4.24.3
+* vs版本  2017
+* 每一个commit对应一小节
+* 欢迎PR
+
+---
 
 Developed with Unreal Engine 4
 
@@ -23,3 +29,16 @@ Developed with Unreal Engine 4
 | 第八节：封装独立UI插件|:heavy_check_mark:|
 |第九节：定制Hall大厅UI|:heavy_check_mark:|
 |第十节：实现通用的UI切换|:heavy_check_mark:|
+---
+|第三章|角色系统搭建|
+| --------   | -----  |
+|第一节：基础角色接口|:heavy_check_mark:|
+|第二节：炮塔材质与动画|:heavy_check_mark:|
+|第三节：动画状态机|:heavy_check_mark:|
+|第四节：编写通用材质|:heavy_check_mark:|
+|第五节：拖尾特效制作|:heavy_check_mark:|
+|第六节：自定义UE4碰撞通道|:heavy_check_mark:|
+|第七节：Cpp怪物AI|:heavy_check_mark:|
+|第八节：AI的BTService设计|:heavy_check_mark:|
+|第九节：AI_怪物查询敌人算法|:heavy_check_mark:|
+|第十节：Towers范围查询敌人算法|:heavy_check_mark:|

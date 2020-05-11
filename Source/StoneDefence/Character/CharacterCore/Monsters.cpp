@@ -3,3 +3,17 @@
 
 #include "Monsters.h"
 
+void AMonsters::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AMonsters::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+EGameCharacterType::Type AMonsters::GetCharacterType()
+{
+	return EGameCharacterType::Type::MONSTER;
+}
