@@ -6,6 +6,9 @@
 #include "../Core/RuleOfTheCharacter.h"
 #include "Towers.generated.h"
 
+class UParticleSystemComponent;
+class UStaticMeshComponent;
+class UDestructibleComponent;
 /**
  * 
  */
@@ -13,5 +16,25 @@ UCLASS()
 class STONEDEFENCE_API ATowers : public ARuleOfTheCharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseAttrubute", meta = (AllowPrivateAccess = "true"))
+		UParticleSystemComponent *ParticleMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseAttrubute", meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent *StaticMeshBuilding;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseAttrubute", meta = (AllowPrivateAccess = "true"))
+		UDestructibleComponent *DestructibleMeshBuilding;
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BaseAttrubute")
+		FRotator TowersRotator;
+
+public:
+	ATowers();
+
+protected:
+
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 	
 };
