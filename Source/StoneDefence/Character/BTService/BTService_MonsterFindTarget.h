@@ -6,6 +6,7 @@
 #include "BehaviorTree/BTService.h"
 #include "BTService_MonsterFindTarget.generated.h"
 
+class ARuleOfTheCharacter;
 /**
  * 
  */
@@ -16,6 +17,17 @@ class STONEDEFENCE_API UBTService_MonsterFindTarget : public UBTService
 	
 public:
 
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+	UPROPERTY(EditAnywhere, Category = "BlackBoard")
+		struct FBlackboardKeySelector BlackBoardKey_Target;
+
+	UPROPERTY(EditAnywhere, Category = "BlackBoard")
+		struct FBlackboardKeySelector BlackBoardKey_Distance;
+
+	UPROPERTY(EditAnywhere, Category = "BlackBoard")
+		struct FBlackboardKeySelector BlackBoardKey_TargetLocation;
+
 	/** Notify called after GameplayTask finishes initialization (not active yet) */
 	virtual void OnGameplayTaskInitialized(UGameplayTask& Task) {}
 
@@ -24,4 +36,7 @@ public:
 
 	/** Notify called after GameplayTask changes state from Active (finishing or pausing) */
 	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) {}
+
+private:
+	TWeakObjectPtr<ARuleOfTheCharacter> Target;
 };

@@ -14,4 +14,7 @@ class STONEDEFENCE_API ATowersAIController : public ARuleOfTheAIController
 {
 	GENERATED_BODY()
 	
+
+public:
+	virtual AActor *FindTarget();
 };

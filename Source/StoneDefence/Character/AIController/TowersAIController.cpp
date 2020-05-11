@@ -3,3 +3,7 @@
 
 #include "TowersAIController.h"
 
+AActor * ATowersAIController::FindTarget()
+{
+	return nullptr;
+}

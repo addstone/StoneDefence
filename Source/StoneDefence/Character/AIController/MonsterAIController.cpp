@@ -3,3 +3,7 @@
 
 #include "MonsterAIController.h"
 
+AActor * AMonsterAIController::FindTarget()
+{
+	return nullptr;
+}
