@@ -6,6 +6,10 @@
 #include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "../Character/Core/RuleOfTheCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/DamageType.h"
+#include "EngineUtils.h"
 
 // Sets default values
 ARuleOfTheBullet::ARuleOfTheBullet()
@@ -26,6 +30,7 @@ ARuleOfTheBullet::ARuleOfTheBullet()
 	ProjectileMovement->InitialSpeed = 1600.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 	ProjectileMovement->UpdatedComponent = BoxDamage;//加上此句话，子弹卡主，第四章，第三节，19:00//解决方案：将staticmesh作为boxdamage子物体
+	BulletType = EBulletType::BULLET_DIRECT_LINE;
 
 	InitialLifeSpan = 4.0f;
 }
@@ -34,12 +39,47 @@ ARuleOfTheBullet::ARuleOfTheBullet()
 void ARuleOfTheBullet::BeginPlay()
 {
 	Super::BeginPlay();
+
+	switch (BulletType)
+	{
+	case EBulletType::BULLET_DIRECT_LINE:
+		break;
+	case EBulletType::BULLET_LINE:
+		break;
+	case EBulletType::BULLET_TRACK_LINE:
+		ProjectileMovement->bIsHomingProjectile = true;
+		ProjectileMovement->bRotationFollowsVelocity = true;
+		break;
+	case EBulletType::BULLET_TRACK_LINE_SP:
+		break;
+	case EBulletType::BULLET_CHAIN:
+		ProjectileMovement->StopMovementImmediately();
+		BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EBulletType::BULLET_RANGE:
+		ProjectileMovement->StopMovementImmediately();
+		break;
+	}
+
 	BoxDamage->OnComponentBeginOverlap.AddUniqueDynamic(this, &ARuleOfTheBullet::BeginOverlap);
 }
 
 void ARuleOfTheBullet::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
+	if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
+	{
+		if (ARuleOfTheCharacter * OtherCharacter = Cast<ARuleOfTheCharacter>(OtherActor)) 
+		{
+			if (InstigatorCharacter->IsTeam() != OtherCharacter->IsTeam())
+			{
+				if (OtherCharacter->IsActive())
+				{
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DamgageParticle, SweepResult.Location);
+					UGameplayStatics::ApplyDamage(OtherCharacter, 100.f, InstigatorCharacter->GetController(), InstigatorCharacter, UDamageType::StaticClass());
+				}
+			}
+		}
+	}
 }
 
 // Called every frame

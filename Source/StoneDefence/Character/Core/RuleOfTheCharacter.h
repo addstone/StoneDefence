@@ -55,6 +55,7 @@ public:
 protected:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+public:
 	virtual bool IsDeath();
 	virtual float GetHealth();
 	virtual float GetMaxHealth();
