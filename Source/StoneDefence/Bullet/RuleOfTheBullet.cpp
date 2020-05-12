@@ -25,7 +25,7 @@ ARuleOfTheBullet::ARuleOfTheBullet()
 	ProjectileMovement->MaxSpeed = 2000.f;
 	ProjectileMovement->InitialSpeed = 1600.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
-	ProjectileMovement->UpdatedComponent = BoxDamage;
+	ProjectileMovement->UpdatedComponent = BoxDamage;//加上此句话，子弹卡主，第四章，第三节，19:00//解决方案：将staticmesh作为boxdamage子物体
 
 	InitialLifeSpan = 4.0f;
 }
