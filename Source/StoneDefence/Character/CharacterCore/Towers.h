@@ -36,6 +36,7 @@ public:
 
 	virtual EGameCharacterType::Type GetCharacterType();
 
+	virtual bool IsTeam();
 protected:
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

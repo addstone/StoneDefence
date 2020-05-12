@@ -43,10 +43,13 @@ void ARuleOfTheBullet::BeginPlay()
 	switch (BulletType)
 	{
 	case EBulletType::BULLET_DIRECT_LINE:
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
 		break;
 	case EBulletType::BULLET_LINE:
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
 		break;
 	case EBulletType::BULLET_TRACK_LINE:
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
 		ProjectileMovement->bIsHomingProjectile = true;
 		ProjectileMovement->bRotationFollowsVelocity = true;
 		break;

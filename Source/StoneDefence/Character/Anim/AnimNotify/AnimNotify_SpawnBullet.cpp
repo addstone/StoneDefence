@@ -43,12 +43,13 @@ void UAnimNotify_SpawnBullet::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 #if WITH_EDITOR
 	FVector ComponentLocation = MeshComp->GetSocketLocation(InSocketName);
 	FRotator ComponentRotation = MeshComp->GetSocketRotation(InSocketName);
-	if (APawn *Character = Cast<APawn>(MeshComp->GetOuter()))
+	
 #else
 	FVector ComponentLocation = Character->GetFirePoint()->GetComponentLocation();
 	FRotator ComponentRotation = Character->GetFirePoint()->GetComponentRotation();
-	if (ARuleOfTheCharacter *Character = Cast<ARuleOfTheCharacter>(MeshComp->GetOuter()))
+	//if (ARuleOfTheCharacter *Character = Cast<ARuleOfTheCharacter>(MeshComp->GetOuter()))
 #endif
+	if (AActor *Character = Cast<AActor>(MeshComp->GetOuter()))
 	{
 		//if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(Character->GetWorld(), Cast<APawn>(Character), BulletClass, ComponentLocation, ComponentRotation))
 		//{
@@ -60,8 +61,8 @@ void UAnimNotify_SpawnBullet::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 		Transform.SetRotation(ComponentRotation.Quaternion());
 
 		FActorSpawnParameters ActorSpawnParameters;
-		ActorSpawnParameters.Instigator = Character;
 
+		ActorSpawnParameters.Instigator = Cast<APawn>(Character);
 
 		if (ARuleOfTheBullet *Bullet = Character->GetWorld()->SpawnActor<ARuleOfTheBullet>(BulletClass, Transform, ActorSpawnParameters))
 		{
