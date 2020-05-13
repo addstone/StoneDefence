@@ -74,9 +74,36 @@ void ARuleOfTheBullet::BeginPlay()
 		ProjectileMovement->StopMovementImmediately();
 		BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		break;
-	case EBulletType::BULLET_RANGE:
-		ProjectileMovement->StopMovementImmediately();
+	case EBulletType::BULLET_RANGE_LINE:
 		break;
+	case EBulletType::BULLET_RANGE:
+		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
+		{
+			ProjectileMovement->StopMovementImmediately();
+			TArray<AActor*> IgnoreActors;
+			//TArray<ARuleOfTheCharacter*> TargetActors;
+			for (TActorIterator<ARuleOfTheCharacter>it(GetWorld(), ARuleOfTheCharacter::StaticClass()); it; ++it)
+			{
+				if (ARuleOfTheCharacter *TheCharacter = *it)
+				{
+					FVector VDistance = TheCharacter->GetActorLocation() - InstigatorCharacter->GetActorLocation();
+					if (VDistance.Size() <= 1400)
+					{
+						if (TheCharacter->IsTeam() == InstigatorCharacter->IsTeam())
+						{
+							IgnoreActors.Add(TheCharacter);
+						}
+						else
+						{
+							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DamgageParticle, TheCharacter->GetActorLocation());
+							//TargetActors.Add(TheCharacter);
+						}
+					}
+				}
+			}
+			UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), 100.f, 10.f, GetActorLocation(), 400.f, 1000.f, 1.f, UDamageType::StaticClass(), IgnoreActors, Instigator);
+		}
+		break;;
 	}
 
 	BoxDamage->OnComponentBeginOverlap.AddUniqueDynamic(this, &ARuleOfTheBullet::BeginOverlap);
