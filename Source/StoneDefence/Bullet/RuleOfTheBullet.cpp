@@ -12,6 +12,7 @@
 #include "EngineUtils.h"
 #include "../Character/Core/RuleOfTheAIController.h"
 #include "Math/UnrealMathUtility.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values
 ARuleOfTheBullet::ARuleOfTheBullet()
@@ -72,9 +73,21 @@ void ARuleOfTheBullet::BeginPlay()
 	case EBulletType::BULLET_TRACK_LINE_SP:
 		break;
 	case EBulletType::BULLET_CHAIN:
+	{
 		ProjectileMovement->StopMovementImmediately();
 		BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))//GetInstigator<ARuleOfTheCharacter>()
+		{
+			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
+			{
+				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+				{
+					UGameplayStatics::SpawnEmitterAttached(DamgageParticle, TargetCharacter->GetHommingPoint());
+				}
+			}
+		}
 		break;
+	}
 	case EBulletType::BULLET_RANGE_LINE:
 	{
 		ProjectileMovement->StopMovementImmediately();
@@ -182,6 +195,26 @@ void ARuleOfTheBullet::RadialDamage(const FVector& Origin, ARuleOfTheCharacter *
 void ARuleOfTheBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))//GetInstigator<ARuleOfTheCharacter>()
+	{
+		if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
+		{
+			if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+			{
+				TArray<USceneComponent*> SceneComponent;
+				RootComponent->GetChildrenComponents(true, SceneComponent);
+				for (auto & Tmp : SceneComponent)
+				{
+					if (UParticleSystemComponent *ParticleSystem = Cast<UParticleSystemComponent>(Tmp))
+					{
+						ParticleSystem->SetBeamSourcePoint(0, InstigatorCharacter->GetFirePoint()->GetComponentLocation(), 0);
+						ParticleSystem->SetBeamTargetPoint(0, TargetCharacter->GetHommingPoint()->GetComponentLocation(), 0);
+					}
+				}
+			}
+		}
+	}
 
 }
 
