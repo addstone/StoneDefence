@@ -48,6 +48,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
 		UParticleSystem* OpenFireParticle;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet track line sp")
+		float SplineOffset;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,6 +58,12 @@ protected:
 		void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	void RadialDamage(const FVector& Origin, ARuleOfTheCharacter * InstigatorCharacter);
+
+	UPROPERTY()
+		USplineComponent *Spline;
+
+	UPROPERTY()
+		float CurrentSplineTime;
 
 public:	
 	// Called every frame

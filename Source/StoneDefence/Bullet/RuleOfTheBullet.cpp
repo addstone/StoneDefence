@@ -13,10 +13,14 @@
 #include "../Character/Core/RuleOfTheAIController.h"
 #include "Math/UnrealMathUtility.h"
 #include "Components/ArrowComponent.h"
+#include "Components/SplineComponent.h"
 
 // Sets default values
 ARuleOfTheBullet::ARuleOfTheBullet()
 {
+	SplineOffset = 0.0f;
+	CurrentSplineTime = 0.f;
+	Spline = nullptr;
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -67,11 +71,38 @@ void ARuleOfTheBullet::BeginPlay()
 					ProjectileMovement->HomingTargetComponent = TargetCharacter->GetHommingPoint();
 				}
 			}
-		}
-	}
-	break;
-	case EBulletType::BULLET_TRACK_LINE_SP:
+		}	
 		break;
+	}
+	case EBulletType::BULLET_TRACK_LINE_SP:
+	{
+		ProjectileMovement->StopMovementImmediately();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
+
+		Spline = NewObject<USplineComponent>(this, TEXT("SplineInstance"));
+		Spline->RegisterComponent();
+
+		Spline->SetLocationAtSplinePoint(0, GetActorLocation(), ESplineCoordinateSpace::Local);
+		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))//GetInstigator<ARuleOfTheCharacter>()
+		{
+			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
+			{
+				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+				{
+					FVector DistanceVector = InstigatorCharacter->GetActorLocation() - TargetCharacter->GetActorLocation();
+					FVector Position = (DistanceVector / 2) + TargetCharacter->GetActorLocation();
+					Position.Y += SplineOffset;
+					Position.Z = (DistanceVector.Size() / 2.f) * 0.5f;
+					Spline->SetLocationAtSplinePoint(1, Position, ESplineCoordinateSpace::Local);
+					Spline->AddSplinePoint(TargetCharacter->GetActorLocation(), ESplineCoordinateSpace::Local);
+				}
+			}
+		}
+		
+
+
+		break;
+	}
 	case EBulletType::BULLET_CHAIN:
 	{
 		ProjectileMovement->StopMovementImmediately();
@@ -202,19 +233,47 @@ void ARuleOfTheBullet::Tick(float DeltaTime)
 		{
 			if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
 			{
-				TArray<USceneComponent*> SceneComponent;
-				RootComponent->GetChildrenComponents(true, SceneComponent);
-				for (auto & Tmp : SceneComponent)
+				switch (BulletType)
 				{
-					if (UParticleSystemComponent *ParticleSystem = Cast<UParticleSystemComponent>(Tmp))
+					case EBulletType::BULLET_CHAIN:
 					{
-						ParticleSystem->SetBeamSourcePoint(0, InstigatorCharacter->GetFirePoint()->GetComponentLocation(), 0);
-						ParticleSystem->SetBeamTargetPoint(0, TargetCharacter->GetHommingPoint()->GetComponentLocation(), 0);
+						TArray<USceneComponent*> SceneComponent;
+						RootComponent->GetChildrenComponents(true, SceneComponent);
+						for (auto & Tmp : SceneComponent)
+						{
+							if (UParticleSystemComponent *ParticleSystem = Cast<UParticleSystemComponent>(Tmp))
+							{
+								ParticleSystem->SetBeamSourcePoint(0, InstigatorCharacter->GetFirePoint()->GetComponentLocation(), 0);
+								ParticleSystem->SetBeamTargetPoint(0, TargetCharacter->GetHommingPoint()->GetComponentLocation(), 0);
+							}
+						}
+						break;
+					}
+					case EBulletType::BULLET_TRACK_LINE_SP:
+					{
+						if (Spline)
+						{
+							FVector DistanceVector = TargetCharacter->GetActorLocation() - InstigatorCharacter->GetActorLocation();
+							CurrentSplineTime += DeltaTime;
+
+							float Distance = Spline->GetSplineLength() * (CurrentSplineTime / (DistanceVector.Size() / 1000.f));
+							FVector Loction = Spline->GetWorldLocationAtDistanceAlongSpline(Distance);
+							FRotator Rotator = Spline->GetRotationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
+
+							SetActorLocationAndRotation(Loction, Rotator);
+
+							if ((Loction - TargetCharacter->GetActorLocation()).Size() <= 100.f)
+							{
+								FHitResult SweepResult;
+								SweepResult.Location = Loction;
+								BeginOverlap(nullptr, TargetCharacter, nullptr, 0, false, SweepResult);
+							}
+						}
+						break;
 					}
 				}
 			}
 		}
 	}
-
 }
 
