@@ -6,6 +6,7 @@
 #include "../Core/RuleOfTheAIController.h"
 #include "TowersAIController.generated.h"
 
+class ARuleOfTheCharacter;
 /**
  * 
  */
@@ -26,6 +27,7 @@ public:
 protected:
 
 	void BTService_FindTarget();
+	virtual void AttackTarget(ARuleOfTheCharacter *InTarget);
 
 protected:
 
@@ -35,5 +37,5 @@ protected:
 
 	float HeartbeatDiagnosis;
 
-	TWeakObjectPtr<ARuleOfTheCharacter> Target;
+	//TWeakObjectPtr<ARuleOfTheCharacter> Target;统一在父类中
 };

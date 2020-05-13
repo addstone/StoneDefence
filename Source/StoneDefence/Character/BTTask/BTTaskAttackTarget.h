@@ -15,6 +15,12 @@ class STONEDEFENCE_API UBTTaskAttackTarget : public UBTTaskNode
 	GENERATED_BODY()
 	
 public:
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)override;
+
+	virtual void InitializeFromAsset(UBehaviorTree& Asset) override;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+		struct FBlackboardKeySelector Blackboard_Actor;
 
 	/** Notify called after GameplayTask finishes initialization (not active yet) */
 	virtual void OnGameplayTaskInitialized(UGameplayTask& Task) {}

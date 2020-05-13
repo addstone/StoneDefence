@@ -22,6 +22,11 @@ EGameCharacterType::Type ATowers::GetCharacterType()
 	return EGameCharacterType::Type::TOWER;
 }
 
+bool ATowers::IsTeam()
+{
+	return true;
+}
+
 float ATowers::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);

@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "RuleOfTheAIController.generated.h"
 
+class ARuleOfTheCharacter;
 /**
  * 
  */
@@ -17,7 +18,7 @@ class STONEDEFENCE_API ARuleOfTheAIController : public AAIController
 public:
 
 	virtual AActor *FindTarget() { return nullptr;  }
-//	virtual void AttackTarget(ARuleOfTheCharacter *InTarget) {};
+	virtual void AttackTarget(ARuleOfTheCharacter *InTarget) {};
 //
 //	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")
 //		ARuleOfTheCharacter *GetTarget();

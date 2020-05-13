@@ -18,21 +18,25 @@ void UBTService_MonsterFindTarget::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		{
 			if (ARuleOfTheCharacter* NewTarget = Cast<ARuleOfTheCharacter>(MonsterAIController->FindTarget()))
 			{
-				if (Target != NewTarget) 
+				if (MonsterAIController->Target != NewTarget)
 				{
 					if (ARuleOfTheCharacter* MonsterSelf = Cast<ARuleOfTheCharacter>(MonsterAIController->GetPawn()))
 					{
 						MonsterSelf->GetCharacterMovement()->StopMovementImmediately();
 					}
-					Target = NewTarget;
+					MonsterAIController->Target = NewTarget;
 				}
 
-				if (Target.IsValid())
+				if (MonsterAIController->Target.IsValid())
 				{
-					if (Target->IsActive())
+					if (MonsterAIController->Target->IsActive())
 					{
-						MyBlackBoard->SetValueAsObject(BlackBoardKey_Target.SelectedKeyName, Target.Get());
-						MyBlackBoard->SetValueAsVector(BlackBoardKey_TargetLocation.SelectedKeyName, Target.Get()->GetActorLocation());
+						FVector NewTargetV = MonsterAIController->GetPawn()->GetActorLocation() - MonsterAIController->Target.Get()->GetActorLocation();
+						NewTargetV.Normalize();
+						FVector CurrentLocation = NewTargetV * 800.f + MonsterAIController->Target.Get()->GetActorLocation();
+
+						MyBlackBoard->SetValueAsObject(BlackBoardKey_Target.SelectedKeyName, MonsterAIController->Target.Get());
+						MyBlackBoard->SetValueAsVector(BlackBoardKey_TargetLocation.SelectedKeyName, CurrentLocation);
 
 					}
 					else
@@ -50,10 +54,10 @@ void UBTService_MonsterFindTarget::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				}
 			}
 
-			if (Target.IsValid())
+			if (MonsterAIController->Target.IsValid())
 			{
 				FVector Mylocation = MonsterAIController->GetPawn()->GetActorLocation();
-				FVector TMDistance = Mylocation - Target->GetActorLocation();
+				FVector TMDistance = Mylocation - MonsterAIController->Target->GetActorLocation();
 				if (TMDistance.Size() > 2200)
 				{
 					if (ARuleOfTheCharacter* MonsterAI = Cast<ARuleOfTheCharacter>(MonsterAIController->GetPawn()))

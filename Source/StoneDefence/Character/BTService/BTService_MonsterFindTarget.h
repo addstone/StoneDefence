@@ -37,6 +37,5 @@ public:
 	/** Notify called after GameplayTask changes state from Active (finishing or pausing) */
 	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) {}
 
-private:
-	TWeakObjectPtr<ARuleOfTheCharacter> Target;
+
 };
