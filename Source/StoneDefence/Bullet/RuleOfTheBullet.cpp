@@ -47,87 +47,61 @@ void ARuleOfTheBullet::BeginPlay()
 {
 	Super::BeginPlay();
 
-	switch (BulletType)
+	if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
 	{
-	case EBulletType::BULLET_DIRECT_LINE:
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
-		break;
-	case EBulletType::BULLET_LINE:
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
-		break;
-	case EBulletType::BULLET_TRACK_LINE:
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
-		ProjectileMovement->bIsHomingProjectile = true;
-		ProjectileMovement->bRotationFollowsVelocity = true;
-
-		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
+		if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
 		{
-			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
+			if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
 			{
-				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+
+				switch (BulletType)
 				{
+				case EBulletType::BULLET_DIRECT_LINE:
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
+					break;
+				case EBulletType::BULLET_LINE:
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
+					break;
+				case EBulletType::BULLET_TRACK_LINE://use spline
+				{
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
+					ProjectileMovement->bIsHomingProjectile = true;
+					ProjectileMovement->bRotationFollowsVelocity = true;
+
 					ProjectileMovement->HomingAccelerationMagnitude = 4000.f;
 					ProjectileMovement->HomingTargetComponent = TargetCharacter->GetHommingPoint();
+					break;
 				}
-			}
-		}	
-		break;
-	}
-	case EBulletType::BULLET_TRACK_LINE_SP:
-	{
-		ProjectileMovement->StopMovementImmediately();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
-
-		Spline = NewObject<USplineComponent>(this, TEXT("SplineInstance"));
-		Spline->RegisterComponent();
-
-		Spline->SetLocationAtSplinePoint(0, GetActorLocation(), ESplineCoordinateSpace::Local);
-		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))//GetInstigator<ARuleOfTheCharacter>()
-		{
-			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
-			{
-				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+				case EBulletType::BULLET_TRACK_LINE_SP:
 				{
+					ProjectileMovement->StopMovementImmediately();
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OpenFireParticle, GetActorLocation());
+
+					Spline = NewObject<USplineComponent>(this, TEXT("SplineInstance"));
+					Spline->RegisterComponent();
+
+					Spline->SetLocationAtSplinePoint(0, GetActorLocation(), ESplineCoordinateSpace::Local);
 					FVector DistanceVector = InstigatorCharacter->GetActorLocation() - TargetCharacter->GetActorLocation();
 					FVector Position = (DistanceVector / 2) + TargetCharacter->GetActorLocation();
 					Position.Y += SplineOffset;
 					Position.Z = (DistanceVector.Size() / 2.f) * 0.5f;
 					Spline->SetLocationAtSplinePoint(1, Position, ESplineCoordinateSpace::Local);
 					Spline->AddSplinePoint(TargetCharacter->GetActorLocation(), ESplineCoordinateSpace::Local);
+
+					break;
 				}
-			}
-		}
-		
-
-
-		break;
-	}
-	case EBulletType::BULLET_CHAIN:
-	{
-		ProjectileMovement->StopMovementImmediately();
-		BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))//GetInstigator<ARuleOfTheCharacter>()
-		{
-			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
-			{
-				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+				case EBulletType::BULLET_CHAIN:
 				{
+					ProjectileMovement->StopMovementImmediately();
+					BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 					UGameplayStatics::SpawnEmitterAttached(DamgageParticle, TargetCharacter->GetHommingPoint());
+
+					break;
 				}
-			}
-		}
-		break;
-	}
-	case EBulletType::BULLET_RANGE_LINE:
-	{
-		ProjectileMovement->StopMovementImmediately();
-		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))//GetInstigator<ARuleOfTheCharacter>()
-		{
-			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
-			{
-				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+				case EBulletType::BULLET_RANGE_LINE:
 				{
+					ProjectileMovement->StopMovementImmediately();
+
 					ProjectileMovement->ProjectileGravityScale = 1.f;
 					FVector TargetFormOwnerVector = TargetCharacter->GetActorLocation() - GetActorLocation();
 
@@ -142,18 +116,18 @@ void ARuleOfTheBullet::BeginPlay()
 					SetActorRotation(Rot);
 
 					ProjectileMovement->SetVelocityInLocalSpace(FVector(1.0f, 0.f, 0.f) * ProjectileMovement->InitialSpeed);
+
+				}
+				break;
+				case EBulletType::BULLET_RANGE:
+					ProjectileMovement->StopMovementImmediately();
+					ProjectileMovement->SetVelocityInLocalSpace(FVector(1.0f, 0.f, 0.f) * ProjectileMovement->InitialSpeed);//没有这句话，子弹会没有初速度而不动
+					RadialDamage(GetActorLocation(), Cast<ARuleOfTheCharacter>(Instigator));
+					break;;
 				}
 			}
 		}
 	}
-		break;
-	case EBulletType::BULLET_RANGE:
-		ProjectileMovement->StopMovementImmediately();
-		ProjectileMovement->SetVelocityInLocalSpace(FVector(1.0f, 0.f, 0.f) * ProjectileMovement->InitialSpeed);//没有这句话，子弹会没有初速度而不动
-		RadialDamage(GetActorLocation(), Cast<ARuleOfTheCharacter>(Instigator));
-		break;;
-	}
-
 	BoxDamage->OnComponentBeginOverlap.AddUniqueDynamic(this, &ARuleOfTheBullet::BeginOverlap);
 }
 
@@ -189,8 +163,6 @@ void ARuleOfTheBullet::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 			}
 		}
 	}
-
-
 }
 
 void ARuleOfTheBullet::RadialDamage(const FVector& Origin, ARuleOfTheCharacter * InstigatorCharacter)
@@ -251,6 +223,7 @@ void ARuleOfTheBullet::Tick(float DeltaTime)
 					}
 					case EBulletType::BULLET_TRACK_LINE_SP:
 					{
+						//Bug  空白处生成多余的爆炸
 						if (Spline)
 						{
 							FVector DistanceVector = TargetCharacter->GetActorLocation() - InstigatorCharacter->GetActorLocation();
@@ -266,12 +239,22 @@ void ARuleOfTheBullet::Tick(float DeltaTime)
 							{
 								FHitResult SweepResult;
 								SweepResult.Location = Loction;
+
+								//为什么手动激活？
 								BeginOverlap(nullptr, TargetCharacter, nullptr, 0, false, SweepResult);
 							}
 						}
 						break;
 					}
 				}
+				if (!TargetCharacter->IsActive())
+				{
+					Destroy();
+				}
+			}
+			else
+			{
+				Destroy();
 			}
 		}
 	}
