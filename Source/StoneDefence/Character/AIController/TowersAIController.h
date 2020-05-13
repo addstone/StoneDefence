@@ -37,5 +37,5 @@ protected:
 
 	float HeartbeatDiagnosis;
 
-	TWeakObjectPtr<ARuleOfTheCharacter> Target;
+	//TWeakObjectPtr<ARuleOfTheCharacter> Target;统一在父类中
 };
