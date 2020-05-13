@@ -45,3 +45,17 @@ Developed with Unreal Engine 4
 |第八节：AI的BTService设计|:heavy_check_mark:|
 |第九节：AI_怪物查询敌人算法|:heavy_check_mark:|
 |第十节：Towers范围查询敌人算法|:heavy_check_mark:|
+---
+|第四章|技能轨迹设计|
+| --------   | -----  |
+|第一节：怪物的AI范围攻击算法|:heavy_check_mark:|
+|第二节：子弹类设计|:heavy_check_mark:|
+|第三节：发射子弹的AnimNotify_runtime和Editor表现|:heavy_check_mark:|
+|第四节：子弹伤害设计|:heavy_check_mark:|
+|第五节：子弹碰撞和发射逻辑|:heavy_check_mark:|
+|第六节：子弹跟踪设计|:heavy_check_mark:|
+|第七节：子弹的范围原理详讲|:heavy_check_mark:|
+|第八节：丢手雷数学模型分析|:heavy_check_mark:|
+|第九节：雷电持续伤害特效加代码|:heavy_check_mark:|
+|第十节：真正商业采用的子弹跟踪方案|:heavy_check_mark:|
+|十一节：花样跟踪的代码实现|:heavy_check_mark:|
