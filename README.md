@@ -12,7 +12,8 @@
 Developed with Unreal Engine 4
 
 ---
-|第一章|游戏架构|
+# 第一章：游戏架构
+|||
 | --------   | -----  |
 |第一节：StoneDefence核心架构分析|:heavy_check_mark:|
 |第二节：StoneDefence_UI架构分析|:heavy_check_mark:|
@@ -20,7 +21,8 @@ Developed with Unreal Engine 4
 |第四节：StoneDefence核心资源和数据架构分析|:heavy_check_mark:|
 |第五节：扩展到整个游戏架构设计与分析|:heavy_check_mark:|
 ---
-|第二章|核心模块搭建|
+# 第二章：核心模块搭建
+|||
 | --------   | -----  |
 |第一节：添加屏幕视口|:heavy_check_mark:|
 |第二节：封装屏幕移动功能到插件|:heavy_check_mark:|
@@ -33,7 +35,8 @@ Developed with Unreal Engine 4
 |第九节：定制Hall大厅UI|:heavy_check_mark:|
 |第十节：实现通用的UI切换|:heavy_check_mark:|
 ---
-|第三章|角色系统搭建|
+# 第三章：角色系统搭建
+|||
 | --------   | -----  |
 |第一节：基础角色接口|:heavy_check_mark:|
 |第二节：炮塔材质与动画|:heavy_check_mark:|
@@ -46,7 +49,8 @@ Developed with Unreal Engine 4
 |第九节：AI_怪物查询敌人算法|:heavy_check_mark:|
 |第十节：Towers范围查询敌人算法|:heavy_check_mark:|
 ---
-|第四章|技能轨迹设计|
+# 第四章：技能轨迹设计
+|||
 | --------   | -----  |
 |第一节：怪物的AI范围攻击算法|:heavy_check_mark:|
 |第二节：子弹类设计|:heavy_check_mark:|
@@ -58,4 +62,4 @@ Developed with Unreal Engine 4
 |第八节：丢手雷数学模型分析|:heavy_check_mark:|
 |第九节：雷电持续伤害特效加代码|:heavy_check_mark:|
 |第十节：真正商业采用的子弹跟踪方案|:heavy_check_mark:|
-|十一节：花样跟踪的代码实现|:heavy_check_mark:|
+|第十一节：花样跟踪的代码实现|:heavy_check_mark:|
