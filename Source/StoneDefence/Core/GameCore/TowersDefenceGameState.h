@@ -29,9 +29,11 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 
 public:
 	ATowersDefenceGameState();
-
-	AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, FVector &Location, const FRotator &Rotator);
-	ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, FVector &Location, const FRotator &Rotator);
+	UFUNCTION(BlueprintCallable, Category = Sapwn)
+		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
+	
+	UFUNCTION(BlueprintCallable, Category = Sapwn)
+		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
 protected:
 	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
 

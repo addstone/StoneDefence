@@ -21,12 +21,12 @@ ATowersDefenceGameState::ATowersDefenceGameState()
 	AIMonsterCharacterData = MyTable_Monsters.Object;
 }
 
-AMonsters * ATowersDefenceGameState::SpawnMonster(int32 CharacterID, int32 CharacterLevel, FVector &Location, const FRotator &Rotator)
+AMonsters * ATowersDefenceGameState::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
 {
 	return SpawnCharacter<AMonsters>(CharacterID, CharacterLevel, AIMonsterCharacterData, Location, Rotator);
 }
 
-ATowers * ATowersDefenceGameState::SpawnTower(int32 CharacterID, int32 CharacterLevel, FVector &Location, const FRotator &Rotator)
+ATowers * ATowersDefenceGameState::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
 {
 	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, AITowerCharacterData, Location, Rotator);
 }
