@@ -3,26 +3,47 @@
 
 #include "TowersDefenceGameState.h"
 #include "../../StoneDefenceMacro.h"
+#include "../../Character/Core/RuleOfTheCharacter.h"
 
-const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FString &Hash, const FCharacterData &Data)
+FCharacterData CharacterDataNULL;
+
+
+ATowersDefenceGameState::ATowersDefenceGameState()
+{
+
+}
+
+ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(const FVector &Location, const FRotator &Rotator)
+{
+	if (GetWorld())
+	{
+		if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(ARuleOfTheCharacter::StaticClass(), Location, Rotator))
+		{
+			RuleOfTheCharacter->GUID = FGuid::NewGuid();
+			FCharacterData CharacterData;
+			AddCharacterData(RuleOfTheCharacter->GUID, CharacterData);
+		}	
+	}
+	return nullptr;
+}
+
+const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &Hash, const FCharacterData &Data)
 {
 	return CharacterDatas.Add(Hash, Data);
 }
 
-bool ATowersDefenceGameState::RemoveCharacterData(const FString &Hash)
+bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &Hash)
 {
 	return CharacterDatas.Remove(Hash);
 }
 
-FCharacterData /*&*/ ATowersDefenceGameState::GetCharacterData(const FString &Hash)
+FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &Hash)
 {
-	for (auto &Tmp : CharacterDatas)
+	if (CharacterDatas.Contains(Hash))
 	{
-		if (Tmp.Key == Hash)
-		{
-			return Tmp.Value;
-		}
+		return CharacterDatas[Hash];
 	}
-	SD_print(Error, "The current [%s] is invalid", *Hash);
-	return FCharacterData();
+	
+	SD_print_r(Error, "The current [%s] is invalid", *Hash.ToString());
+	return CharacterDataNULL;
 }
