@@ -9,6 +9,8 @@
 
 extern FCharacterData CharacterDataNULL;
 class ARuleOfTheCharacter;
+class AMonsters;
+class ATowers;
 /**
  * 
  */
@@ -17,15 +19,26 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 {
 	GENERATED_BODY()
 	
+	//塔数据
+	UPROPERTY()
+		UDataTable* AITowerCharacterData;
+
+	//怪物数据
+	UPROPERTY()
+		UDataTable* AIMonsterCharacterData;
+
 public:
 	ATowersDefenceGameState();
 
-	ARuleOfTheCharacter *SpawnCharacter(const FVector &Location, const FRotator &Rotator);
+	AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, FVector &Location, const FRotator &Rotator);
+	ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, FVector &Location, const FRotator &Rotator);
+protected:
+	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
 
 	template<class T>
-	T SpawnCharacter(const FVector &Location, const FRotator &Rotator)
+	T *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator)
 	{
-		return Cast<T>(SpawnCharacter(Location, Rotator));
+		return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
 	}
 
 public:

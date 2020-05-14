@@ -18,9 +18,24 @@ struct FCharacterData : public FTableRowBase
 public:
 	FCharacterData();
 
+	//资源
+	//////////////////////////////////////////////////////////////////////////
+	//角色蓝图实例
+	UPROPERTY(EditDefaultsOnly, Category = "Table")
+		TAssetSubclassOf<class ARuleOfTheCharacter> CharacterBlueprintKey;
+	//属性
+	////////////////////////////////////////////////////////
+	//角色图片
+	UPROPERTY(EditDefaultsOnly, Category = "Table")
+		TAssetPtr<class UTexture2D> Icon;
+
 	//角色名字
 	UPROPERTY(EditDefaultsOnly, Category = "Character Attribute")
 		FName Name;
+
+	//ID
+	UPROPERTY(EditDefaultsOnly, Category = "Character Attribute")
+		int32 ID;
 
 	//属性
 	////////////////////////////////////////////////////////
@@ -136,4 +151,8 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	UPROPERTY(EditDefaultsOnly, Category = "Characte Skill")
 		TMap<int32, FSkillData> CharacterSkill;
+
+
+public:
+	bool IsValid();
 };

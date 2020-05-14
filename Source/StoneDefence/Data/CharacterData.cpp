@@ -2,7 +2,7 @@
 
 FCharacterData::FCharacterData()
 	:Name(NAME_None),
-	//GUID(FGuid::NewGuid().ToString()),
+	ID(INDEX_NONE),
 	Lv(1),
 	MaxHealth(100),
 	Health(MaxHealth),
@@ -30,4 +30,9 @@ FCharacterData::FCharacterData()
 	ConstructionTime(5)
 {
 
+}
+
+bool FCharacterData::IsValid()
+{
+	return ID != INDEX_NONE;
 }
