@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "../../UI/Character/UI_Health.h"
 #include "../../Data/CharacterData.h"
+#include "../../StoneDefenceUtils.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -73,12 +74,16 @@ void ARuleOfTheCharacter::Tick(float DeltaTime)
 float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	float DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
 
-
-	GetCharacterData().Health -= Damage / 10.f;
+	GetCharacterData().Health -= DamageValue;
+	if (!IsActive())
+	{
+		GetCharacterData().Health = 0.0f;
+	}
 
 	UpdateUI();
-	return 0.f;
+	return DamageValue;
 }
 
 bool ARuleOfTheCharacter::IsDeath()

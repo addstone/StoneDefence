@@ -53,7 +53,7 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 			}
 			return nullptr;
 		};
-		;
+
 		if (FCharacterData *CharacterData = GetCharacterData(CharacterID))
 		{	
 			//https://blog.csdn.net/qq_29523119/article/details/84455486

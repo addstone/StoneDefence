@@ -14,6 +14,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Components/ArrowComponent.h"
 #include "Components/SplineComponent.h"
+#include "../StoneDefenceUtils.h"
 
 // Sets default values
 ARuleOfTheBullet::ARuleOfTheBullet()
@@ -142,13 +143,22 @@ void ARuleOfTheBullet::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 				if (OtherCharacter->IsActive())
 				{
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DamgageParticle, SweepResult.Location);
+					
+					float DamageValue = Expression::GetDamage(InstigatorCharacter, OtherCharacter);
+
 					switch (BulletType)
 					{
 					case EBulletType::BULLET_DIRECT_LINE:
 					case EBulletType::BULLET_LINE:
 					case EBulletType::BULLET_TRACK_LINE:
 					case EBulletType::BULLET_TRACK_LINE_SP:
-						UGameplayStatics::ApplyDamage(OtherCharacter, 100.f, InstigatorCharacter->GetController(), InstigatorCharacter, UDamageType::StaticClass());
+						UGameplayStatics::ApplyDamage(
+							OtherCharacter, 
+							DamageValue,
+							InstigatorCharacter->GetController(), 
+							InstigatorCharacter, 
+							UDamageType::StaticClass());
+
 						Destroy();
 						break;
 					case EBulletType::BULLET_RANGE_LINE:
@@ -191,7 +201,16 @@ void ARuleOfTheBullet::RadialDamage(const FVector& Origin, ARuleOfTheCharacter *
 				}
 			}
 		}
-		UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), 100.f, 10.f, Origin, 400.f, 1000.f, 1.f, UDamageType::StaticClass(), IgnoreActors, Instigator);
+		UGameplayStatics::ApplyRadialDamageWithFalloff(
+			GetWorld(), 
+			100.f, 10.f,
+			Origin, 
+			400.f, 
+			1000.f, 
+			1.f, 
+			UDamageType::StaticClass(), 
+			IgnoreActors, 
+			Instigator);
 	}
 }
 
