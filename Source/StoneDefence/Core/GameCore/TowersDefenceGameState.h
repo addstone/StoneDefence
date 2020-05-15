@@ -44,13 +44,13 @@ protected:
 	}
 
 public:
-	const FCharacterData &AddCharacterData(const FGuid &Hash, const FCharacterData &Data);
-	bool RemoveCharacterData(const FGuid &Hash);
-	FCharacterData &GetCharacterData(const FGuid &Hash);
+	const FCharacterData &AddCharacterData(const uint32 &ID, const FCharacterData &Data);
+	bool RemoveCharacterData(const uint32 &ID);
+	FCharacterData &GetCharacterData(const uint32 &ID);
 
 
 private:
 	UPROPERTY()
 		//TArray<FCharacterData*> CharacterDatas;
-		TMap<FGuid, FCharacterData> CharacterDatas;
+		TMap<uint32, FCharacterData> CharacterDatas;
 };

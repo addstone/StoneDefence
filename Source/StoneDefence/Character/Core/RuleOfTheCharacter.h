@@ -45,6 +45,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	void UpdateUI();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

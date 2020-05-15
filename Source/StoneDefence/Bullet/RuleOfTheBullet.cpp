@@ -147,6 +147,7 @@ void ARuleOfTheBullet::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 					case EBulletType::BULLET_DIRECT_LINE:
 					case EBulletType::BULLET_LINE:
 					case EBulletType::BULLET_TRACK_LINE:
+					case EBulletType::BULLET_TRACK_LINE_SP:
 						UGameplayStatics::ApplyDamage(OtherCharacter, 100.f, InstigatorCharacter->GetController(), InstigatorCharacter, UDamageType::StaticClass());
 						Destroy();
 						break;

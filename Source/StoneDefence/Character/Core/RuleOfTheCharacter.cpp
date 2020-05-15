@@ -6,6 +6,8 @@
 #include "Components/WidgetComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "../../UI/Character/UI_Health.h"
+#include "../../Data/CharacterData.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -39,6 +41,26 @@ void ARuleOfTheCharacter::BeginPlay()
 	{
 		SpawnDefaultController();
 	}
+
+	UpdateUI();
+}
+
+void ARuleOfTheCharacter::UpdateUI()
+{
+	if (Widget)
+	{
+		//if (const FCharacterData *InCharacterData = GetCharacterData())
+		//{
+		//	if (InCharacterData->IsValid())
+		//	{
+				if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
+				{
+					HealthUI->SetTitle(GetCharacterData().Name.ToString());
+					HealthUI->SetHealth(GetHealth() / GetMaxHealth());
+				}
+			}
+	//	}
+	//}
 }
 
 // Called every frame
@@ -52,6 +74,10 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+
+	GetCharacterData().Health -= Damage / 10.f;
+
+	UpdateUI();
 	return 0.f;
 }
 
@@ -80,7 +106,7 @@ FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 {
 	if (GetGameState())
 	{
-		return GetGameState()->GetCharacterData(GUID);
+		return GetGameState()->GetCharacterData(GetUniqueID());
 	}
 	return CharacterDataNULL;
 }

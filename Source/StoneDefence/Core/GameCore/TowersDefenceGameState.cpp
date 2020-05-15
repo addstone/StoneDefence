@@ -62,9 +62,10 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 			{
 				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, Location, Rotator))
 				{
-					RuleOfTheCharacter->GUID = FGuid::NewGuid();
+					//RuleOfTheCharacter->GetUniqueID();
+					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
 
-					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
+					AddCharacterData(RuleOfTheCharacter->GetUniqueID(), *CharacterData);
 				}
 			}
 		}
@@ -73,23 +74,23 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 	return nullptr;
 }
 
-const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &Hash, const FCharacterData &Data)
+const FCharacterData & ATowersDefenceGameState::AddCharacterData(const uint32 &ID, const FCharacterData &Data)
 {
-	return CharacterDatas.Add(Hash, Data);
+	return CharacterDatas.Add(ID, Data);
 }
 
-bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &Hash)
+bool ATowersDefenceGameState::RemoveCharacterData(const uint32 &ID)
 {
-	return CharacterDatas.Remove(Hash);
+	return CharacterDatas.Remove(ID);
 }
 
-FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &Hash)
+FCharacterData & ATowersDefenceGameState::GetCharacterData(const uint32 &ID)
 {
-	if (CharacterDatas.Contains(Hash))
+	if (CharacterDatas.Contains(ID))
 	{
-		return CharacterDatas[Hash];
+		return CharacterDatas[ID];
 	}
 	
-	SD_print_r(Error, "The current [%s] is invalid", *Hash.ToString());
+	SD_print_r(Error, "The current [%i] is invalid", ID);
 	return CharacterDataNULL;
 }
