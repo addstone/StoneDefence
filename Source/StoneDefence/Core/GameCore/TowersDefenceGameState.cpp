@@ -8,9 +8,21 @@
 #include "Engine/DataTable.h"
 #include "../../Character/CharacterCore/Monsters.h"
 #include "../../Character/CharacterCore/Towers.h"
+#include "../../Data/Save/GameSaveData.h"
+#include "Kismet/GameplayStatics.h"
 
 FCharacterData CharacterDataNULL;
 
+
+void ATowersDefenceGameState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//if (1)
+	//{
+	//	SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
+	//}
+}
 
 ATowersDefenceGameState::ATowersDefenceGameState()
 {
@@ -29,6 +41,22 @@ AMonsters * ATowersDefenceGameState::SpawnMonster(int32 CharacterID, int32 Chara
 ATowers * ATowersDefenceGameState::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
 {
 	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, AITowerCharacterData, Location, Rotator);
+}
+
+bool ATowersDefenceGameState::SaveGameData(int32 SaveNumber)
+{
+	if (SaveData)
+	{
+		return UGameplayStatics::SaveGameToSlot(SaveData, FString::Printf(TEXT("SaveSlot_%i"), SaveNumber), 0);
+	}
+	return false;
+}
+
+bool ATowersDefenceGameState::ReadGameData(int32 SaveNumber)
+{
+	SaveData = Cast<UGameSaveData>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("SaveSlot_%i"), SaveNumber), 0));
+
+	return SaveData != NULL;
 }
 
 ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
@@ -76,21 +104,30 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 
 const FCharacterData & ATowersDefenceGameState::AddCharacterData(const uint32 &ID, const FCharacterData &Data)
 {
-	return CharacterDatas.Add(ID, Data);
+	return GetSaveData()->CharacterDatas.Add(ID, Data);
 }
 
 bool ATowersDefenceGameState::RemoveCharacterData(const uint32 &ID)
 {
-	return CharacterDatas.Remove(ID);
+	return GetSaveData()->CharacterDatas.Remove(ID);
 }
 
 FCharacterData & ATowersDefenceGameState::GetCharacterData(const uint32 &ID)
 {
-	if (CharacterDatas.Contains(ID))
+	if (GetSaveData()->CharacterDatas.Contains(ID))
 	{
-		return CharacterDatas[ID];
+		return GetSaveData()->CharacterDatas[ID];
 	}
 	
 	SD_print_r(Error, "The current [%i] is invalid", ID);
 	return CharacterDataNULL;
+}
+
+UGameSaveData * ATowersDefenceGameState::GetSaveData()
+{
+	if (!SaveData)
+	{
+		SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
+	}
+	return SaveData;
 }

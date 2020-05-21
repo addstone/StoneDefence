@@ -11,6 +11,7 @@ extern FCharacterData CharacterDataNULL;
 class ARuleOfTheCharacter;
 class AMonsters;
 class ATowers;
+class UGameSaveData;
 /**
  * 
  */
@@ -27,6 +28,7 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 	UPROPERTY()
 		UDataTable* AIMonsterCharacterData;
 
+	virtual void BeginPlay() override;
 public:
 	ATowersDefenceGameState();
 	UFUNCTION(BlueprintCallable, Category = Sapwn)
@@ -34,6 +36,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = Sapwn)
 		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
+	
+	UFUNCTION(BlueprintCallable, Category = SaveData)
+		bool SaveGameData(int32 SaveNumber);
+
+	UFUNCTION(BlueprintCallable, Category = SaveData)
+		bool ReadGameData(int32 SaveNumber);
 protected:
 	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
 
@@ -48,9 +56,10 @@ public:
 	bool RemoveCharacterData(const uint32 &ID);
 	FCharacterData &GetCharacterData(const uint32 &ID);
 
+protected:
+	UGameSaveData *GetSaveData();
 
 private:
 	UPROPERTY()
-		//TArray<FCharacterData*> CharacterDatas;
-		TMap<uint32, FCharacterData> CharacterDatas;
+		UGameSaveData *SaveData;
 };
