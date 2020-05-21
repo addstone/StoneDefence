@@ -53,9 +53,9 @@ protected:
 	}
 
 public:
-	const FCharacterData &AddCharacterData(const uint32 &ID, const FCharacterData &Data);
-	bool RemoveCharacterData(const uint32 &ID);
-	FCharacterData &GetCharacterData(const uint32 &ID);
+	const FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
+	bool RemoveCharacterData(const FGuid &ID);
+	FCharacterData &GetCharacterData(const FGuid &ID);
 
 protected:
 	UGameSaveData *GetSaveData();

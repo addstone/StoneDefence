@@ -97,7 +97,7 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 					//RuleOfTheCharacter->GetUniqueID();
 					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
 					CharacterData->UpdateHealth();
-					AddCharacterData(RuleOfTheCharacter->GetUniqueID(), *CharacterData);
+					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
 				}
 			}
 		}
@@ -106,24 +106,24 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 	return nullptr;
 }
 
-const FCharacterData & ATowersDefenceGameState::AddCharacterData(const uint32 &ID, const FCharacterData &Data)
+const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
 {
 	return GetSaveData()->CharacterDatas.Add(ID, Data);
 }
 
-bool ATowersDefenceGameState::RemoveCharacterData(const uint32 &ID)
+bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &ID)
 {
 	return GetSaveData()->CharacterDatas.Remove(ID);
 }
 
-FCharacterData & ATowersDefenceGameState::GetCharacterData(const uint32 &ID)
+FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
 {
 	if (GetSaveData()->CharacterDatas.Contains(ID))
 	{
 		return GetSaveData()->CharacterDatas[ID];
 	}
 	
-	SD_print_r(Error, "The current [%i] is invalid", ID);
+	SD_print_r(Error, "The current [%i] is invalid", *ID.ToString());
 	return CharacterDataNULL;
 }
 

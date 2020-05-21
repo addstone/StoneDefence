@@ -3,3 +3,8 @@
 
 #include "UI_RuleOfTheWidget.h"
 
+UUI_RuleOfTheWidget::UUI_RuleOfTheWidget(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	GUID = FGuid::NewGuid();
+}

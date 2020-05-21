@@ -15,6 +15,7 @@
 ARuleOfTheCharacter::ARuleOfTheCharacter()
 	:bAttack(false)
 {
+	GUID = FGuid::NewGuid();
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -121,7 +122,7 @@ FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 {
 	if (GetGameState())
 	{
-		return GetGameState()->GetCharacterData(GetUniqueID());
+		return GetGameState()->GetCharacterData(GUID);
 	}
 	return CharacterDataNULL;
 }
