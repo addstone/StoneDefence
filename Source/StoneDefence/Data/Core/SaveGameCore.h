@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "CharacterData.generated.h"
+#include "GameFramework/SaveGame.h"
+#include "SaveGameCore.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STONEDEFENCE_API UCharacterData : public UObject
+class STONEDEFENCE_API USaveGameCore : public USaveGame
 {
 	GENERATED_BODY()
 	

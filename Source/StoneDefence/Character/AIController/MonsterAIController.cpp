@@ -41,38 +41,41 @@ AActor * AMonsterAIController::FindTarget()
 	//	}
 	//	return nullptr;
 	//};
-
-	TArray<ARuleOfTheCharacter*>TargetMainTowersArray;
-	TArray<ARuleOfTheCharacter*>TargetTowersArray;
-	for (TActorIterator<ATowers>it(GetWorld(), ATowers::StaticClass()); it; ++it)
+	if (!Target.IsValid() || !Target->IsActive())
 	{
-		ATowers* TheCharacter = *it;
-		if (TheCharacter && TheCharacter->IsActive())
+		TArray<ARuleOfTheCharacter*>TargetMainTowersArray;
+		TArray<ARuleOfTheCharacter*>TargetTowersArray;
+		for (TActorIterator<ATowers>it(GetWorld(), ATowers::StaticClass()); it; ++it)
 		{
-			if (TheCharacter->GetCharacterType() == EGameCharacterType::Type::TOWER)
+			ATowers* TheCharacter = *it;
+			if (TheCharacter && TheCharacter->IsActive())
 			{
-				TargetTowersArray.Add(TheCharacter);
-			}
-			else if (TheCharacter->GetCharacterType() == EGameCharacterType::Type::MAIN_TOWER)
-			{
-				TargetMainTowersArray.Add(TheCharacter);
+				if (TheCharacter->GetCharacterType() == EGameCharacterType::Type::TOWER)
+				{
+					TargetTowersArray.Add(TheCharacter);
+				}
+				else if (TheCharacter->GetCharacterType() == EGameCharacterType::Type::MAIN_TOWER)
+				{
+					TargetMainTowersArray.Add(TheCharacter);
+				}
 			}
 		}
+
+		//ATowers* MainTowers = GetRecentlyTowers(TargetMainTowersArray);
+		//ATowers* NorTowers = GetRecentlyTowers(TargetTowersArray);
+
+		ATowers* MainTowers = Cast<ATowers>(StoneDefenceUtils::FindTargetRecently(TargetMainTowersArray, GetPawn()->GetActorLocation()));
+		ATowers* NorTowers = Cast<ATowers>(StoneDefenceUtils::FindTargetRecently(TargetTowersArray, GetPawn()->GetActorLocation()));
+
+
+		if (MainTowers)
+		{
+			return MainTowers;
+		}
+		return NorTowers;
 	}
-
-	//ATowers* MainTowers = GetRecentlyTowers(TargetMainTowersArray);
-	//ATowers* NorTowers = GetRecentlyTowers(TargetTowersArray);
-
-	ATowers* MainTowers = Cast<ATowers>(StoneDefenceUtils::FindTargetRecently(TargetMainTowersArray, GetPawn()->GetActorLocation()));
-	ATowers* NorTowers = Cast<ATowers>(StoneDefenceUtils::FindTargetRecently(TargetTowersArray, GetPawn()->GetActorLocation()));
-
-
-	if (MainTowers)
-	{
-		return MainTowers;
-	}
-
-	return NorTowers;
+	
+	return Target.Get();
 
 }
 

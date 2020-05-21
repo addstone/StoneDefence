@@ -14,12 +14,14 @@
 #include "Math/UnrealMathUtility.h"
 #include "Components/ArrowComponent.h"
 #include "Components/SplineComponent.h"
+#include "../StoneDefenceUtils.h"
 
 // Sets default values
 ARuleOfTheBullet::ARuleOfTheBullet()
 {
 	SplineOffset = 0.0f;
 	CurrentSplineTime = 0.f;
+	ChainAttackCount = 3;
 	Spline = nullptr;
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -96,6 +98,9 @@ void ARuleOfTheBullet::BeginPlay()
 					BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 					UGameplayStatics::SpawnEmitterAttached(DamgageParticle, TargetCharacter->GetHommingPoint());
 
+					GetWorld()->GetTimerManager().SetTimer(ChainAttackHandle, this, &ARuleOfTheBullet::ChainAttack, 0.1f);
+
+					//SubmissionSkillRequest();
 					break;
 				}
 				case EBulletType::BULLET_RANGE_LINE:
@@ -122,6 +127,7 @@ void ARuleOfTheBullet::BeginPlay()
 				case EBulletType::BULLET_RANGE:
 					ProjectileMovement->StopMovementImmediately();
 					ProjectileMovement->SetVelocityInLocalSpace(FVector(1.0f, 0.f, 0.f) * ProjectileMovement->InitialSpeed);//没有这句话，子弹会没有初速度而不动
+					BoxDamage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 					RadialDamage(GetActorLocation(), Cast<ARuleOfTheCharacter>(Instigator));
 					break;;
 				}
@@ -142,12 +148,22 @@ void ARuleOfTheBullet::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 				if (OtherCharacter->IsActive())
 				{
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DamgageParticle, SweepResult.Location);
+					
+					float DamageValue = Expression::GetDamage(InstigatorCharacter, OtherCharacter);
+
 					switch (BulletType)
 					{
 					case EBulletType::BULLET_DIRECT_LINE:
 					case EBulletType::BULLET_LINE:
 					case EBulletType::BULLET_TRACK_LINE:
-						UGameplayStatics::ApplyDamage(OtherCharacter, 100.f, InstigatorCharacter->GetController(), InstigatorCharacter, UDamageType::StaticClass());
+					case EBulletType::BULLET_TRACK_LINE_SP:
+						UGameplayStatics::ApplyDamage(
+							OtherCharacter, 
+							DamageValue,
+							InstigatorCharacter->GetController(), 
+							InstigatorCharacter, 
+							UDamageType::StaticClass());
+
 						Destroy();
 						break;
 					case EBulletType::BULLET_RANGE_LINE:
@@ -190,7 +206,53 @@ void ARuleOfTheBullet::RadialDamage(const FVector& Origin, ARuleOfTheCharacter *
 				}
 			}
 		}
-		UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), 100.f, 10.f, Origin, 400.f, 1000.f, 1.f, UDamageType::StaticClass(), IgnoreActors, Instigator);
+		UGameplayStatics::ApplyRadialDamageWithFalloff(
+			GetWorld(), 
+			100.f, 10.f,
+			Origin, 
+			400.f, 
+			1000.f, 
+			1.f, 
+			UDamageType::StaticClass(), 
+			IgnoreActors, 
+			Instigator,
+			Instigator->GetController(),
+			ECollisionChannel::ECC_MAX);
+	}
+}
+
+void ARuleOfTheBullet::ChainAttack()
+{
+	if (ChainAttackHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ChainAttackHandle);
+	}
+
+	//主要伤害区
+	if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
+	{
+		if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
+		{
+			if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+			{
+				UGameplayStatics::SpawnEmitterAttached(DamgageParticle, TargetCharacter->GetHommingPoint());
+				UGameplayStatics::SpawnEmitterAttached(OpenFireParticle, InstigatorCharacter->GetHommingPoint());
+
+
+				UGameplayStatics::ApplyDamage(
+					TargetCharacter,
+					100.f,
+					InstigatorCharacter->GetController(),
+					InstigatorCharacter,
+					UDamageType::StaticClass());
+			}
+		}
+	}
+
+	ChainAttackCount--;
+	if (ChainAttackCount > 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ChainAttackHandle, this, &ARuleOfTheBullet::ChainAttack, 0.3f);
 	}
 }
 

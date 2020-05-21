@@ -6,6 +6,9 @@
 #include "Components/WidgetComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "../../UI/Character/UI_Health.h"
+#include "../../Data/CharacterData.h"
+#include "../../StoneDefenceUtils.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -34,6 +37,31 @@ void ARuleOfTheCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//生成角色需要生成一个默认的控制
+	if (!GetController())
+	{
+		SpawnDefaultController();
+	}
+
+	UpdateUI();
+}
+
+void ARuleOfTheCharacter::UpdateUI()
+{
+	if (Widget)
+	{
+		//if (const FCharacterData *InCharacterData = GetCharacterData())
+		//{
+		//	if (InCharacterData->IsValid())
+		//	{
+				if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
+				{
+					HealthUI->SetTitle(GetCharacterData().Name.ToString());
+					HealthUI->SetHealth(GetHealth() / GetMaxHealth());
+				}
+			}
+	//	}
+	//}
 }
 
 // Called every frame
@@ -46,28 +74,46 @@ void ARuleOfTheCharacter::Tick(float DeltaTime)
 float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	float DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
 
-	return 0.f;
+	GetCharacterData().Health -= DamageValue;
+	if (!IsActive())
+	{
+		GetCharacterData().Health = 0.0f;
+	}
+
+	UpdateUI();
+	return DamageValue;
 }
 
 bool ARuleOfTheCharacter::IsDeath()
 {
-	return false;
+	
+	return GetHealth() <= 0.f;
 }
 
 float ARuleOfTheCharacter::GetHealth()
 {
-	return 0.f;
+	return GetCharacterData().Health;
 }
 
 float ARuleOfTheCharacter::GetMaxHealth()
 {
-	return 0.f;
+	return GetCharacterData().MaxHealth;
 }
 
 bool ARuleOfTheCharacter::IsTeam()
 {
 	return false;
+}
+
+FCharacterData & ARuleOfTheCharacter::GetCharacterData()
+{
+	if (GetGameState())
+	{
+		return GetGameState()->GetCharacterData(GetUniqueID());
+	}
+	return CharacterDataNULL;
 }
 
 EGameCharacterType::Type ARuleOfTheCharacter::GetCharacterType()

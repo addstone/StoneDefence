@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "../../Interface/Character/IRuleCharacter.h"
+#include "../../Interface/Character/RuleCharacter.h"
 #include "../../Core/GameCore/TowersDefencePlayerController.h"
 #include "../../Core/GameCore/TowersDefenceGameState.h"
 #include "../../Core/GameCore/TowersDefencePlayerState.h"
@@ -45,6 +45,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	void UpdateUI();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -52,14 +54,19 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterAttrubute")
 		bool bAttack;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ID")
+		FGuid GUID;
+
 protected:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
+	virtual EGameCharacterType::Type GetCharacterType();
 	virtual bool IsDeath();
 	virtual float GetHealth();
 	virtual float GetMaxHealth();
 	virtual bool IsTeam();
+	virtual FCharacterData &GetCharacterData();
 
 public:
 	FORCEINLINE ATowersDefencePlayerController* GetGameController() { return GetWorld() ? GetWorld()->GetFirstPlayerController<ATowersDefencePlayerController>() : nullptr; }
@@ -73,5 +80,5 @@ public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Attrubute")
 		bool IsActive() { return !IsDeath(); }
 
-	virtual EGameCharacterType::Type GetCharacterType();
+	
 };

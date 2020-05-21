@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "StoneDefenceType.h"
 
+
 class USizeBox;
 class ARuleOfTheCharacter;
 class IRuleCharacter;
@@ -23,4 +24,9 @@ namespace StoneDefenceUtils
 
 	ARuleOfTheCharacter *FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters,const FVector &Loc);
 	
+}
+
+namespace Expression
+{
+	float GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner);
 }

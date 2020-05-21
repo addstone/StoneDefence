@@ -53,6 +53,11 @@ void UBTService_MonsterFindTarget::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 				}
 			}
+			else
+			{
+				MyBlackBoard->SetValueAsObject(BlackBoardKey_Target.SelectedKeyName, nullptr);
+				//MyBlackBoard->SetValueAsVector(BlackBoardKey_TargetLocation.SelectedKeyName, FVector::ZeroVector);
+			}
 
 			if (MonsterAIController->Target.IsValid())
 			{
