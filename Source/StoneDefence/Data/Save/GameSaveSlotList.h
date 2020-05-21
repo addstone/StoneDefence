@@ -3,18 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "GameFramework/SaveGame.h"
+#include "GameFramework/SaveGame.h"
 #include "GameSaveSlotList.generated.h"
 
 /**
  * 
  */
-//UCLASS()
-//class STONEDEFENCE_API UGameSaveSlotList : public USaveGame
-//{
-//	GENERATED_BODY()
-//	
-//};
+
 USTRUCT()
 struct FSaveSlot
 {
@@ -26,16 +21,44 @@ struct FSaveSlot
 	UPROPERTY(SaveGame)
 		FText DateText;
 
-	//对应有存档的角标
+	//关卡名称
 	UPROPERTY(SaveGame)
-		int32 SaveGameBoxNumber;
+		FText LevelName;
+
+	//章节名称
+	UPROPERTY(SaveGame)
+		FText ChapterName;
+
+	//是否存档
+	UPROPERTY(SaveGame)
+		bool bSave;
 };
 
 USTRUCT()
 struct FSaveSlotList
 {
 	GENERATED_USTRUCT_BODY()
+	
+	FSaveSlotList();
 
 	UPROPERTY(SaveGame)
 		TMap<int32, FSaveSlot> Slots;
+
+	UPROPERTY(SaveGame)
+		TMap<int32, float> DegreeOfCompletion;
+
+	int32 GetSerialNumber();
+
+	bool RemoveAtGameData(int32 SlotNumber);
+	bool AddGameDataByNumber(int32 SlotNumber);
+};
+
+UCLASS()
+class STONEDEFENCE_API UGameSaveSlotList : public USaveGame
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(SaveGame)
+		FSaveSlotList SlotList;
 };

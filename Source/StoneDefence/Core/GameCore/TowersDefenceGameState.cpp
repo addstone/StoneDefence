@@ -10,6 +10,7 @@
 #include "../../Character/CharacterCore/Towers.h"
 #include "../../Data/Save/GameSaveData.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../Data/Save/GameSaveSlotList.h"
 
 FCharacterData CharacterDataNULL;
 
@@ -45,9 +46,12 @@ ATowers * ATowersDefenceGameState::SpawnTower(int32 CharacterID, int32 Character
 
 bool ATowersDefenceGameState::SaveGameData(int32 SaveNumber)
 {
-	if (SaveData)
+	if (SaveData && SlotList)
 	{
-		return UGameplayStatics::SaveGameToSlot(SaveData, FString::Printf(TEXT("SaveSlot_%i"), SaveNumber), 0);
+		SlotList->SlotList.AddGameDataByNumber(SaveNumber);
+		return UGameplayStatics::SaveGameToSlot(SlotList, FString::Printf(TEXT("SlotList")), 0)
+			&&
+			UGameplayStatics::SaveGameToSlot(SaveData, FString::Printf(TEXT("SaveSlot_%i"), SaveNumber), 0);
 	}
 	return false;
 }
@@ -130,4 +134,17 @@ UGameSaveData * ATowersDefenceGameState::GetSaveData()
 		SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
 	}
 	return SaveData;
+}
+
+UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
+{
+	if (!SlotList)
+	{
+		SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("SaveSlot")), 0));
+		if (!SlotList)
+		{
+			SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UGameSaveSlotList::StaticClass()));
+		}
+	}
+	return SlotList;
 }

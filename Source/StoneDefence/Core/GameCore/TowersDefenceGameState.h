@@ -12,6 +12,7 @@ class ARuleOfTheCharacter;
 class AMonsters;
 class ATowers;
 class UGameSaveData;
+class UGameSaveSlotList;
 /**
  * 
  */
@@ -58,8 +59,12 @@ public:
 
 protected:
 	UGameSaveData *GetSaveData();
+	UGameSaveSlotList *GetGameSaveSlotList();
 
 private:
 	UPROPERTY()
 		UGameSaveData *SaveData;
+
+	UPROPERTY()
+		UGameSaveSlotList *SlotList;
 };
