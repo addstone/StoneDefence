@@ -9,6 +9,7 @@
 #include "../../UI/Character/UI_Health.h"
 #include "../../Data/CharacterData.h"
 #include "../../StoneDefenceUtils.h"
+#include "../../SimpleDrawText/Source/SimpleDrawText/Public/Actor/DrawText.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -83,6 +84,15 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 	}
 
 	UpdateUI();
+
+	if (DrawTextClass)
+	{
+		if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, GetActorLocation(), FRotator::ZeroRotator))
+		{
+			FString DamageText = FString::Printf(TEXT("-%0.f"), DamageValue);
+			MyValueText->SetTextBlock(DamageText, FLinearColor::Red, DamageValue / GetCharacterData().MaxHealth);
+		}
+	}
 	return DamageValue;
 }
 
