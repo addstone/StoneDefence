@@ -36,3 +36,8 @@ bool FCharacterData::IsValid()
 {
 	return ID != INDEX_NONE;
 }
+
+void FCharacterData::UpdateHealth()
+{
+	Health = MaxHealth;
+}

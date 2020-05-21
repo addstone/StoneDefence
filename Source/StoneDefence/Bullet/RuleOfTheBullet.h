@@ -65,6 +65,13 @@ protected:
 	UPROPERTY()
 		float CurrentSplineTime;
 
+	FTimerHandle ChainAttackHandle;
+
+	UPROPERTY()
+		uint8 ChainAttackCount;
+
+	UFUNCTION()
+		void ChainAttack();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

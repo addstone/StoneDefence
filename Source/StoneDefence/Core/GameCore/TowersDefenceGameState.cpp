@@ -64,7 +64,7 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 				{
 					//RuleOfTheCharacter->GetUniqueID();
 					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
-
+					CharacterData->UpdateHealth();
 					AddCharacterData(RuleOfTheCharacter->GetUniqueID(), *CharacterData);
 				}
 			}
