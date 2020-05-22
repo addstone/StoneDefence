@@ -7,6 +7,8 @@
 #include "UI_InventorySlot.generated.h"
 
 
+
+
 class UImage;
 class UTextBlock;
 class UButton;
@@ -40,9 +42,19 @@ class STONEDEFENCE_API UUI_InventorySlot : public UUI_Slot
 	UPROPERTY(meta = (BindWidget))
 		UButton *TISButton;
 
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		FName TowersMatCDName;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		FName TowersClearValueName;
+
+	//CD¶¯Ì¬²ÄÖÊ
+	UPROPERTY()
+		class UMaterialInstanceDynamic* CDMaterialDynamic;
+
 public:
 	virtual void NativeConstruct() override;
-
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	UFUNCTION()
 		void OnClickedWidget();
 
@@ -50,5 +62,9 @@ public:
 
 	FBuildingTower &GetBuildingTower();
 
-
+private:
+	void UpdateTowersCD(float InDeltaTime);
+	void DrawTowersCD(float TowerCD);
+	void DisplayNumber(UTextBlock* TextNumberBlock, int32 TextNumber);
+	void UpdateTowersBuildingInfo();
 };
