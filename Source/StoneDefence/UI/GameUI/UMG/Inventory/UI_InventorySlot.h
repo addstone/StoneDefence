@@ -6,6 +6,7 @@
 #include "../Core/UI_Slot.h"
 #include "UI_InventorySlot.generated.h"
 
+
 class UImage;
 class UTextBlock;
 class UButton;
@@ -39,11 +40,15 @@ class STONEDEFENCE_API UUI_InventorySlot : public UUI_Slot
 	UPROPERTY(meta = (BindWidget))
 		UButton *TISButton;
 
-protected:
+public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 		void OnClickedWidget();
 
+	void UpdateUI();
+
 	FBuildingTower &GetBuildingTower();
+
+
 };

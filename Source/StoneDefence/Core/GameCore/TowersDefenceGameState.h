@@ -62,6 +62,7 @@ public:
 	FCharacterData &GetCharacterData(const FGuid &ID);
 	FBuildingTower &GetBuildingTower(const FGuid &ID);
 	const TArray<const FGuid*> GetBuildingTowersID();
+	bool GetCharacterDataFromTable(TArray<const FCharacterData*> &Datas);
 
 protected:
 	UGameSaveData *GetSaveData();

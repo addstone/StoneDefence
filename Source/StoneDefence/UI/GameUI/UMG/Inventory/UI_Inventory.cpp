@@ -37,10 +37,25 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 				}
 			}
 		}
+
 		const TArray<const FGuid*> ID = GetGameState()->GetBuildingTowersID();
 		for (int32 i = 0; i < ColumNumber * RowNumber; i++)
 		{
 			InventorySlotArray[i]->GUID = *ID[i];
+		}
+
+		TArray<const FCharacterData*> Datas;
+		if (GetGameState()->GetCharacterDataFromTable(Datas))
+		{
+			for (int32 i = 0; i < Datas.Num(); i++)
+			{
+				InventorySlotArray[i]->GetBuildingTower().TowerID = Datas[i]->ID;
+				InventorySlotArray[i]->GetBuildingTower().NeedGold = Datas[i]->Glod;
+				InventorySlotArray[i]->GetBuildingTower().MaxConstructionTowersCD = Datas[i]->ConstructionTime;
+				InventorySlotArray[i]->GetBuildingTower().ICO = Datas[i]->Icon.LoadSynchronous();
+
+				InventorySlotArray[i]->UpdateUI();
+			}
 		}
 	}
 }

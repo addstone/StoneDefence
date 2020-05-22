@@ -12,6 +12,9 @@ struct FBuildingTower
 {
 	GENERATED_BODY()
 
+	UPROPERTY(SaveGame)
+		int32 TowerID;
+
 	//需要的消费金币
 	UPROPERTY(SaveGame)
 		int32 NeedGold;
@@ -46,6 +49,17 @@ struct FBuildingTower
 
 	UPROPERTY(SaveGame)
 		bool bCallUpdateTowersInfo;
+
+public:
+	FBuildingTower();
+
+	void Init();
+
+	float GetTowerConstructionTimePercentage();
+
+	bool IsValid();
+
+	void ResetCD();
 };
 /**
  * 
