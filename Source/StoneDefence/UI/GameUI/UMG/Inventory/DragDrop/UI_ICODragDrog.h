@@ -6,6 +6,7 @@
 #include "../../../../Core/UI_RuleOfTheWidget.h"
 #include "UI_ICODragDrog.generated.h"
 
+class UImage;
 /**
  * 
  */
@@ -14,4 +15,10 @@ class STONEDEFENCE_API UUI_ICODragDrog : public UUI_RuleOfTheWidget
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(meta = (BindWidget))
+		UImage *ICON;
+
+public:
+
+	void DrawICON(UTexture2D *InICON);
 };

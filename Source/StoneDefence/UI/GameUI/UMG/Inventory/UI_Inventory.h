@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../../../Core/UI_RuleOfTheWidget.h"
+#include "../Core/UI_Slot.h"
 #include "UI_Inventory.generated.h"
+
 
 class UUniformGridPanel;
 class UUI_InventorySlot;
@@ -14,7 +15,7 @@ class UMaterialInterface;
  * 
  */
 UCLASS()
-class STONEDEFENCE_API UUI_Inventory : public UUI_RuleOfTheWidget
+class STONEDEFENCE_API UUI_Inventory : public UUI_Slot
 {
 	GENERATED_BODY()
 

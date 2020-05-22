@@ -63,3 +63,17 @@ Developed with Unreal Engine 4
 |第九节：雷电持续伤害特效加代码|:heavy_check_mark:|
 |第十节：真正商业采用的子弹跟踪方案|:heavy_check_mark:|
 |第十一节：花样跟踪的代码实现|:heavy_check_mark:|
+---
+# 第五章：服务端角色数据搭建
+|||
+| --------   | -----  |
+|第一节：角色数据详细讲解|:heavy_check_mark:|
+|第二节：理解UE4中心数据管理|:heavy_check_mark:|
+|第三节：数据驱动角色|:heavy_check_mark:|
+|第四节：注册角色|:heavy_check_mark:|
+|第五节：角色生成与调试|:heavy_check_mark:|
+|第六节：更新血条方案|:heavy_check_mark:|
+|第七节：伤害公式|:heavy_check_mark:|
+|第八节：闪电持续伤害方案|:heavy_check_mark:|
+|第九节：游戏数据存档|:heavy_check_mark:|
+|第十节：数据列表存储和读取|:heavy_check_mark:|

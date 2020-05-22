@@ -25,7 +25,7 @@ public class StoneDefence : ModuleRules
             "SimpleGameSettings",
             "SimpleTutoria",
             "AIModule",
-            //"SimpleDrawText",
+            "SimpleDrawText",
             "RawMesh",
             "ImageWrapper",
             //"SimplePopup",

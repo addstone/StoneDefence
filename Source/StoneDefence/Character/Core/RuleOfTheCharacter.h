@@ -38,6 +38,10 @@ class STONEDEFENCE_API ARuleOfTheCharacter : public ACharacter, public IRuleChar
 		USceneComponent *HomePoint;
 
 public:
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class ADrawText> DrawTextClass;
+
+public:
 	// Sets default values for this character's properties
 	ARuleOfTheCharacter();
 

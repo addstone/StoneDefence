@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "../../Core/GameCore/TowersDefenceGameState.h"
 #include "UI_RuleOfTheWidget.generated.h"
+
 
 /**
  * 
@@ -13,5 +15,11 @@ UCLASS()
 class STONEDEFENCE_API UUI_RuleOfTheWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	UUI_RuleOfTheWidget(const FObjectInitializer& ObjectInitializer);
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI" )
+		FGuid GUID;
+
+	ATowersDefenceGameState *GetGameState();
 };
