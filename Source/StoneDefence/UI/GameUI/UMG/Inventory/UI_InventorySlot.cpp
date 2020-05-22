@@ -60,6 +60,15 @@ void UUI_InventorySlot::UpdateUI()
 	{
 		TowersIcon->SetVisibility(ESlateVisibility::Hidden);
 	}
+
+	if (GetBuildingTower().TowersConstructionNumber > 0)
+	{
+		TCOCNumber->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	if (GetBuildingTower().TowersPerpareBuildingNumber > 0)
+	{
+		TPBNumber->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
 }
 
 FBuildingTower & UUI_InventorySlot::GetBuildingTower()
@@ -188,20 +197,18 @@ bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 	bool bDrop = false;
 
-	//if (UStoneDefenceDragDropOperation* StoneDefenceDragDropOperation = Cast<UStoneDefenceDragDropOperation>(InOperation))
-	//{
-	//	if (UUI_InventorySlot* MyInventorySlot = Cast<UUI_InventorySlot>(StoneDefenceDragDropOperation->Payload))
-	//	{
-	//		//·þÎñÆ÷ÇëÇó
-	//		GetPlayerState()->SetTowersDragICOState(MyInventorySlot->GUID, false);
-	//		GetPlayerState()->RequestInventorySlotSwap(GUID, MyInventorySlot->GUID);
+	if (UStoneDefenceDragDropOperation* StoneDefenceDragDropOperation = Cast<UStoneDefenceDragDropOperation>(InOperation))
+	{
+		if (UUI_InventorySlot* MyInventorySlot = Cast<UUI_InventorySlot>(StoneDefenceDragDropOperation->Payload))
+		{
+			MyInventorySlot->GetBuildingTower().bDragICO = false;
+			GetGameState()->RequestInventorySlotSwap(GUID, MyInventorySlot->GUID);
 
-	//		UpdateUI();
-	//		MyInventorySlot->UpdateUI();
-
-	//		bDrop = true;
-	//	}
-	//}
+			UpdateUI();
+			MyInventorySlot->UpdateUI();
+			bDrop = true;
+		}
+	}
 
 	return bDrop;
 }

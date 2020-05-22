@@ -64,6 +64,8 @@ public:
 	const TArray<const FGuid*> GetBuildingTowersID();
 	bool GetCharacterDataFromTable(TArray<const FCharacterData*> &Datas);
 
+	void RequestInventorySlotSwap(const FGuid &A, const FGuid &B);
+
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();

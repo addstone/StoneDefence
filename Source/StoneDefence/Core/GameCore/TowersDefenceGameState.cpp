@@ -164,6 +164,24 @@ bool ATowersDefenceGameState::GetCharacterDataFromTable(TArray<const FCharacterD
 	return Datas.Num() > 0;
 }
 
+void ATowersDefenceGameState::RequestInventorySlotSwap(const FGuid &A, const FGuid &B)
+{
+	FBuildingTower &ASlot = GetBuildingTower(A);
+	FBuildingTower &BSlot = GetBuildingTower(B);
+
+	if (ASlot.IsValid()) //½»»»
+	{
+		FBuildingTower TmpSlot = ASlot;
+		ASlot = BSlot;
+		BSlot = TmpSlot;
+	}
+	else //ÒÆ¶¯
+	{
+		ASlot = BSlot;
+		BSlot.Init();
+	}
+}
+
 UGameSaveData * ATowersDefenceGameState::GetSaveData()
 {
 	if (!SaveData)
