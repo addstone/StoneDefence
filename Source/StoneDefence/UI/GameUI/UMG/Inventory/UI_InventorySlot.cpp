@@ -6,6 +6,9 @@
 #include "Components/Image.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/TextBlock.h"
+#include "../../../../DragDrop/StoneDefenceDragDropOperation.h"
+#include "DragDrop/UI_ICODragDrog.h"
+#include "Blueprint/UserWidget.h"
 
 void UUI_InventorySlot::NativeConstruct()
 {
@@ -62,6 +65,15 @@ void UUI_InventorySlot::UpdateUI()
 FBuildingTower & UUI_InventorySlot::GetBuildingTower()
 {
 	return GetGameState()->GetBuildingTower(GUID);
+}
+
+void UUI_InventorySlot::ClearSlot()
+{
+	TowersIcon->SetVisibility(ESlateVisibility::Hidden);
+	TowersCD->SetVisibility(ESlateVisibility::Hidden);
+	TPBNumber->SetVisibility(ESlateVisibility::Hidden);
+	TowersCDValue->SetVisibility(ESlateVisibility::Hidden);
+	TCOCNumber->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUI_InventorySlot::UpdateTowersCD(float InDeltaTime)
@@ -127,4 +139,79 @@ void UUI_InventorySlot::UpdateTowersBuildingInfo()
 	DisplayNumber(TowersCDValue, GetBuildingTower().CurrentConstrictionTowersCD);
 	DisplayNumber(TCOCNumber, GetBuildingTower().TowersConstructionNumber);
 	DisplayNumber(TPBNumber, GetBuildingTower().TowersPerpareBuildingNumber);
+}
+
+FReply UUI_InventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton || InMouseEvent.IsTouchEvent())
+	{
+		FReply Reply = FReply::Handled();
+		TSharedPtr<SWidget> SlateWidgetDrag = GetCachedWidget();
+		if (SlateWidgetDrag.IsValid())
+		{
+			Reply.DetectDrag(SlateWidgetDrag.ToSharedRef(), EKeys::RightMouseButton);
+			return Reply;
+		}
+	}
+	return FReply::Handled();
+}
+
+void UUI_InventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+{
+	if (GetBuildingTower().IsValid() && ICODragDrogClass)
+	{
+		if (UUI_ICODragDrog* ICODragDrog = CreateWidget<UUI_ICODragDrog>(GetWorld(), ICODragDrogClass))
+		{
+			if (UStoneDefenceDragDropOperation* StoneDefenceDragDropOperation = NewObject<UStoneDefenceDragDropOperation>(GetTransientPackage(), UStoneDefenceDragDropOperation::StaticClass()))
+			{
+				StoneDefenceDragDropOperation->SetFlags(RF_StrongRefOnFrame);
+				ICODragDrog->DrawICON(GetBuildingTower().ICO);
+				StoneDefenceDragDropOperation->DefaultDragVisual = ICODragDrog;
+				StoneDefenceDragDropOperation->Payload = this;
+				OutOperation = StoneDefenceDragDropOperation;
+
+				GetBuildingTower().bDragICO = true;
+
+				ClearSlot();
+			}
+		}
+	}
+
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+}
+
+bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	bool bDrop = false;
+
+	//if (UStoneDefenceDragDropOperation* StoneDefenceDragDropOperation = Cast<UStoneDefenceDragDropOperation>(InOperation))
+	//{
+	//	if (UUI_InventorySlot* MyInventorySlot = Cast<UUI_InventorySlot>(StoneDefenceDragDropOperation->Payload))
+	//	{
+	//		//·þÎñÆ÷ÇëÇó
+	//		GetPlayerState()->SetTowersDragICOState(MyInventorySlot->GUID, false);
+	//		GetPlayerState()->RequestInventorySlotSwap(GUID, MyInventorySlot->GUID);
+
+	//		UpdateUI();
+	//		MyInventorySlot->UpdateUI();
+
+	//		bDrop = true;
+	//	}
+	//}
+
+	return bDrop;
+}
+
+void UUI_InventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+
+}
+
+void UUI_InventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+
 }

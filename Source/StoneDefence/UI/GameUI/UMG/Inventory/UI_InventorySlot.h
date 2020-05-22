@@ -52,6 +52,9 @@ class STONEDEFENCE_API UUI_InventorySlot : public UUI_Slot
 	UPROPERTY()
 		class UMaterialInstanceDynamic* CDMaterialDynamic;
 
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class UUI_ICODragDrog> ICODragDrogClass;
+
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -62,9 +65,17 @@ public:
 
 	FBuildingTower &GetBuildingTower();
 
+	void ClearSlot();
 private:
 	void UpdateTowersCD(float InDeltaTime);
 	void DrawTowersCD(float TowerCD);
 	void DisplayNumber(UTextBlock* TextNumberBlock, int32 TextNumber);
 	void UpdateTowersBuildingInfo();
+
+protected:
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)override;
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
 };
