@@ -77,3 +77,16 @@ Developed with Unreal Engine 4
 |第八节：闪电持续伤害方案|:heavy_check_mark:|
 |第九节：游戏数据存档|:heavy_check_mark:|
 |第十节：数据列表存储和读取|:heavy_check_mark:|
+---
+# 第六章：背包数据交互的设计思路
+|||
+| --------   | -----  |
+|第一节：屏幕绘制伤害字体|:heavy_check_mark:|
+|第二节：物品栏数据规划|:heavy_check_mark:|
+|第三节：物品栏服务的数据和客户端数据|:heavy_check_mark:|
+|第四节：数据驱动UI|:heavy_check_mark:|
+|第五节：背包信息数据效果显示|:heavy_check_mark:|
+|第六节：CD材质函数的数学原理|:heavy_check_mark:|
+|第七节：构造塔效果实现|:heavy_check_mark:|
+|第八节：实现物品栏进行拖拽功能|:heavy_check_mark:|
+|第九节：数据层实现物品交换|:heavy_check_mark:|
