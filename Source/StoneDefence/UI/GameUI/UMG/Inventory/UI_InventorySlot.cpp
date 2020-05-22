@@ -25,7 +25,7 @@ void UUI_InventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 	if (!GetBuildingTower().bLockCD)
 	{
-		if (GetBuildingTower().bDragICO)
+		if (!GetBuildingTower().bDragICO)
 		{
 			UpdateTowersCD(InDeltaTime);
 
@@ -35,7 +35,15 @@ void UUI_InventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 void UUI_InventorySlot::OnClickedWidget()
 {
-
+	if (GetBuildingTower().IsValid()) //客户端验证 降低网络带宽
+	{
+		//通知服务器对塔的数量进行增加
+		GetBuildingTower().TowersPerpareBuildingNumber++;
+		if (GetBuildingTower().CurrentConstrictionTowersCD <= 0)
+		{
+			GetBuildingTower().ResetCD();
+		}
+	}
 }
 
 void UUI_InventorySlot::UpdateUI()
@@ -90,10 +98,12 @@ void UUI_InventorySlot::DrawTowersCD(float TowerCD)
 		if (TowerCD > 0.0f && TowerCD < 1.0f)
 		{
 			CDMaterialDynamic->SetScalarParameterValue(TowersClearValueName, true);
+			TowersCD->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 		else
 		{
 			CDMaterialDynamic->SetScalarParameterValue(TowersClearValueName, false);
+			TowersCD->SetVisibility(ESlateVisibility::Hidden);
 		}
 		CDMaterialDynamic->SetScalarParameterValue(TowersMatCDName, TowerCD);
 	}

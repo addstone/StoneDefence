@@ -133,7 +133,7 @@ FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
 		return GetSaveData()->CharacterDatas[ID];
 	}
 	
-	SD_print_r(Error, "The current [%i] is invalid", *ID.ToString());
+	SD_print(Error, "The current [%i] is invalid", *ID.ToString());
 	return CharacterDataNULL;
 }
 
@@ -144,7 +144,7 @@ FBuildingTower & ATowersDefenceGameState::GetBuildingTower(const FGuid &ID)
 		return GetSaveData()->BuildingTowers[ID];
 	}
 
-	SD_print_r(Error, "The current [%i] is invalid", *ID.ToString());
+	SD_print(Error, "The current [%i] is invalid", *ID.ToString());
 	return BuildingTowerNULL;
 }
 
