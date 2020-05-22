@@ -5,9 +5,12 @@
 #include "CoreMinimal.h"
 #include "../RuleOfTheGameState.h"
 #include "../../Data/CharacterData.h"
+#include "../../Data/Save/GameSaveData.h"
 #include "TowersDefenceGameState.generated.h"
 
+
 extern FCharacterData CharacterDataNULL;
+extern FBuildingTower BuildingTowerNULL;
 class ARuleOfTheCharacter;
 class AMonsters;
 class ATowers;
@@ -54,8 +57,11 @@ protected:
 
 public:
 	const FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
+	const FBuildingTower &AddBuildingTower(const FGuid &ID, const FBuildingTower &Data);
 	bool RemoveCharacterData(const FGuid &ID);
 	FCharacterData &GetCharacterData(const FGuid &ID);
+	FBuildingTower &GetBuildingTower(const FGuid &ID);
+	const TArray<const FGuid*> GetBuildingTowersID();
 
 protected:
 	UGameSaveData *GetSaveData();

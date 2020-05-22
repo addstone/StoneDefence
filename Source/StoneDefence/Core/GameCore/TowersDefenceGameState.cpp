@@ -13,7 +13,7 @@
 #include "../../Data/Save/GameSaveSlotList.h"
 
 FCharacterData CharacterDataNULL;
-
+FBuildingTower BuildingTowerNULL;
 
 void ATowersDefenceGameState::BeginPlay()
 {
@@ -32,6 +32,11 @@ ATowersDefenceGameState::ATowersDefenceGameState()
 	static ConstructorHelpers::FObjectFinder<UDataTable> MyTable_Monsters(TEXT("/Game/GameData/MonstersData"));
 	AITowerCharacterData = MyTable_Towers.Object;
 	AIMonsterCharacterData = MyTable_Monsters.Object;
+
+	for (int32 i = 0; i < 21; i++)
+	{
+		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
+	}
 }
 
 AMonsters * ATowersDefenceGameState::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
@@ -111,6 +116,11 @@ const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID
 	return GetSaveData()->CharacterDatas.Add(ID, Data);
 }
 
+const FBuildingTower & ATowersDefenceGameState::AddBuildingTower(const FGuid &ID, const FBuildingTower &Data)
+{
+	return GetSaveData()->BuildingTowers.Add(ID, Data);
+}
+
 bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &ID)
 {
 	return GetSaveData()->CharacterDatas.Remove(ID);
@@ -125,6 +135,27 @@ FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
 	
 	SD_print_r(Error, "The current [%i] is invalid", *ID.ToString());
 	return CharacterDataNULL;
+}
+
+FBuildingTower & ATowersDefenceGameState::GetBuildingTower(const FGuid &ID)
+{
+	if (GetSaveData()->BuildingTowers.Contains(ID))
+	{
+		return GetSaveData()->BuildingTowers[ID];
+	}
+
+	SD_print_r(Error, "The current [%i] is invalid", *ID.ToString());
+	return BuildingTowerNULL;
+}
+
+const TArray<const FGuid*> ATowersDefenceGameState::GetBuildingTowersID()
+{
+	TArray<const FGuid*> TowersID;
+	for (const auto &Tmp: GetSaveData()->BuildingTowers)
+	{
+		TowersID.Add(&Tmp.Key);
+	}
+	return TowersID;
 }
 
 UGameSaveData * ATowersDefenceGameState::GetSaveData()

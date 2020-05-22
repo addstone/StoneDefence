@@ -37,5 +37,10 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 				}
 			}
 		}
+		const TArray<const FGuid*> ID = GetGameState()->GetBuildingTowersID();
+		for (int32 i = 0; i < ColumNumber * RowNumber; i++)
+		{
+			InventorySlotArray[i]->GUID = *ID[i];
+		}
 	}
 }

@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "../../Core/GameCore/TowersDefenceGameState.h"
 #include "UI_RuleOfTheWidget.generated.h"
+
 
 /**
  * 
@@ -18,4 +20,6 @@ public:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI" )
 		FGuid GUID;
+
+	ATowersDefenceGameState *GetGameState();
 };

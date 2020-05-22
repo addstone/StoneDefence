@@ -44,4 +44,6 @@ protected:
 
 	UFUNCTION()
 		void OnClickedWidget();
+
+	FBuildingTower &GetBuildingTower();
 };
