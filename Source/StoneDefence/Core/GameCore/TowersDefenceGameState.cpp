@@ -113,9 +113,9 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 	return nullptr;
 }
 
-AActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
+AStaticMeshActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
 {
-	AActor *OutActor = nullptr;
+	AStaticMeshActor *OutActor = nullptr;
 	TArray<const FCharacterData*> InDatas;
 	GetTowerDataFromTable(InDatas);
 	for (const auto &Tmp : InDatas)
@@ -134,6 +134,7 @@ AActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
 						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
 						{
 							MeshActor->SetMobility(EComponentMobility::Movable);
+							MeshActor->GetStaticMeshComponent()->SetRelativeTransform(Transform);
 							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
 							MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 							OutActor = MeshActor;

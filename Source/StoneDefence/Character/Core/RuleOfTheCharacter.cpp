@@ -162,6 +162,7 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 						{
 							if (MyParticleDataMesh->Mesh)
 							{
+								Transform = NewParticleSystemComponent->GetComponentTransform();
 								return MyParticleDataMesh->Mesh;
 							}
 						}
@@ -171,7 +172,7 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
 		{
-
+			Transform = NewSkeletalMeshComponent->GetComponentTransform();
 		}
 	}
 

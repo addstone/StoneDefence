@@ -77,7 +77,14 @@ void UUI_Inventory::SpawnTowersDollPressed()
 		if (GetBuildingTower().TowersConstructionNumber >= 1)
 		{
 			int32 TowerID = GetBuildingTower().TowerID;
-			TowerDoll = GetGameState()->SpawnTowersDoll(TowerID);
+			if (AStaticMeshActor * MeshActor = GetGameState()->SpawnTowersDoll(TowerID))
+			{
+				for (int32 i = 0; i < MeshActor->GetStaticMeshComponent()->GetNumMaterials(); i++)
+				{
+					MeshActor->GetStaticMeshComponent()->SetMaterial(i, DollMaterial);
+				}
+				TowerDoll = MeshActor;
+			}
 		}
 	}
 }
@@ -88,10 +95,19 @@ void UUI_Inventory::SpawnTowersDollReleased()
 	{
 		if (TowerDoll)
 		{
+			if (GetBuildingTower().TowersConstructionNumber >= 1)
+			{
+				if (/*AActor*/ATowers *CharacterActor = GetGameState()->SpawnTower(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
+				{
+					GetBuildingTower().TowersConstructionNumber--;
+				}
+			}
+
 			TowerDoll->Destroy();
 			TowerDoll = nullptr;
 		}
 	}
+
 	bLockGUID = false;
 	TowerICOGUID = FGuid();
 }
