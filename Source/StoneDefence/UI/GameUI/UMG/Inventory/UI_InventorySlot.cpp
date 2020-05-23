@@ -9,6 +9,8 @@
 #include "../../../../DragDrop/StoneDefenceDragDropOperation.h"
 #include "DragDrop/UI_ICODragDrog.h"
 #include "Blueprint/UserWidget.h"
+#include "../Tip/UI_TowerTip.h"
+#include "../../../../Data/CharacterData.h"
 
 void UUI_InventorySlot::NativeConstruct()
 {
@@ -83,6 +85,21 @@ void UUI_InventorySlot::ClearSlot()
 	TPBNumber->SetVisibility(ESlateVisibility::Hidden);
 	TowersCDValue->SetVisibility(ESlateVisibility::Hidden);
 	TCOCNumber->SetVisibility(ESlateVisibility::Hidden);
+}
+
+UWidget * UUI_InventorySlot::GetTowerTip()
+{
+	if (TowerTipClass)
+	{
+		if (UUI_TowerTip *TowerTip = CreateWidget<UUI_TowerTip>(GetWorld(), TowerTipClass))
+		{
+					TowerTip->InitTip(GetGameState()->GetCharacterDataByID(GetBuildingTower().TowerID));
+
+					return TowerTip;
+		}
+	}
+
+	return nullptr;
 }
 
 void UUI_InventorySlot::UpdateTowersCD(float InDeltaTime)

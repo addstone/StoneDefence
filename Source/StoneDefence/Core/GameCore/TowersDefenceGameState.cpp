@@ -137,6 +137,34 @@ FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
 	return CharacterDataNULL;
 }
 
+const FCharacterData & ATowersDefenceGameState::GetCharacterDataByID(int32 ID, ECharacterType Type /*= ECharacterType::TOWER*/)
+{
+	TArray<const FCharacterData*> Datas;
+	switch (Type)
+	{
+	case ECharacterType::TOWER:
+	{
+		GetTowerDataFromTable(Datas);
+		break;
+	}
+		
+	case ECharacterType::MONSTER:
+	{
+		GetMonsterDataFromTable(Datas);
+		break;
+	}
+	}
+
+	for (const auto &Tmp : Datas)
+	{
+		if (Tmp->ID == ID)
+		{
+			return *Tmp;
+		}
+	}
+	return CharacterDataNULL;
+}
+
 FBuildingTower & ATowersDefenceGameState::GetBuildingTower(const FGuid &ID)
 {
 	if (GetSaveData()->BuildingTowers.Contains(ID))
@@ -158,9 +186,33 @@ const TArray<const FGuid*> ATowersDefenceGameState::GetBuildingTowersID()
 	return TowersID;
 }
 
-bool ATowersDefenceGameState::GetCharacterDataFromTable(TArray<const FCharacterData*> &Datas)
+bool ATowersDefenceGameState::GetTowerDataFromTable(TArray<const FCharacterData*> &Datas)
 {
-	AITowerCharacterData->GetAllRows(TEXT("CharacterData"), Datas);
+	if (!CacheTowerDatas.Num())
+	{
+		AITowerCharacterData->GetAllRows(TEXT("CharacterData"), CacheTowerDatas);
+	}
+
+	for (const auto &Tmp : CacheTowerDatas)
+	{
+		Datas.Add(Tmp);
+	}
+	
+	return Datas.Num() > 0;
+}
+
+bool ATowersDefenceGameState::GetMonsterDataFromTable(TArray<const FCharacterData*> &Datas)
+{
+	if (!CacheMonsterDatas.Num())
+	{
+		AIMonsterCharacterData->GetAllRows(TEXT("CharacterData"), CacheMonsterDatas);
+	}
+
+	for (const auto &Tmp : CacheMonsterDatas)
+	{
+		Datas.Add(Tmp);
+	}
+
 	return Datas.Num() > 0;
 }
 
