@@ -16,12 +16,14 @@
 #include "Particles/TypeData/ParticleModuleTypeDataMesh.h"
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
+#include "../../StoneDefenceMacro.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
 	:bAttack(false)
 {
 	GUID = FGuid::NewGuid();
+	//SD_print_r(Error, "The xxxxxxxxcurrent [%i] is invalid", *GUID.ToString());
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -38,6 +40,7 @@ ARuleOfTheCharacter::ARuleOfTheCharacter()
 	//ÉèÖÃÔ¤ÉèScanning
 	TraceShowCharacterInformation->SetCollisionProfileName("Scanning");
 	TraceShowCharacterInformation->SetBoxExtent(FVector(38.f, 38.f, 100.f));
+
 }
 
 // Called when the game starts or when spawned
@@ -168,7 +171,7 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
 		{
-			break;
+
 		}
 	}
 

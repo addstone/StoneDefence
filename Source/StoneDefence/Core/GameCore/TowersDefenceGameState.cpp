@@ -104,6 +104,7 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
 					CharacterData->UpdateHealth();
 					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
+					return RuleOfTheCharacter;
 				}
 			}
 		}
@@ -132,7 +133,9 @@ AActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
 						FTransform Transform;
 						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
 						{
+							MeshActor->SetMobility(EComponentMobility::Movable);
 							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
+							MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 							OutActor = MeshActor;
 							RuleOfTheCharacter->Destroy();
 						}

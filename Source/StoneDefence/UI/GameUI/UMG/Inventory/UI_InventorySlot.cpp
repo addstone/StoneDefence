@@ -237,7 +237,10 @@ bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 void UUI_InventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	TowerICOGUID = GUID;
+	if (!bLockGUID)
+	{
+		TowerICOGUID = GUID;
+	}
 }
 
 void UUI_InventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)

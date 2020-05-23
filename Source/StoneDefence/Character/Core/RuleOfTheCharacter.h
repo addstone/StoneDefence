@@ -72,6 +72,7 @@ public:
 	virtual float GetHealth();
 	virtual float GetMaxHealth();
 	virtual bool IsTeam();
+
 	virtual FCharacterData &GetCharacterData();
 
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")

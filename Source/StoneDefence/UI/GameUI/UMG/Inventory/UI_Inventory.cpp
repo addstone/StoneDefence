@@ -73,13 +73,11 @@ void UUI_Inventory::SpawnTowersDollPressed()
 {
 	if (GetBuildingTower().IsValid())
 	{
+		bLockGUID = true;
 		if (GetBuildingTower().TowersConstructionNumber >= 1)
 		{
 			int32 TowerID = GetBuildingTower().TowerID;
-			if (AActor *Actor = GetGameState()->SpawnTowersDoll(TowerID))
-			{
-
-			}
+			TowerDoll = GetGameState()->SpawnTowersDoll(TowerID);
 		}
 	}
 }
@@ -88,6 +86,12 @@ void UUI_Inventory::SpawnTowersDollReleased()
 {
 	if (GetBuildingTower().IsValid())
 	{
+		if (TowerDoll)
+		{
+			TowerDoll->Destroy();
+			TowerDoll = nullptr;
+		}
 	}
+	bLockGUID = false;
 	TowerICOGUID = FGuid();
 }

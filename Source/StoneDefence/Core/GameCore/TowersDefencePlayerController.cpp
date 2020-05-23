@@ -3,6 +3,7 @@
 
 #include "TowersDefencePlayerController.h"
 #include "TowerDefenceGameCamera.h"
+#include "../../UI/Core/UI_Data.h"
 
 ATowersDefencePlayerController::ATowersDefencePlayerController()
 {
@@ -15,6 +16,22 @@ void ATowersDefencePlayerController::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	float ScreenSpeed = 20.f;
 	ScreenMoveUnits.ListenScreenMove(this, ScreenSpeed);
+
+	if (TowerDoll)
+	{
+		if (MouseTaceHit.Location != FVector::ZeroVector)
+		{
+			MouseTaceHit.Location = FVector::ZeroVector;
+		}
+
+		FHitResult TaceOutHit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_GameTraceChannel4, true, TaceOutHit);
+		TowerDoll->SetActorLocation(TaceOutHit.Location);
+	}
+	else
+	{
+		GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, MouseTaceHit);
+	}
 }
 
 void ATowersDefencePlayerController::BeginPlay()
@@ -71,4 +88,9 @@ void ATowersDefencePlayerController::MouseMiddleButtonPressed()
 void ATowersDefencePlayerController::MouseMiddleButtonReleased()
 {
 	EventFMouseMiddleReleased.ExecuteIfBound();
+}
+
+const FHitResult & ATowersDefencePlayerController::GetHitResult()
+{
+	return MouseTaceHit;
 }
