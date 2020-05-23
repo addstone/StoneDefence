@@ -11,6 +11,7 @@
 #include "../../Data/Save/GameSaveData.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../Data/Save/GameSaveSlotList.h"
+#include "Engine/StaticMeshActor.h"
 
 FCharacterData CharacterDataNULL;
 FBuildingTower BuildingTowerNULL;
@@ -109,6 +110,15 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 	}
 
 	return nullptr;
+}
+
+AActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
+{
+	//AStaticMeshActor
+	if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+	{
+
+	}
 }
 
 const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)

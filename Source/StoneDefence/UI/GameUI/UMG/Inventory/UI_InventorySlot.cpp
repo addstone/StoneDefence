@@ -11,6 +11,7 @@
 #include "Blueprint/UserWidget.h"
 #include "../Tip/UI_TowerTip.h"
 #include "../../../../Data/CharacterData.h"
+#include "../../../Core/UI_Data.h"
 
 void UUI_InventorySlot::NativeConstruct()
 {
@@ -236,7 +237,7 @@ bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 void UUI_InventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-
+	TowerICOGUID = GUID;
 }
 
 void UUI_InventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)

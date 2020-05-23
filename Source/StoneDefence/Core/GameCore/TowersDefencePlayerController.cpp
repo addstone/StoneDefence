@@ -40,6 +40,8 @@ void ATowersDefencePlayerController::SetupInputComponent()
 	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &ATowersDefencePlayerController::MouseWheelUP);
 	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &ATowersDefencePlayerController::MouseWheelDown);
 
+	InputComponent->BindAction("MouseMiddleButton", IE_Pressed, this, &ATowersDefencePlayerController::MouseMiddleButtonPressed);
+	InputComponent->BindAction("MouseMiddleButton", IE_Released, this, &ATowersDefencePlayerController::MouseMiddleButtonReleased);
 }
 
 static float WheelValue = 15.f;
@@ -59,4 +61,14 @@ void ATowersDefencePlayerController::MouseWheelDown()
 	{
 		ZoomCamera->Zoom(false, WheelValue);
 	}
+}
+
+void ATowersDefencePlayerController::MouseMiddleButtonPressed()
+{
+	EventMouseMiddlePressed.ExecuteIfBound();
+}
+
+void ATowersDefencePlayerController::MouseMiddleButtonReleased()
+{
+	EventFMouseMiddleReleased.ExecuteIfBound();
 }

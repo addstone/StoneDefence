@@ -19,3 +19,23 @@ ATowersDefenceGameState * UUI_RuleOfTheWidget::GetGameState()
 
 	return nullptr;
 }
+
+ATowersDefencePlayerState * UUI_RuleOfTheWidget::GetPlayerState()
+{
+	if (GetPlayerController())
+	{
+		return GetPlayerController()->GetPlayerState<ATowersDefencePlayerState>();
+	}
+
+	return nullptr;
+}
+
+ATowersDefencePlayerController * UUI_RuleOfTheWidget::GetPlayerController()
+{
+	if (GetWorld())
+	{
+		return GetWorld()->GetFirstPlayerController<ATowersDefencePlayerController>();
+	}
+
+	return nullptr;
+}

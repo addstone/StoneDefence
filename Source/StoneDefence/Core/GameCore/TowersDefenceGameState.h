@@ -58,6 +58,7 @@ protected:
 	}
 
 public:
+	AActor* SpawnTowersDoll(int32 ID);
 	const FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
 	const FBuildingTower &AddBuildingTower(const FGuid &ID, const FBuildingTower &Data);
 	bool RemoveCharacterData(const FGuid &ID);

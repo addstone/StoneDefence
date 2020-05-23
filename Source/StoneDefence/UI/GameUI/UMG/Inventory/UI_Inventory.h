@@ -27,8 +27,11 @@ class STONEDEFENCE_API UUI_Inventory : public UUI_Slot
 	
 protected:
 	virtual void NativeConstruct() override;
-
+	FBuildingTower &GetBuildingTower();
 	void LayoutInventroySlot(int32 ColumNumber, int32 RowNumber);
+
+	void SpawnTowersDollPressed();
+	void SpawnTowersDollReleased();
 private:
 	TArray<UUI_InventorySlot*> InventorySlotArray;
 };

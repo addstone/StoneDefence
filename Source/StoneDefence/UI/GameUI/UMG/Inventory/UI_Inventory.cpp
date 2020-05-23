@@ -7,14 +7,24 @@
 #include "Engine/StaticMeshActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "UI_InventorySlot.h"
+#include "../../../Core/UI_RuleOfTheWidget.h"
+#include "../../../Core/UI_Data.h"
 
 void UUI_Inventory::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	LayoutInventroySlot(3, 7);
+
+	GetPlayerController()->EventMouseMiddlePressed.BindUObject(this, &UUI_Inventory::SpawnTowersDollPressed);
+	GetPlayerController()->EventFMouseMiddleReleased.BindUObject(this, &UUI_Inventory::SpawnTowersDollReleased);
 }
 
+FBuildingTower &UUI_Inventory::GetBuildingTower()
+{
+	return GetPlayerState()->GetBuildingTower(TowerICOGUID);
+
+}
 void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 {
 	if (InventorySlotClass)
@@ -58,4 +68,60 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 			}
 		}
 	}
+}
+
+void UUI_Inventory::SpawnTowersDollPressed()
+{
+	if (GetBuildingTower().IsValid())
+	{
+		if (GetBuildingTower().TowersConstructionNumber >= 1)
+		{
+			int32 TowersID = GetBuildingTower().TowerID;
+			if (AStaticMeshActor * MeshActor = StoneDefenceUtils::SpawnTowersDoll(GetWorld(), TowersID))
+			{
+				for (int32 i = 0; i < MeshActor->GetStaticMeshComponent()->GetNumMaterials(); i++)
+				{
+					MeshActor->GetStaticMeshComponent()->SetMaterial(i, DollMaterial);
+				}
+
+				TowerDoll = MeshActor;
+			}
+		}
+	}
+}
+
+void UUI_Inventory::SpawnTowersDollReleased()
+{
+	if (GetBuildingTower().IsValid())
+	{
+		if (TowerDoll)
+		{
+			if (GetBuildingTower().TowersConstructionNumber >= 1)
+			{
+				if (AActor *CharacterActor = GetPlayerController()->SpawnTowers(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
+				{
+					//通知服务器 更新构建塔的数量
+					GetPlayerState()->TowersConstructionNumber(TowerICOGUID);
+
+					//通知客户端更新
+					CallInventorySlotBreak([&](UUI_InventorySlot* InInventorySlot)
+					{
+						if (InInventorySlot->GUID == TowerICOGUID)
+						{
+							InInventorySlot->UpdateTowersBuildingInfo();
+							return true;
+						}
+
+						return false;
+					});
+				}
+			}
+
+			TowerDoll->Destroy();
+			TowerDoll = nullptr;
+		}
+	}
+
+	bLockGUID = false;
+	TowerICOGUID = FGuid();
 }
