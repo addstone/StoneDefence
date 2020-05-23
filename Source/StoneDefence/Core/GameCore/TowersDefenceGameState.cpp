@@ -114,11 +114,45 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 
 AActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
 {
-	//AStaticMeshActor
-	if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+	AActor *OutActor = nullptr;
+	TArray<const FCharacterData*> InDatas;
+	GetTowerDataFromTable(InDatas);
+	for (const auto &Tmp : InDatas)
 	{
-
+		if (Tmp->ID == ID)
+		{
+			UClass *NewClass = Tmp->CharacterBlueprintKey.LoadSynchronous();
+			if (NewClass)
+			{
+				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, FVector::ZeroVector, FRotator::ZeroRotator))
+				{
+					//AStaticMeshActor
+					if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+					{
+						FTransform Transform;
+						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
+						{
+							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
+							OutActor = MeshActor;
+							RuleOfTheCharacter->Destroy();
+						}
+						else
+						{
+							MeshActor->Destroy();
+							RuleOfTheCharacter->Destroy();
+						}
+					}
+					else
+					{
+						RuleOfTheCharacter->Destroy();
+					}
+				}
+			}
+			break;
+		}
 	}
+
+	return OutActor;
 }
 
 const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)

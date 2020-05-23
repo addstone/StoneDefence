@@ -22,8 +22,7 @@ void UUI_Inventory::NativeConstruct()
 
 FBuildingTower &UUI_Inventory::GetBuildingTower()
 {
-	return GetPlayerState()->GetBuildingTower(TowerICOGUID);
-
+	return GetGameState()->GetBuildingTower(TowerICOGUID);
 }
 void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 {
@@ -76,15 +75,10 @@ void UUI_Inventory::SpawnTowersDollPressed()
 	{
 		if (GetBuildingTower().TowersConstructionNumber >= 1)
 		{
-			int32 TowersID = GetBuildingTower().TowerID;
-			if (AStaticMeshActor * MeshActor = StoneDefenceUtils::SpawnTowersDoll(GetWorld(), TowersID))
+			int32 TowerID = GetBuildingTower().TowerID;
+			if (AActor *Actor = GetGameState()->SpawnTowersDoll(TowerID))
 			{
-				for (int32 i = 0; i < MeshActor->GetStaticMeshComponent()->GetNumMaterials(); i++)
-				{
-					MeshActor->GetStaticMeshComponent()->SetMaterial(i, DollMaterial);
-				}
 
-				TowerDoll = MeshActor;
 			}
 		}
 	}
@@ -94,34 +88,6 @@ void UUI_Inventory::SpawnTowersDollReleased()
 {
 	if (GetBuildingTower().IsValid())
 	{
-		if (TowerDoll)
-		{
-			if (GetBuildingTower().TowersConstructionNumber >= 1)
-			{
-				if (AActor *CharacterActor = GetPlayerController()->SpawnTowers(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
-				{
-					//通知服务器 更新构建塔的数量
-					GetPlayerState()->TowersConstructionNumber(TowerICOGUID);
-
-					//通知客户端更新
-					CallInventorySlotBreak([&](UUI_InventorySlot* InInventorySlot)
-					{
-						if (InInventorySlot->GUID == TowerICOGUID)
-						{
-							InInventorySlot->UpdateTowersBuildingInfo();
-							return true;
-						}
-
-						return false;
-					});
-				}
-			}
-
-			TowerDoll->Destroy();
-			TowerDoll = nullptr;
-		}
 	}
-
-	bLockGUID = false;
 	TowerICOGUID = FGuid();
 }

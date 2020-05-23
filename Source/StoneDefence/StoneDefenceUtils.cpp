@@ -1,6 +1,9 @@
 #include "StoneDefenceUtils.h"
 #include "Character/Core/RuleOfTheCharacter.h"
 #include "Interface/Character/RuleCharacter.h"
+#include "Engine/StaticMesh.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/TypeData/ParticleModuleTypeDataMesh.h"
 
 ARuleOfTheCharacter * StoneDefenceUtils::FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters, const FVector &Loc)
 {
@@ -48,4 +51,35 @@ float Expression::GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner)
 	//}
 
 	return 0.0f;
+}
+
+UStaticMesh * MeshUtils::ParticleSystemCompnentToStaticMesh(UParticleSystemComponent *NewParticleSystemComponent)
+{
+	UStaticMesh *NewStaticMesh = nullptr;
+	//if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+	//{
+	//	for (const UParticleEmitter *Tmp : NewParticleSystemComponent->Template->Emitters)
+	//	{
+	//		if (Tmp->LODLevels[0]->bEnabled)
+	//		{
+	//			if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp->LODLevels[0]->TypeDataModule))
+	//			{
+	//				if (MyParticleDataMesh->Mesh)
+	//				{
+	//					NewStaticMesh = MyParticleDataMesh->Mesh;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+
+	return NewStaticMesh;
+}
+
+UStaticMesh * MeshUtils::SkeletalMeshComponentToStaticMesh(USkeletalMeshComponent *SkeletalMeshComponent)
+{
+	UStaticMesh* StaticMesh = nullptr;
+
+	return StaticMesh;
 }

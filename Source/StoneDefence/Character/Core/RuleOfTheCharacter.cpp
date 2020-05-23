@@ -10,6 +10,12 @@
 #include "../../Data/CharacterData.h"
 #include "../../StoneDefenceUtils.h"
 #include "../../SimpleDrawText/Source/SimpleDrawText/Public/Actor/DrawText.h"
+#include "Components/StaticMeshComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Particles/TypeData/ParticleModuleTypeDataMesh.h"
+#include "Particles/ParticleEmitter.h"
+#include "Particles/ParticleLODLevel.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -125,6 +131,48 @@ FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 		return GetGameState()->GetCharacterData(GUID);
 	}
 	return CharacterDataNULL;
+}
+
+UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 MeshID)
+{
+	TArray<USceneComponent*> SceneComponent;
+	RootComponent->GetChildrenComponents(true, SceneComponent);
+	for (auto &Tmp : SceneComponent)
+	{
+		if (UStaticMeshComponent *NewMeshComponent = Cast<UStaticMeshComponent>(Tmp))
+		{
+			if (NewMeshComponent->GetStaticMesh())
+			{
+				Transform = NewMeshComponent->GetComponentTransform();
+				return NewMeshComponent->GetStaticMesh();
+			}
+		}
+		else if (UParticleSystemComponent *NewParticleSystemComponent = Cast<UParticleSystemComponent>(Tmp))
+		{
+			if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+			{
+				for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
+				{
+					if (Tmp_->LODLevels[0]->bEnabled)
+					{
+						if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
+						{
+							if (MyParticleDataMesh->Mesh)
+							{
+								return MyParticleDataMesh->Mesh;
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
+		{
+			break;
+		}
+	}
+
+	return NULL;
 }
 
 EGameCharacterType::Type ARuleOfTheCharacter::GetCharacterType()
