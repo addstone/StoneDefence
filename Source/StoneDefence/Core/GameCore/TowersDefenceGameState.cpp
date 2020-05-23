@@ -13,6 +13,10 @@
 #include "../../Data/Save/GameSaveSlotList.h"
 #include "Engine/StaticMeshActor.h"
 
+#if PLATFORM_WINDOWS
+#pragma optimize("",off) 
+#endif
+
 FCharacterData CharacterDataNULL;
 FBuildingTower BuildingTowerNULL;
 
@@ -303,3 +307,7 @@ UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
 	}
 	return SlotList;
 }
+
+#if PLATFORM_WINDOWS
+#pragma optimize("",on) 
+#endif

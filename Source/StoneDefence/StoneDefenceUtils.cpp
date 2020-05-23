@@ -13,6 +13,11 @@
 #include "Math/UnrealMathSSE.h"
 #include "RawIndexBuffer.h"
 
+
+#if PLATFORM_WINDOWS
+#pragma optimize("",off) 
+#endif
+
 ARuleOfTheCharacter * StoneDefenceUtils::FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters, const FVector &Loc)
 {
 	if (InCharacters.Num())
@@ -188,28 +193,89 @@ UStaticMesh * MeshUtils::SkeletalMeshComponentToStaticMesh(USkeletalMeshComponen
 {
 	UStaticMesh* StaticMesh = nullptr;
 
-	
-	FString MeshName = FGuid::NewGuid().ToString();
-	StaticMesh = NewObject<UStaticMesh>(nullptr, *MeshName, RF_Transient);
-	StaticMesh->InitResources();
-
-
-
-
-	FRawMesh RawMesh;
-	FMeshTracker MeshTracker;
-
-	int32 OverallMaxLODs = 0;
-
-	const FTransform& InRootTransform = FTransform::Identity;
-	FMatrix WorldToRoot = InRootTransform.ToMatrixWithScale().Inverse();
-	FMatrix ComponentToWorld = SkeletalMeshComponent->GetComponentTransform().ToMatrixWithScale() * WorldToRoot;
-
-	if (IsValidSkeletalMeshComponent(SkeletalMeshComponent))
+	if (UWorld *World = SkeletalMeshComponent->GetWorld())
 	{
-		SkeletalMeshToRawMeshes(SkeletalMeshComponent, OverallMaxLODs, ComponentToWorld, MeshTracker, RawMesh);
-	}
+		FRawMesh RawMesh;
+		FMeshTracker MeshTracker;
 
+		int32 OverallMaxLODs = 0;
+
+		const FTransform& InRootTransform = FTransform::Identity;
+		FMatrix WorldToRoot = InRootTransform.ToMatrixWithScale().Inverse();
+		FMatrix ComponentToWorld = SkeletalMeshComponent->GetComponentTransform().ToMatrixWithScale() * WorldToRoot;
+
+		if (IsValidSkeletalMeshComponent(SkeletalMeshComponent))
+		{
+			SkeletalMeshToRawMeshes(SkeletalMeshComponent, OverallMaxLODs, ComponentToWorld, MeshTracker, RawMesh);
+		}
+
+		uint32 MaxInUseTextureCoordinate = 0;
+
+		if (!MeshTracker.bValidColors)
+		{
+			RawMesh.WedgeColors.Empty();
+		}
+
+		for (uint32 TexCoordIndex = 0; TexCoordIndex < MAX_MESH_TEXTURE_COORDS; TexCoordIndex++)
+		{
+			if (!MeshTracker.bValidTexCoords[TexCoordIndex])
+			{
+				RawMesh.WedgeTexCoords[TexCoordIndex].Empty();
+			}
+			else
+			{
+				MaxInUseTextureCoordinate = FMath::Max(MaxInUseTextureCoordinate, TexCoordIndex);
+			}
+		}
+
+		if (RawMesh.IsValidOrFixable())
+		{
+			FString MeshName = FGuid::NewGuid().ToString();
+			StaticMesh = NewObject<UStaticMesh>(World, *MeshName, RF_Transient | RF_Standalone);
+			StaticMesh->InitResources();
+
+			StaticMesh->LightingGuid = FGuid::NewGuid();
+
+			const uint32 LightMapIndex = FMath::Min(MaxInUseTextureCoordinate + 1, (uint32)8 - 1);
+
+			FStaticMeshSourceModel& SrcModel = StaticMesh->AddSourceModel();
+			SrcModel.BuildSettings.bRecomputeNormals = false;
+			SrcModel.BuildSettings.bRecomputeTangents = false;
+			SrcModel.BuildSettings.bRemoveDegenerates = true;
+			SrcModel.BuildSettings.bUseHighPrecisionTangentBasis = false;
+			SrcModel.BuildSettings.bUseFullPrecisionUVs = false;
+			SrcModel.BuildSettings.bGenerateLightmapUVs = true;
+			SrcModel.BuildSettings.SrcLightmapIndex = 0;
+			SrcModel.BuildSettings.DstLightmapIndex = LightMapIndex;
+			SrcModel.SaveRawMesh(RawMesh);
+
+			for (const UMaterialInterface* Material : SkeletalMeshComponent->GetMaterials())
+			{
+				StaticMesh->StaticMaterials.Add(FStaticMaterial(const_cast<UMaterialInterface*>(Material)));
+			}
+
+			StaticMesh->ImportVersion = EImportStaticMeshVersion::LastVersion;
+			StaticMesh->LightMapCoordinateIndex = LightMapIndex;
+
+			TArray<int32> UniqueMaterialIndices;
+			for (int32 MaterialIndex : RawMesh.FaceMaterialIndices)
+			{
+				UniqueMaterialIndices.AddUnique(MaterialIndex);
+			}
+
+			for (int32 i = 0; i < UniqueMaterialIndices.Num(); i++)
+			{
+				StaticMesh->GetSectionInfoMap().Set(0, i, FMeshSectionInfo(UniqueMaterialIndices[i]));
+			}
+			StaticMesh->GetOriginalSectionInfoMap().CopyFrom(StaticMesh->GetSectionInfoMap());
+
+			StaticMesh->Build(false);
+		}
+	}
 
 	return StaticMesh;
 }
+
+#if PLATFORM_WINDOWS
+#pragma optimize("",on) 
+#endif

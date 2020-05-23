@@ -172,12 +172,16 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
 		{
-			
-				if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
-				{
-					Transform = NewSkeletalMeshComponent->GetComponentTransform();
-					return NewMesh;
-				}
+			Transform = NewSkeletalMeshComponent->GetComponentTransform();
+			NewSkeletalMeshComponent->SetRelativeTransform(FTransform::Identity);
+			NewSkeletalMeshComponent->SetWorldTransform(FTransform::Identity);
+			NewSkeletalMeshComponent->SetRelativeRotation(Transform.GetRotation());
+
+			if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+			{
+				
+				return NewMesh;
+			}
 			
 		}
 	}

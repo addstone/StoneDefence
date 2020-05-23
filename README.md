@@ -90,3 +90,16 @@ Developed with Unreal Engine 4
 |第七节：构造塔效果实现|:heavy_check_mark:|
 |第八节：实现物品栏进行拖拽功能|:heavy_check_mark:|
 |第九节：数据层实现物品交换|:heavy_check_mark:|
+---
+# 第七章：拖拽与构建塔
+|||
+| --------   | -----  |
+|第一节：显示物品栏塔的介绍代码实现|:heavy_check_mark:|
+|第二节：UI映射简介|:heavy_check_mark:|
+|第三节：构建功能的按键绑定思路|:heavy_check_mark:|
+|第四节：提取特效里面的UStaticMesh|:heavy_check_mark:|
+|第五节：通过射线检测实现拖拽生成塔方案|:heavy_check_mark:|
+|第六节：实现绿色模型尺寸准确生成|:heavy_check_mark:|
+|第七节：RowMesh详细讲解|:heavy_check_mark:|
+|第八节：蒙皮网格渲染数据拷贝到静态网格|:heavy_check_mark:|
+|第九节：如何修正模型变换位置|:heavy_check_mark:|
