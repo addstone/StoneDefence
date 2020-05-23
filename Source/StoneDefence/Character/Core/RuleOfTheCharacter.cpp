@@ -172,7 +172,13 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
 		{
-			Transform = NewSkeletalMeshComponent->GetComponentTransform();
+			
+				if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+				{
+					Transform = NewSkeletalMeshComponent->GetComponentTransform();
+					return NewMesh;
+				}
+			
 		}
 	}
 

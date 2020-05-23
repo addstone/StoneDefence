@@ -4,6 +4,7 @@
 #include "Engine/StaticMesh.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/TypeData/ParticleModuleTypeDataMesh.h"
+#include "RawMesh.h"
 
 ARuleOfTheCharacter * StoneDefenceUtils::FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters, const FVector &Loc)
 {
@@ -80,6 +81,25 @@ UStaticMesh * MeshUtils::ParticleSystemCompnentToStaticMesh(UParticleSystemCompo
 UStaticMesh * MeshUtils::SkeletalMeshComponentToStaticMesh(USkeletalMeshComponent *SkeletalMeshComponent)
 {
 	UStaticMesh* StaticMesh = nullptr;
+
+	const FTransform& InRootTransform = FTransform::Identity;
+	FString MeshName = FGuid::NewGuid().ToString();
+	StaticMesh = NewObject<UStaticMesh>(nullptr, *MeshName, RF_Transient);
+	StaticMesh->InitResources();
+
+	TArray<FRawMesh> RawMeshes;
+	struct FMeshTracker
+	{
+		FMeshTracker()
+			:bValidColors(false)
+		{
+			FMemory::Memset(bValidTexCoords, 0);
+		}
+
+		bool bValidTexCoords;
+		bool bValidColors;
+	};
+
 
 	return StaticMesh;
 }
