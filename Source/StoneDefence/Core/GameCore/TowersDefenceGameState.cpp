@@ -11,6 +11,11 @@
 #include "../../Data/Save/GameSaveData.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../Data/Save/GameSaveSlotList.h"
+#include "Engine/StaticMeshActor.h"
+
+#if PLATFORM_WINDOWS
+#pragma optimize("",off) 
+#endif
 
 FCharacterData CharacterDataNULL;
 FBuildingTower BuildingTowerNULL;
@@ -103,12 +108,59 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
 					CharacterData->UpdateHealth();
 					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
+					return RuleOfTheCharacter;
 				}
 			}
 		}
 	}
 
 	return nullptr;
+}
+
+AStaticMeshActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
+{
+	AStaticMeshActor *OutActor = nullptr;
+	TArray<const FCharacterData*> InDatas;
+	GetTowerDataFromTable(InDatas);
+	for (const auto &Tmp : InDatas)
+	{
+		if (Tmp->ID == ID)
+		{
+			UClass *NewClass = Tmp->CharacterBlueprintKey.LoadSynchronous();
+			if (NewClass)
+			{
+				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, FVector::ZeroVector, FRotator::ZeroRotator))
+				{
+					//AStaticMeshActor
+					if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+					{
+						FTransform Transform;
+						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
+						{
+							MeshActor->SetMobility(EComponentMobility::Movable);
+							MeshActor->GetStaticMeshComponent()->SetRelativeTransform(Transform);
+							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
+							MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+							OutActor = MeshActor;
+							RuleOfTheCharacter->Destroy();
+						}
+						else
+						{
+							MeshActor->Destroy();
+							RuleOfTheCharacter->Destroy();
+						}
+					}
+					else
+					{
+						RuleOfTheCharacter->Destroy();
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	return OutActor;
 }
 
 const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
@@ -137,6 +189,34 @@ FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
 	return CharacterDataNULL;
 }
 
+const FCharacterData & ATowersDefenceGameState::GetCharacterDataByID(int32 ID, ECharacterType Type /*= ECharacterType::TOWER*/)
+{
+	TArray<const FCharacterData*> Datas;
+	switch (Type)
+	{
+	case ECharacterType::TOWER:
+	{
+		GetTowerDataFromTable(Datas);
+		break;
+	}
+		
+	case ECharacterType::MONSTER:
+	{
+		GetMonsterDataFromTable(Datas);
+		break;
+	}
+	}
+
+	for (const auto &Tmp : Datas)
+	{
+		if (Tmp->ID == ID)
+		{
+			return *Tmp;
+		}
+	}
+	return CharacterDataNULL;
+}
+
 FBuildingTower & ATowersDefenceGameState::GetBuildingTower(const FGuid &ID)
 {
 	if (GetSaveData()->BuildingTowers.Contains(ID))
@@ -158,9 +238,33 @@ const TArray<const FGuid*> ATowersDefenceGameState::GetBuildingTowersID()
 	return TowersID;
 }
 
-bool ATowersDefenceGameState::GetCharacterDataFromTable(TArray<const FCharacterData*> &Datas)
+bool ATowersDefenceGameState::GetTowerDataFromTable(TArray<const FCharacterData*> &Datas)
 {
-	AITowerCharacterData->GetAllRows(TEXT("CharacterData"), Datas);
+	if (!CacheTowerDatas.Num())
+	{
+		AITowerCharacterData->GetAllRows(TEXT("CharacterData"), CacheTowerDatas);
+	}
+
+	for (const auto &Tmp : CacheTowerDatas)
+	{
+		Datas.Add(Tmp);
+	}
+	
+	return Datas.Num() > 0;
+}
+
+bool ATowersDefenceGameState::GetMonsterDataFromTable(TArray<const FCharacterData*> &Datas)
+{
+	if (!CacheMonsterDatas.Num())
+	{
+		AIMonsterCharacterData->GetAllRows(TEXT("CharacterData"), CacheMonsterDatas);
+	}
+
+	for (const auto &Tmp : CacheMonsterDatas)
+	{
+		Datas.Add(Tmp);
+	}
+
 	return Datas.Num() > 0;
 }
 
@@ -203,3 +307,7 @@ UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
 	}
 	return SlotList;
 }
+
+#if PLATFORM_WINDOWS
+#pragma optimize("",on) 
+#endif

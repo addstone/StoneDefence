@@ -3,6 +3,7 @@
 
 #include "TowersDefencePlayerController.h"
 #include "TowerDefenceGameCamera.h"
+#include "../../UI/Core/UI_Data.h"
 
 ATowersDefencePlayerController::ATowersDefencePlayerController()
 {
@@ -15,6 +16,22 @@ void ATowersDefencePlayerController::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	float ScreenSpeed = 20.f;
 	ScreenMoveUnits.ListenScreenMove(this, ScreenSpeed);
+
+	if (TowerDoll)
+	{
+		if (MouseTaceHit.Location != FVector::ZeroVector)
+		{
+			MouseTaceHit.Location = FVector::ZeroVector;
+		}
+
+		FHitResult TaceOutHit;
+		GetHitResultUnderCursor(ECollisionChannel::ECC_GameTraceChannel4, true, TaceOutHit);
+		TowerDoll->SetActorLocation(TaceOutHit.Location);
+	}
+	else
+	{
+		GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, MouseTaceHit);
+	}
 }
 
 void ATowersDefencePlayerController::BeginPlay()
@@ -40,6 +57,8 @@ void ATowersDefencePlayerController::SetupInputComponent()
 	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &ATowersDefencePlayerController::MouseWheelUP);
 	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &ATowersDefencePlayerController::MouseWheelDown);
 
+	InputComponent->BindAction("MouseMiddleButton", IE_Pressed, this, &ATowersDefencePlayerController::MouseMiddleButtonPressed);
+	InputComponent->BindAction("MouseMiddleButton", IE_Released, this, &ATowersDefencePlayerController::MouseMiddleButtonReleased);
 }
 
 static float WheelValue = 15.f;
@@ -59,4 +78,19 @@ void ATowersDefencePlayerController::MouseWheelDown()
 	{
 		ZoomCamera->Zoom(false, WheelValue);
 	}
+}
+
+void ATowersDefencePlayerController::MouseMiddleButtonPressed()
+{
+	EventMouseMiddlePressed.ExecuteIfBound();
+}
+
+void ATowersDefencePlayerController::MouseMiddleButtonReleased()
+{
+	EventFMouseMiddleReleased.ExecuteIfBound();
+}
+
+const FHitResult & ATowersDefencePlayerController::GetHitResult()
+{
+	return MouseTaceHit;
 }

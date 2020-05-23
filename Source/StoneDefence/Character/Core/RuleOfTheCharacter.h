@@ -9,7 +9,9 @@
 #include "../../Core/GameCore/TowersDefenceGameState.h"
 #include "../../Core/GameCore/TowersDefencePlayerState.h"
 #include "../../StoneDefenceType.h"
+#include "Engine/StaticMesh.h"
 #include "RuleOfTheCharacter.generated.h"
+
 
 
 
@@ -70,7 +72,11 @@ public:
 	virtual float GetHealth();
 	virtual float GetMaxHealth();
 	virtual bool IsTeam();
+
 	virtual FCharacterData &GetCharacterData();
+
+	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")
+		UStaticMesh *GetDollMesh(FTransform &Transform, int32 MeshID);
 
 public:
 	FORCEINLINE ATowersDefencePlayerController* GetGameController() { return GetWorld() ? GetWorld()->GetFirstPlayerController<ATowersDefencePlayerController>() : nullptr; }

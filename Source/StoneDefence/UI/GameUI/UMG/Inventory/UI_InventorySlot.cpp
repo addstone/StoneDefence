@@ -9,6 +9,9 @@
 #include "../../../../DragDrop/StoneDefenceDragDropOperation.h"
 #include "DragDrop/UI_ICODragDrog.h"
 #include "Blueprint/UserWidget.h"
+#include "../Tip/UI_TowerTip.h"
+#include "../../../../Data/CharacterData.h"
+#include "../../../Core/UI_Data.h"
 
 void UUI_InventorySlot::NativeConstruct()
 {
@@ -83,6 +86,25 @@ void UUI_InventorySlot::ClearSlot()
 	TPBNumber->SetVisibility(ESlateVisibility::Hidden);
 	TowersCDValue->SetVisibility(ESlateVisibility::Hidden);
 	TCOCNumber->SetVisibility(ESlateVisibility::Hidden);
+}
+
+UWidget * UUI_InventorySlot::GetTowerTip()
+{
+	if (TowerTipClass)
+	{
+		if (UUI_TowerTip *TowerTip = CreateWidget<UUI_TowerTip>(GetWorld(), TowerTipClass))
+		{
+			const FCharacterData &TowerDataInfo = GetGameState()->GetCharacterDataByID(GetBuildingTower().TowerID);
+			if (TowerDataInfo.IsValid())
+			{
+				TowerTip->InitTip(TowerDataInfo);
+
+				return TowerTip;
+			}
+		}
+	}
+
+	return nullptr;
 }
 
 void UUI_InventorySlot::UpdateTowersCD(float InDeltaTime)
@@ -215,7 +237,10 @@ bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 void UUI_InventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-
+	if (!bLockGUID)
+	{
+		TowerICOGUID = GUID;
+	}
 }
 
 void UUI_InventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)

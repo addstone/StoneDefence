@@ -55,6 +55,9 @@ class STONEDEFENCE_API UUI_InventorySlot : public UUI_Slot
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 		TSubclassOf<class UUI_ICODragDrog> ICODragDrogClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class UUI_TowerTip> TowerTipClass;
+
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -66,6 +69,9 @@ public:
 	FBuildingTower &GetBuildingTower();
 
 	void ClearSlot();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Tip)
+		UWidget *GetTowerTip();
 private:
 	void UpdateTowersCD(float InDeltaTime);
 	void DrawTowersCD(float TowerCD);

@@ -7,14 +7,23 @@
 #include "Engine/StaticMeshActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "UI_InventorySlot.h"
+#include "../../../Core/UI_RuleOfTheWidget.h"
+#include "../../../Core/UI_Data.h"
 
 void UUI_Inventory::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	LayoutInventroySlot(3, 7);
+
+	GetPlayerController()->EventMouseMiddlePressed.BindUObject(this, &UUI_Inventory::SpawnTowersDollPressed);
+	GetPlayerController()->EventFMouseMiddleReleased.BindUObject(this, &UUI_Inventory::SpawnTowersDollReleased);
 }
 
+FBuildingTower &UUI_Inventory::GetBuildingTower()
+{
+	return GetGameState()->GetBuildingTower(TowerICOGUID);
+}
 void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 {
 	if (InventorySlotClass)
@@ -45,7 +54,7 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 		}
 
 		TArray<const FCharacterData*> Datas;
-		if (GetGameState()->GetCharacterDataFromTable(Datas))
+		if (GetGameState()->GetTowerDataFromTable(Datas))
 		{
 			for (int32 i = 0; i < Datas.Num(); i++)
 			{
@@ -58,4 +67,47 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 			}
 		}
 	}
+}
+
+void UUI_Inventory::SpawnTowersDollPressed()
+{
+	if (GetBuildingTower().IsValid())
+	{
+		bLockGUID = true;
+		if (GetBuildingTower().TowersConstructionNumber >= 1)
+		{
+			int32 TowerID = GetBuildingTower().TowerID;
+			if (AStaticMeshActor * MeshActor = GetGameState()->SpawnTowersDoll(TowerID))
+			{
+				for (int32 i = 0; i < MeshActor->GetStaticMeshComponent()->GetNumMaterials(); i++)
+				{
+					MeshActor->GetStaticMeshComponent()->SetMaterial(i, DollMaterial);
+				}
+				TowerDoll = MeshActor;
+			}
+		}
+	}
+}
+
+void UUI_Inventory::SpawnTowersDollReleased()
+{
+	if (GetBuildingTower().IsValid())
+	{
+		if (TowerDoll)
+		{
+			if (GetBuildingTower().TowersConstructionNumber >= 1)
+			{
+				if (/*AActor*/ATowers *CharacterActor = GetGameState()->SpawnTower(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
+				{
+					GetBuildingTower().TowersConstructionNumber--;
+				}
+			}
+
+			TowerDoll->Destroy();
+			TowerDoll = nullptr;
+		}
+	}
+
+	bLockGUID = false;
+	TowerICOGUID = FGuid();
 }

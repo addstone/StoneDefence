@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "../../Core/GameCore/TowersDefenceGameState.h"
+#include "../../Core/GameCore/TowersDefencePlayerState.h"
+#include "../../Core/GameCore/TowersDefencePlayerController.h"
 #include "UI_RuleOfTheWidget.generated.h"
+
 
 
 /**
@@ -22,4 +25,6 @@ public:
 		FGuid GUID;
 
 	ATowersDefenceGameState *GetGameState();
+	ATowersDefencePlayerState *GetPlayerState();
+	ATowersDefencePlayerController *GetPlayerController();
 };

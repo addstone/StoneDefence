@@ -15,7 +15,13 @@ UCLASS()
 class STONEDEFENCE_API ATowersDefencePlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+public:
+	//按下鼠标的代理
+	FSimpleDelegate EventMouseMiddlePressed;
+	//松开鼠标的代理
+	FSimpleDelegate EventFMouseMiddleReleased;
+
 public:
 	ATowersDefencePlayerController();
 
@@ -29,6 +35,14 @@ public:
 	void MouseWheelUP();
 	void MouseWheelDown();
 
+	//鼠标中键控制
+	void MouseMiddleButtonPressed();
+	void MouseMiddleButtonReleased();
+
+	const FHitResult &GetHitResult();
+
 protected:
 	FScreenMoveUnits ScreenMoveUnits;
+
+	FHitResult MouseTaceHit;
 };

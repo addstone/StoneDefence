@@ -30,3 +30,9 @@ namespace Expression
 {
 	float GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner);
 }
+
+namespace MeshUtils
+{
+	UStaticMesh *ParticleSystemCompnentToStaticMesh(UParticleSystemComponent *NewParticleSystemComponent);
+	UStaticMesh *SkeletalMeshComponentToStaticMesh(USkeletalMeshComponent *SkeletalMeshComponent);
+}

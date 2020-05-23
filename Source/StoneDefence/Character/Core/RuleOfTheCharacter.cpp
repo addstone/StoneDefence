@@ -10,12 +10,20 @@
 #include "../../Data/CharacterData.h"
 #include "../../StoneDefenceUtils.h"
 #include "../../SimpleDrawText/Source/SimpleDrawText/Public/Actor/DrawText.h"
+#include "Components/StaticMeshComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Particles/TypeData/ParticleModuleTypeDataMesh.h"
+#include "Particles/ParticleEmitter.h"
+#include "Particles/ParticleLODLevel.h"
+#include "../../StoneDefenceMacro.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
 	:bAttack(false)
 {
 	GUID = FGuid::NewGuid();
+	//SD_print_r(Error, "The xxxxxxxxcurrent [%i] is invalid", *GUID.ToString());
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -32,6 +40,7 @@ ARuleOfTheCharacter::ARuleOfTheCharacter()
 	//ÉèÖÃÔ¤ÉèScanning
 	TraceShowCharacterInformation->SetCollisionProfileName("Scanning");
 	TraceShowCharacterInformation->SetBoxExtent(FVector(38.f, 38.f, 100.f));
+
 }
 
 // Called when the game starts or when spawned
@@ -125,6 +134,59 @@ FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 		return GetGameState()->GetCharacterData(GUID);
 	}
 	return CharacterDataNULL;
+}
+
+UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 MeshID)
+{
+	TArray<USceneComponent*> SceneComponent;
+	RootComponent->GetChildrenComponents(true, SceneComponent);
+	for (auto &Tmp : SceneComponent)
+	{
+		if (UStaticMeshComponent *NewMeshComponent = Cast<UStaticMeshComponent>(Tmp))
+		{
+			if (NewMeshComponent->GetStaticMesh())
+			{
+				Transform = NewMeshComponent->GetComponentTransform();
+				return NewMeshComponent->GetStaticMesh();
+			}
+		}
+		else if (UParticleSystemComponent *NewParticleSystemComponent = Cast<UParticleSystemComponent>(Tmp))
+		{
+			if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+			{
+				for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
+				{
+					if (Tmp_->LODLevels[0]->bEnabled)
+					{
+						if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
+						{
+							if (MyParticleDataMesh->Mesh)
+							{
+								Transform = NewParticleSystemComponent->GetComponentTransform();
+								return MyParticleDataMesh->Mesh;
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
+		{
+			Transform = NewSkeletalMeshComponent->GetComponentTransform();
+			NewSkeletalMeshComponent->SetRelativeTransform(FTransform::Identity);
+			NewSkeletalMeshComponent->SetWorldTransform(FTransform::Identity);
+			NewSkeletalMeshComponent->SetRelativeRotation(Transform.GetRotation());
+
+			if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+			{
+				
+				return NewMesh;
+			}
+			
+		}
+	}
+
+	return NULL;
 }
 
 EGameCharacterType::Type ARuleOfTheCharacter::GetCharacterType()

@@ -154,7 +154,7 @@ public:
 
 
 public:
-	bool IsValid();
+	bool IsValid() const;
 
 	void UpdateHealth();
 };

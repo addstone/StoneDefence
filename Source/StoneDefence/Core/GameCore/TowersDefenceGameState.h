@@ -6,7 +6,9 @@
 #include "../RuleOfTheGameState.h"
 #include "../../Data/CharacterData.h"
 #include "../../Data/Save/GameSaveData.h"
+#include "../../StoneDefenceType.h"
 #include "TowersDefenceGameState.generated.h"
+
 
 
 extern FCharacterData CharacterDataNULL;
@@ -56,14 +58,16 @@ protected:
 	}
 
 public:
+	class AStaticMeshActor* SpawnTowersDoll(int32 ID);
 	const FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
 	const FBuildingTower &AddBuildingTower(const FGuid &ID, const FBuildingTower &Data);
 	bool RemoveCharacterData(const FGuid &ID);
 	FCharacterData &GetCharacterData(const FGuid &ID);
 	FBuildingTower &GetBuildingTower(const FGuid &ID);
 	const TArray<const FGuid*> GetBuildingTowersID();
-	bool GetCharacterDataFromTable(TArray<const FCharacterData*> &Datas);
-
+	bool GetTowerDataFromTable(TArray<const FCharacterData*> &Datas);
+	bool GetMonsterDataFromTable(TArray<const FCharacterData*> &Datas);
+	const FCharacterData &GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
 	void RequestInventorySlotSwap(const FGuid &A, const FGuid &B);
 
 protected:
@@ -76,4 +80,9 @@ private:
 
 	UPROPERTY()
 		UGameSaveSlotList *SlotList;
+
+
+	TArray<const FCharacterData*> CacheTowerDatas;
+
+	TArray<const FCharacterData*> CacheMonsterDatas;
 };
