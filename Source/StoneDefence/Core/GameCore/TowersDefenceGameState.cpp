@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../../Data/Save/GameSaveSlotList.h"
 #include "Engine/StaticMeshActor.h"
+#include "../../Data/CharacterData.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -95,6 +96,19 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 			}
 			return nullptr;
 		};
+
+		//auto GetCharacterData = [&](int32 ID) ->const FCharacterData*
+		//{
+		//	for (auto &Tmp : Datas)
+		//	{
+		//		if (Tmp->ID == ID)
+		//		{
+		//			return Tmp;
+		//		}
+		//	}
+
+		//	return nullptr;
+		//};
 
 		if (FCharacterData *CharacterData = GetCharacterData(CharacterID))
 		{	
