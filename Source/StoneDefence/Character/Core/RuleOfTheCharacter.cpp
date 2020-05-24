@@ -48,6 +48,8 @@ void ARuleOfTheCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	TraceShowCharacterInformation->OnClicked.AddDynamic(this, &ARuleOfTheCharacter::OnClicked);
+
 	//生成角色需要生成一个默认的控制
 	if (!GetController())
 	{
@@ -55,6 +57,11 @@ void ARuleOfTheCharacter::BeginPlay()
 	}
 
 	UpdateUI();
+}
+
+void ARuleOfTheCharacter::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	//SD_print_s("Hello");
 }
 
 void ARuleOfTheCharacter::UpdateUI()

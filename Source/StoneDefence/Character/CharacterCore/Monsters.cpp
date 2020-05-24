@@ -2,6 +2,8 @@
 
 
 #include "Monsters.h"
+#include "../../UI/Core/UI_Data.h"
+#include "../../StoneDefenceMacro.h"
 
 void AMonsters::BeginPlay()
 {
@@ -21,4 +23,18 @@ bool AMonsters::IsTeam()
 EGameCharacterType::Type AMonsters::GetCharacterType()
 {
 	return EGameCharacterType::Type::MONSTER;
+}
+
+void AMonsters::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	Super::OnClicked(TouchedComponent, ButtonPressed);
+	SD_print_s("Monster");
+	if (ClickedTargetMonster)
+	{
+		ClickedTargetMonster = nullptr;
+	}
+	else
+	{
+		ClickedTargetMonster = this;
+	}
 }
