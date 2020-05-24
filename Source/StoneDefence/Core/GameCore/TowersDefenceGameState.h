@@ -18,6 +18,8 @@ class AMonsters;
 class ATowers;
 class UGameSaveData;
 class UGameSaveSlotList;
+struct FPlayerData;
+struct FGameInstanceDatas;
 /**
  * 
  */
@@ -35,6 +37,8 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 		UDataTable* AIMonsterCharacterData;
 
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds);
 public:
 	ATowersDefenceGameState();
 	UFUNCTION(BlueprintCallable, Category = Sapwn)
@@ -70,6 +74,8 @@ public:
 	const FCharacterData &GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
 	void RequestInventorySlotSwap(const FGuid &A, const FGuid &B);
 
+	FPlayerData &GetPlayerData();
+	FGameInstanceDatas &GetGameData();
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();

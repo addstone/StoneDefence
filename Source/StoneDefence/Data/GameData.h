@@ -88,6 +88,8 @@ struct FGameInstanceDatas
 	UPROPERTY(SaveGame)
 		int32 MainTowersDeathNumber;
 
+	float GetPerOfRemMonsters();
 
+	int32 GetMaxMonstersNumber();
 };
 
