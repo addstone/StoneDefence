@@ -12,6 +12,7 @@
 
 void UUI_TutoriaSystem::NativeConstruct()
 {
+	Super::NativeConstruct();
 	InitMadia(1);
 
 	MediaPlayer->OnEndReached.AddDynamic(this, &UUI_TutoriaSystem::FinshPlayMovie);
