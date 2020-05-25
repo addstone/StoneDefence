@@ -3,27 +3,35 @@
 
 #include "UI_TutoriaSystem.h"
 #include "Tutoria/UI_TutoriaSlot.h"
-#include "MediaAssets/Public/MediaPlayer.h"
+#include "MediaPlayer.h"
 #include "Components/Image.h"
 #include "Components/CheckBox.h"
 #include "Components/Slider.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "HAL/FileManager.h"
+#include "MediaSource.h"
+#include "GlobalTutoriaProxy.h"
+#include "Components/ScrollBox.h"
+#include "MediaPlaylist.h"
 
 void UUI_TutoriaSystem::NativeConstruct()
 {
 	Super::NativeConstruct();
-	InitMadia(1);
+	InitMadia();
+
+
 
 	MediaPlayer->OnEndReached.AddDynamic(this, &UUI_TutoriaSystem::FinshPlayMovie);
 
 	ReplayButton->OnClicked.AddDynamic(this, &UUI_TutoriaSystem::Replay);
 	PauseButton->OnClicked.AddDynamic(this, &UUI_TutoriaSystem::Pause);
-	CloseButton->OnClicked.AddDynamic(this, &UUI_TutoriaSystem::Close);
 	SuspendButton->OnCheckStateChanged.AddDynamic(this, &UUI_TutoriaSystem::ClickedCheckBox);
 
 	MovieProgress->OnMouseCaptureBegin.AddDynamic(this, &UUI_TutoriaSystem::MouseCaptureBegin);
 	MovieProgress->OnMouseCaptureEnd.AddDynamic(this, &UUI_TutoriaSystem::MouseCaptureEnd);
+
+	SimpleTutoriaMulticastDelegate.BindUObject(this, &UUI_TutoriaSystem::Play);
 }
 
 void UUI_TutoriaSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -39,13 +47,26 @@ void UUI_TutoriaSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	}
 }
 
-void UUI_TutoriaSystem::InitMadia(bool bPlayMovie)
+void UUI_TutoriaSystem::InitMadia()
 {
-	if (UUI_TutoriaSlot *TutoriaSlot = CreateWidget<UUI_TutoriaSlot>(GetWorld(), TutoriaSlotClass))
+	if (MediaPlayer)
 	{
-		if (MediaPlayer)
+		TArray<FString> MadiaFilenames;
+		FString MadiaPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() / TEXT("Media/"));
+		IFileManager::Get().FindFilesRecursive(MadiaFilenames, *MadiaPath, TEXT("*.*"), true, false);
+
+		for (int32 i = 0; i < MadiaFilenames.Num(); i++)
 		{
-			MediaPlayer->OpenSource(TutoriaSlot->MediaSource);
+			if (UUI_TutoriaSlot *TutoriaSlot = CreateWidget<UUI_TutoriaSlot>(GetWorld(), TutoriaSlotClass))
+			{
+				TutoriaSlot->Index = i;
+				MediaPlayer->GetPlaylist()->AddFile(MadiaFilenames[i]);
+				ScrollMediaList->AddChild(TutoriaSlot);
+			}
+		}
+		if (UMediaSource* Media = MediaPlayer->GetPlaylist()->Get(0))
+		{
+			MediaPlayer->OpenSource(Media);
 		}
 	}
 }
@@ -94,6 +115,19 @@ void UUI_TutoriaSystem::Close()
 void UUI_TutoriaSystem::Pause()
 {
 	ActivationMovie();
+}
+
+bool UUI_TutoriaSystem::Play(int32 InIndex)
+{
+	if (InIndex >= 0)
+	{
+		if (UMediaSource* Media = MediaPlayer->GetPlaylist()->Get(InIndex))
+		{
+			MediaPlayer->OpenSource(Media);
+		}
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("Hello World !"));
+	return false;
 }
 
 void UUI_TutoriaSystem::FinshPlayMovie()

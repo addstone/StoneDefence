@@ -7,7 +7,7 @@
 #include "UI_TutoriaSlot.generated.h"
 
 class UButton;
-class UMediaSource;
+
 /**
  * 
  */
@@ -16,9 +16,19 @@ class SIMPLETUTORIA_API UUI_TutoriaSlot : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UPROPERTY(meta = (BindWidget))
+		UButton* PlayButton;
 public:
-	//‘ÿ»Î ”∆µ‘¥
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
-		UMediaSource *MediaSource;
+	UUI_TutoriaSlot(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY()
+		int32 Index;
+
+	bool IsIndexValid();
+
+	UFUNCTION()
+		void Play();
+
+protected:
+	virtual void NativeConstruct() override;
 };

@@ -15,7 +15,6 @@ class UTextBlock;
 class UMediaPlayer;
 class UUI_TutoriaSlot;
 class UWidgetAnimation;
-class UUI_TutoriaList;
 class UMediaSoundComponent;
 class UComboBoxString;
 
@@ -25,6 +24,9 @@ class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta = (BindWidget))
+		UScrollBox *ScrollMediaList;
+
+	UPROPERTY(meta = (BindWidget))
 		UCheckBox *ScreenButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -32,9 +34,6 @@ class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UCheckBox* SuspendButton;
-
-	UPROPERTY(meta = (BindWidget))
-		UButton* CloseButton;
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* PauseButton;
@@ -62,7 +61,7 @@ protected:
 
 	//初始化视频资源
 	UFUNCTION()
-		void InitMadia(bool bPlayMovie);
+		void InitMadia();
 
 	UFUNCTION()
 		void ActivationMovie();
@@ -78,6 +77,9 @@ protected:
 
 	UFUNCTION()
 		void Pause();
+
+	UFUNCTION()
+		bool Play(int32 InIndex);
 
 	UFUNCTION()
 		void FinshPlayMovie();
