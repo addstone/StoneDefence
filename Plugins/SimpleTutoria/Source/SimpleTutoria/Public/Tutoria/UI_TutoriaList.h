@@ -17,7 +17,7 @@ class SIMPLETUTORIA_API UUI_TutoriaList : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 		UScrollBox *ScrollMediaList;
-
+public:
 	UWidgetAnimation* GetNameWidgetAnimation(const FString& WidgetAnimationName) const;
 public:
 

@@ -19,6 +19,14 @@ class UMediaSoundComponent;
 class UComboBoxString;
 class UUI_TutoriaList;
 
+
+enum class ETutoriaType
+{
+	FULL_SCREEN,
+	WINDOW,
+	MAX
+};
+
 UCLASS()
 class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
 {
@@ -32,6 +40,21 @@ class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* ReplayButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* NextButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UButton* PreviousButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UCheckBox *VolumeButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* VolumeValue;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* VolumeProgress;
 
 	UPROPERTY(meta = (BindWidget))
 		UCheckBox* SuspendButton;
@@ -48,6 +71,15 @@ class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* PlayTimeText;
 
+	UPROPERTY()
+		UMediaSoundComponent *MediaSoundComponent;
+
+	UPROPERTY(meta = (BindWidget))
+		UComboBoxString *ComboPlaySpeed;
+
+	UPROPERTY(meta = (BindWidget))
+		UComboBoxString *ComboResolution;
+
 public:
 	//载入视频播放
 	UPROPERTY(EditAnywhere, Category = UI)
@@ -55,12 +87,18 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = UI)
 		TSubclassOf<UUI_TutoriaSlot> TutoriaSlotClass;
+	UUI_TutoriaSystem(const FObjectInitializer& ObjectInitializer);
 
+	ETutoriaType TutoriaType;
+	void SetTutoriaType(ETutoriaType InTutoriaType);
 
+	void PlayMedia(const FString &URL, const FTimespan &InTime);
 protected:
 	virtual void NativeConstruct() override;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 
 	//初始化视频资源
 	UFUNCTION()
@@ -70,10 +108,31 @@ protected:
 		void ChangedValue(float InValue);
 
 	UFUNCTION()
-		void ActivationMovie();
+		void ChangedVolumeValue(float InValue);
+
+	UFUNCTION()
+		void PlaySpeed(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+		void Resolution(FString SelectedItem, ESelectInfo::Type SelectionType);
 
 	UFUNCTION()
 		void ClickedCheckBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void ClickedCheckBoxVolume(bool ClickedWidget);
+
+	UFUNCTION()
+		void ClickedCheckBoxScreen(bool ClickedWidget);
+
+	UFUNCTION()
+		void ActivationMovie();
+
+	UFUNCTION()
+		void Previous();
+
+	UFUNCTION()
+		void Next();
 
 	UFUNCTION()
 		void Replay();
@@ -106,4 +165,10 @@ protected:
 	float MouseMoveCount;
 	bool bMouseMoveFinsh;
 
+private:
+	UPROPERTY()
+		UUI_TutoriaSystem* UI_TutoriaSystem;
+
+protected:
+		UWidgetAnimation* GetNameWidgetAnimation(const FString& WidgetAnimationName) const;
 };
