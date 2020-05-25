@@ -6,7 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "UI_TutoriaSlot.generated.h"
 
+
+
 class UButton;
+
 /**
  * 
  */
@@ -15,5 +18,21 @@ class SIMPLETUTORIA_API UUI_TutoriaSlot : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UPROPERTY(meta = (BindWidget))
+		UButton* PlayButton;
+public:
+	UUI_TutoriaSlot(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY()
+		FString TutoriaPath;
+
+	bool IsIndexValid();
+
+	UFUNCTION()
+		void Play();
+
+
+	
+protected:
+	virtual void NativeConstruct() override;
 };

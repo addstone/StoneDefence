@@ -10,6 +10,18 @@ UUI_RuleOfTheWidget::UUI_RuleOfTheWidget(const FObjectInitializer& ObjectInitial
 	GUID = FGuid::NewGuid();
 }
 
+UWidgetAnimation* UUI_RuleOfTheWidget::GetNameWidgetAnimation(const FString& WidgetAnimationName) const
+{
+	if (UWidgetBlueprintGeneratedClass* WidgetBlueprintGenerated = Cast<UWidgetBlueprintGeneratedClass>(GetClass()))
+	{
+		TArray<UWidgetAnimation*> TArrayAnimations = WidgetBlueprintGenerated->Animations;
+		UWidgetAnimation** MyTempAnimation = TArrayAnimations.FindByPredicate([&](const UWidgetAnimation* OurAnimation) {return OurAnimation->GetFName().ToString() == (WidgetAnimationName + FString("_INST")); });
+		return *MyTempAnimation;
+	}
+
+	return nullptr;
+}
+
 ATowersDefenceGameState * UUI_RuleOfTheWidget::GetGameState()
 {
 	if (GetWorld())

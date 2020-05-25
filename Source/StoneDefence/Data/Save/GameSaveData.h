@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "../CharacterData.h"
+#include "../PlayerData.h"
+#include "../GameData.h"
 #include "GameSaveData.generated.h"
+
 
 USTRUCT()
 struct FBuildingTower
@@ -73,6 +76,15 @@ public:
 	UPROPERTY(SaveGame)
 		TMap<FGuid, FCharacterData> CharacterDatas;
 
+	//被曝数据
 	UPROPERTY(SaveGame)
-	TMap <FGuid, FBuildingTower> BuildingTowers;
+		TMap <FGuid, FBuildingTower> BuildingTowers;
+
+	//玩家数据
+	UPROPERTY(SaveGame)
+		FPlayerData PlayerData;
+
+	//当前关卡内游戏数据
+	UPROPERTY(SaveGame)
+		FGameInstanceDatas GamerDatas;
 };

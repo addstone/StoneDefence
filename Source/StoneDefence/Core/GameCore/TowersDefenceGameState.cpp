@@ -12,6 +12,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "../../Data/Save/GameSaveSlotList.h"
 #include "Engine/StaticMeshActor.h"
+#include "../../Data/CharacterData.h"
+#include "../../Data/PlayerData.h"
+#include "../../Data/GameData.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -28,6 +31,13 @@ void ATowersDefenceGameState::BeginPlay()
 	//{
 	//	SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
 	//}
+}
+
+void ATowersDefenceGameState::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	GetGameData().GameCount -= DeltaSeconds;
 }
 
 ATowersDefenceGameState::ATowersDefenceGameState()
@@ -95,6 +105,19 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 			}
 			return nullptr;
 		};
+
+		//auto GetCharacterData = [&](int32 ID) ->const FCharacterData*
+		//{
+		//	for (auto &Tmp : Datas)
+		//	{
+		//		if (Tmp->ID == ID)
+		//		{
+		//			return Tmp;
+		//		}
+		//	}
+
+		//	return nullptr;
+		//};
 
 		if (FCharacterData *CharacterData = GetCharacterData(CharacterID))
 		{	
@@ -284,6 +307,16 @@ void ATowersDefenceGameState::RequestInventorySlotSwap(const FGuid &A, const FGu
 		ASlot = BSlot;
 		BSlot.Init();
 	}
+}
+
+FPlayerData & ATowersDefenceGameState::GetPlayerData()
+{
+	return GetSaveData()->PlayerData;
+}
+
+FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
+{
+	return GetSaveData()->GamerDatas;
 }
 
 UGameSaveData * ATowersDefenceGameState::GetSaveData()

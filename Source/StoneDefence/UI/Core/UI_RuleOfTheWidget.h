@@ -9,7 +9,7 @@
 #include "../../Core/GameCore/TowersDefencePlayerController.h"
 #include "UI_RuleOfTheWidget.generated.h"
 
-
+class UWidgetAnimation;
 
 /**
  * 
@@ -24,6 +24,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI" )
 		FGuid GUID;
 
+	UWidgetAnimation *GetNameWidgetAnimation(const FString& WidgetAnimationName) const;
 	ATowersDefenceGameState *GetGameState();
 	ATowersDefencePlayerState *GetPlayerState();
 	ATowersDefencePlayerController *GetPlayerController();

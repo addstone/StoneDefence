@@ -38,10 +38,10 @@ class STONEDEFENCE_API UUI_ToolBarSystem : public UUI_NativeOnDrop
 public:
 	virtual void NativeConstruct()override;
 
-//	//Tick
-//	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-//
-//private:
-//	FString GetCurrentCount(float NewTimeCount);
+	//Tick
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+private:
+	FString GetCurrentCount(float NewTimeCount);
 	
 };

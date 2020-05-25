@@ -51,6 +51,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+		virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 public:
 	void UpdateUI();
 public:	

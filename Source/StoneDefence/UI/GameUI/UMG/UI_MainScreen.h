@@ -6,6 +6,8 @@
 #include "../../Core/UI_RuleOfTheWidget.h"
 #include "UI_MainScreen.generated.h"
 
+
+
 /**
  * 
  */
@@ -35,8 +37,17 @@ class STONEDEFENCE_API UUI_MainScreen : public UUI_RuleOfTheWidget
 	UPROPERTY(meta = (BindWidget))
 		class UUI_ToolBarSystem* ToolBarSystem;
 
+	UPROPERTY(meta = (BindWidget))
+		class UUI_TowerTip* CharacterTip;
+
+	UPROPERTY(meta = (BindWidget))
+		class UImage* FireConcentrationPoint;
+
 public:
 	virtual void NativeConstruct() override;
+
+	//Tick
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 

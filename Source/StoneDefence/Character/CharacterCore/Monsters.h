@@ -27,4 +27,7 @@ public:
 	virtual bool IsTeam();
 
 	virtual EGameCharacterType::Type GetCharacterType();
+
+protected:
+	virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 };

@@ -21,7 +21,7 @@ void ATowersDefencePlayerController::Tick(float DeltaSeconds)
 	{
 		if (MouseTaceHit.Location != FVector::ZeroVector)
 		{
-			MouseTaceHit.Location = FVector::ZeroVector;
+			MouseTaceHit = FHitResult();
 		}
 
 		FHitResult TaceOutHit;
@@ -30,7 +30,7 @@ void ATowersDefencePlayerController::Tick(float DeltaSeconds)
 	}
 	else
 	{
-		GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, MouseTaceHit);
+		GetHitResultUnderCursor(ECollisionChannel::ECC_GameTraceChannel5, true, MouseTaceHit);
 	}
 }
 
