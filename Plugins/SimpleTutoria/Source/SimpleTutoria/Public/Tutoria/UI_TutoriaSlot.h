@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "UI_TutoriaSlot.generated.h"
 
+
+
 class UButton;
 
 /**
@@ -22,13 +24,15 @@ public:
 	UUI_TutoriaSlot(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY()
-		int32 Index;
+		FString TutoriaPath;
 
 	bool IsIndexValid();
 
 	UFUNCTION()
 		void Play();
 
+
+	
 protected:
 	virtual void NativeConstruct() override;
 };

@@ -7,19 +7,19 @@
 UUI_TutoriaSlot::UUI_TutoriaSlot(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
-	Index = INDEX_NONE;
+
 }
 
 bool UUI_TutoriaSlot::IsIndexValid()
 {
-	return Index != INDEX_NONE;
+	return TutoriaPath != "";
 }
 
 void UUI_TutoriaSlot::Play()
 {
 	if (SimpleTutoriaMulticastDelegate.IsBound())
 	{
-		if (SimpleTutoriaMulticastDelegate.Execute(Index))
+		if (SimpleTutoriaMulticastDelegate.Execute(TutoriaPath))
 		{
 
 		}

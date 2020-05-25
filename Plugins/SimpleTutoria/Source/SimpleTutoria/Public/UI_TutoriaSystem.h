@@ -17,6 +17,7 @@ class UUI_TutoriaSlot;
 class UWidgetAnimation;
 class UMediaSoundComponent;
 class UComboBoxString;
+class UUI_TutoriaList;
 
 UCLASS()
 class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
@@ -24,7 +25,7 @@ class SIMPLETUTORIA_API UUI_TutoriaSystem : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta = (BindWidget))
-		UScrollBox *ScrollMediaList;
+		UUI_TutoriaList* TutoriaList;
 
 	UPROPERTY(meta = (BindWidget))
 		UCheckBox *ScreenButton;
@@ -54,6 +55,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = UI)
 		TSubclassOf<UUI_TutoriaSlot> TutoriaSlotClass;
+
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -62,6 +65,9 @@ protected:
 	//初始化视频资源
 	UFUNCTION()
 		void InitMadia();
+
+	UFUNCTION()
+		void ChangedValue(float InValue);
 
 	UFUNCTION()
 		void ActivationMovie();
@@ -79,7 +85,7 @@ protected:
 		void Pause();
 
 	UFUNCTION()
-		bool Play(int32 InIndex);
+		bool Play(const FString &InPath);
 
 	UFUNCTION()
 		void FinshPlayMovie();

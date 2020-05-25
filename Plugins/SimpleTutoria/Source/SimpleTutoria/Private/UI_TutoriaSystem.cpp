@@ -3,6 +3,7 @@
 
 #include "UI_TutoriaSystem.h"
 #include "Tutoria/UI_TutoriaSlot.h"
+#include "Tutoria/UI_TutoriaList.h"
 #include "MediaPlayer.h"
 #include "Components/Image.h"
 #include "Components/CheckBox.h"
@@ -30,6 +31,7 @@ void UUI_TutoriaSystem::NativeConstruct()
 
 	MovieProgress->OnMouseCaptureBegin.AddDynamic(this, &UUI_TutoriaSystem::MouseCaptureBegin);
 	MovieProgress->OnMouseCaptureEnd.AddDynamic(this, &UUI_TutoriaSystem::MouseCaptureEnd);
+	MovieProgress->OnValueChanged.AddDynamic(this, &UUI_TutoriaSystem::ChangedValue);
 
 	SimpleTutoriaMulticastDelegate.BindUObject(this, &UUI_TutoriaSystem::Play);
 }
@@ -59,15 +61,22 @@ void UUI_TutoriaSystem::InitMadia()
 		{
 			if (UUI_TutoriaSlot *TutoriaSlot = CreateWidget<UUI_TutoriaSlot>(GetWorld(), TutoriaSlotClass))
 			{
-				TutoriaSlot->Index = i;
-				MediaPlayer->GetPlaylist()->AddFile(MadiaFilenames[i]);
-				ScrollMediaList->AddChild(TutoriaSlot);
+				TutoriaSlot->TutoriaPath = MadiaFilenames[i];
+				TutoriaList->Add(TutoriaSlot);
 			}
 		}
-		if (UMediaSource* Media = MediaPlayer->GetPlaylist()->Get(0))
+		if (MadiaFilenames.Num() > 0)
 		{
-			MediaPlayer->OpenSource(Media);
+			Play(MadiaFilenames[0]);
 		}
+	}
+}
+
+void UUI_TutoriaSystem::ChangedValue(float InValue)
+{
+	if (MediaPlayer)
+	{
+		MediaPlayer->Seek(FTimespan(MediaPlayer->GetDuration().GetTicks() * InValue));
 	}
 }
 
@@ -117,17 +126,9 @@ void UUI_TutoriaSystem::Pause()
 	ActivationMovie();
 }
 
-bool UUI_TutoriaSystem::Play(int32 InIndex)
+bool UUI_TutoriaSystem::Play(const FString &InPath)
 {
-	if (InIndex >= 0)
-	{
-		if (UMediaSource* Media = MediaPlayer->GetPlaylist()->Get(InIndex))
-		{
-			MediaPlayer->OpenSource(Media);
-		}
-	}
-	//GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("Hello World !"));
-	return false;
+	return MediaPlayer->OpenFile(InPath);
 }
 
 void UUI_TutoriaSystem::FinshPlayMovie()
