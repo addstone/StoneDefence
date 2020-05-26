@@ -79,6 +79,7 @@ public:
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();
+	void SpawnMonstersRule(float DeltaSeconds);
 
 private:
 	UPROPERTY()

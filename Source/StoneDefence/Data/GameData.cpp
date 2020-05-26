@@ -15,6 +15,7 @@ void FGameInstanceDatas::Init()
 	SpawnMonsterStage = 0;
 	CurrentLevel = INDEX_NONE;
 	TimeInterval = 0.5f;
+	CurrentSpawnMosnterTime = 0.f;
 	MaxStagesAreMonsters = 0;
 	CurrentStageAreMonsters = 0;
 	GameCount = 6000;
@@ -46,4 +47,9 @@ int32 FGameInstanceDatas::GetMaxMonstersNumber()
 		MaxMonstersNumber += Tmp;
 	}
 	return MaxMonstersNumber;
+}
+
+void FGameInstanceDatas::ResetSpawnMosnterTime()
+{
+	CurrentSpawnMosnterTime = 0.0f;
 }

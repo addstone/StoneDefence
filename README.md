@@ -103,3 +103,17 @@ Developed with Unreal Engine 4
 |第七节：RowMesh详细讲解|:heavy_check_mark:|
 |第八节：蒙皮网格渲染数据拷贝到静态网格|:heavy_check_mark:|
 |第九节：如何修正模型变换位置|:heavy_check_mark:|
+---
+# 第八章：制作数据与视频插件
+|||
+| --------   | -----  |
+|第一节：如何为模型渲染四边形网格|:heavy_check_mark:|
+|第二节：查看角色详细信息功能|:heavy_check_mark:|
+|第三节：集火UI效果|:heavy_check_mark:|
+|第四节：玩家数据和游戏场景数据|:heavy_check_mark:|
+|第五节：游戏Toolbar数据显示|:heavy_check_mark:|
+|第六节：编写视频代码|:heavy_check_mark:|
+|第七节：视频蓝图修正|:heavy_check_mark:|
+|第八节：视频列表|:heavy_check_mark:|
+|第九节：视频UI动画代码编写|:heavy_check_mark:|
+|第十节：视频倍速与视频声音问题|:heavy_check_mark:|

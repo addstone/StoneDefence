@@ -15,6 +15,8 @@
 #include "../../Data/CharacterData.h"
 #include "../../Data/PlayerData.h"
 #include "../../Data/GameData.h"
+#include "../../Items/SpawnPoint.h"
+#include "../../StoneDefenceUtils.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -38,6 +40,9 @@ void ATowersDefenceGameState::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	GetGameData().GameCount -= DeltaSeconds;
+
+	//Éú³É¹ÖÎï
+	SpawnMonstersRule(DeltaSeconds);
 }
 
 ATowersDefenceGameState::ATowersDefenceGameState()
@@ -339,6 +344,41 @@ UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
 		}
 	}
 	return SlotList;
+}
+
+void ATowersDefenceGameState::SpawnMonstersRule(float DeltaSeconds)
+{
+	if (!GetGameData().bCurrentLevelMissionSuccess)
+	{
+		if (!GetGameData().bGameOver)
+		{
+			if (GetGameData().PerNumberOfMonsters.Num())
+			{
+				GetGameData().CurrentSpawnMosnterTime += DeltaSeconds;
+				if (GetGameData().IsAllowSpawnMosnter())
+				{
+					GetGameData().ResetSpawnMosnterTime();
+					if (ARuleOfTheCharacter* MyMonster = SpawnMonster(0, 1, FVector::ZeroVector, FRotator::ZeroRotator))
+					{
+						TArray<ASpawnPoint *> MosnterSpawnPoints;
+						for (ASpawnPoint* TargetPoint : StoneDefenceUtils::GetAllActor<ASpawnPoint>(GetWorld()))
+						{
+							if (MyMonster->IsTeam() == TargetPoint->bTeam)
+							{
+								MosnterSpawnPoints.Add(TargetPoint);
+							}
+						}
+						ASpawnPoint *TargetPoint = MosnterSpawnPoints[FMath::RandRange(0, MosnterSpawnPoints.Num() - 1)];
+						MyMonster->SetActorLocationAndRotation(TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+
+	}
 }
 
 #if PLATFORM_WINDOWS

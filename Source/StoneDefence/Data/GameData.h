@@ -44,6 +44,10 @@ struct FGameInstanceDatas
 	UPROPERTY(SaveGame)
 		float TimeInterval;
 
+	//生成怪物的时间记录
+	UPROPERTY(SaveGame)
+		float CurrentSpawnMosnterTime;
+
 	//有多少波怪物
 	UPROPERTY(SaveGame)
 		int32 MaxStagesAreMonsters;
@@ -91,5 +95,9 @@ struct FGameInstanceDatas
 	float GetPerOfRemMonsters();
 
 	int32 GetMaxMonstersNumber();
+
+	void ResetSpawnMosnterTime();
+
+	FORCEINLINE bool IsAllowSpawnMosnter() { return CurrentSpawnMosnterTime >= TimeInterval; }
 };
 
