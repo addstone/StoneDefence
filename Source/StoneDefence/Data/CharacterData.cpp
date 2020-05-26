@@ -9,17 +9,17 @@ FCharacterData::FCharacterData()
 	PhysicalAttack(10),
 	Armor(10),
 	MaxEmpircalValue(100),
-	EmpircalValue(MaxEmpircalValue),
+	EmpircalValue(0.f),
 	CD(2.f),
 	AttackSpeed(0.66),
 	Glod(80),
 
 	AddGlod(30),
-	AddHealth(0.f),
-	AddPhysicalAttack(0.f),
-	AddArmor(0.f),
-	AddEmpiricalValue(20),
-	AddAttackSpeed(0.f),
+	AddHealth(50.f),
+	AddPhysicalAttack(10.f),
+	AddArmor(8.f),
+	AddEmpiricalValue(100),
+	AddAttackSpeed(0.001f),
 	RestoreHealth(0.2f),
 
 	AddPassiveSkillHealth(0.f),
@@ -30,6 +30,16 @@ FCharacterData::FCharacterData()
 	ConstructionTime(5)
 {
 
+}
+
+float FCharacterData::GetEPPercent() const
+{
+	if (MaxEmpircalValue != 0.f)
+	{
+		return EmpircalValue / MaxEmpircalValue;
+	}
+
+	return 0.0f;
 }
 
 bool FCharacterData::IsValid() const

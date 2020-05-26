@@ -30,6 +30,8 @@ void ATowersDefenceGameState::BeginPlay()
 	Super::BeginPlay();
 
 	GetGameData().AssignedMonsterAmount();
+
+	//GetSaveData()->CharacterDatas.Empty();
 	//if (1)
 	//{
 	//	SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));

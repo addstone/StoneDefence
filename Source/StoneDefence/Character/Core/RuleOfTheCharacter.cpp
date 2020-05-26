@@ -56,7 +56,7 @@ void ARuleOfTheCharacter::BeginPlay()
 		SpawnDefaultController();
 	}
 
-	UpdateUI();
+
 }
 
 void ARuleOfTheCharacter::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
@@ -68,17 +68,17 @@ void ARuleOfTheCharacter::UpdateUI()
 {
 	if (Widget)
 	{
-		//if (const FCharacterData *InCharacterData = GetCharacterData())
+		//if (const FCharacterData &InCharacterData = GetCharacterData())
 		//{
-		//	if (InCharacterData->IsValid())
-		//	{
+			if (GetCharacterData().IsValid())
+			{
 				if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
 				{
 					HealthUI->SetTitle(GetCharacterData().Name.ToString());
 					HealthUI->SetHealth(GetHealth() / GetMaxHealth());
 				}
 			}
-	//	}
+		}
 	//}
 }
 
@@ -86,7 +86,7 @@ void ARuleOfTheCharacter::UpdateUI()
 void ARuleOfTheCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UpdateUI();
 }
 
 float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -152,8 +152,6 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 	}
 
 	DrawGameText(this, TEXT("-%0.f"), DamageValue, FLinearColor::Red);
-
-	UpdateUI();
 
 	return DamageValue;
 }
