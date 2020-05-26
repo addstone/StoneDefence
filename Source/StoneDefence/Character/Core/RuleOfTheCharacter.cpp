@@ -92,24 +92,69 @@ void ARuleOfTheCharacter::Tick(float DeltaTime)
 float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	auto DrawGameText = [&](ARuleOfTheCharacter* InOwner, const TCHAR* InText, float InDamageValue, FLinearColor InColor)
+	{
+		if (DrawTextClass)
+		{
+			if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, InOwner->GetActorLocation(), FRotator::ZeroRotator))
+			{
+				FString DamageText = FString::Printf(InText, InDamageValue);
+				MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().MaxHealth);
+			}
+		}
+	};
+
 	float DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
 
 	GetCharacterData().Health -= DamageValue;
 	if (!IsActive())
 	{
 		GetCharacterData().Health = 0.0f;
+		SetLifeSpan(3.f);
+
+		Widget->SetVisibility(false);
+
+		//谁杀死我 谁就得到我提供的最多经验
+		if (ARuleOfTheCharacter *CauserCharacter = Cast<ARuleOfTheCharacter>(DamageCauser))
+		{
+			if (CauserCharacter->IsActive())
+			{
+				if (CauserCharacter->GetCharacterData().UpdateLevel(GetCharacterData().AddEmpiricalValue))
+				{
+
+				}
+
+				DrawGameText(CauserCharacter, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue, FLinearColor::Yellow);
+			}
+
+			//寻找范围内最近的敌人 升级
+			TArray<ARuleOfTheCharacter*> EnemyCharacters;
+			StoneDefenceUtils::FindRangeTargetRecently(this, 1000.f, EnemyCharacters);
+			for (ARuleOfTheCharacter* InEnemy : EnemyCharacters)
+			{
+				if (InEnemy != CauserCharacter)
+				{
+					if (InEnemy->IsActive())
+					{
+						if (InEnemy->GetCharacterData().UpdateLevel(GetCharacterData().AddEmpiricalValue) * 0.3)
+						{
+
+						}
+
+						DrawGameText(InEnemy, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue * 0.3, FLinearColor::Yellow);
+					}
+				}
+			}
+		}
+
+		GetGameState()->RemoveCharacterData(GUID);
 	}
+
+	DrawGameText(this, TEXT("-%0.f"), DamageValue, FLinearColor::Red);
 
 	UpdateUI();
 
-	if (DrawTextClass)
-	{
-		if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, GetActorLocation(), FRotator::ZeroRotator))
-		{
-			FString DamageText = FString::Printf(TEXT("-%0.f"), DamageValue);
-			MyValueText->SetTextBlock(DamageText, FLinearColor::Red, DamageValue / GetCharacterData().MaxHealth);
-		}
-	}
 	return DamageValue;
 }
 

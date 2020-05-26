@@ -157,4 +157,6 @@ public:
 	bool IsValid() const;
 
 	void UpdateHealth();
+
+	bool UpdateLevel(float InExp);
 };

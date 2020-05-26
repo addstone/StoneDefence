@@ -18,6 +18,25 @@
 #pragma optimize("",off) 
 #endif
 
+void StoneDefenceUtils::FindRangeTargetRecently(ARuleOfTheCharacter *InOwner, float Range, TArray<ARuleOfTheCharacter *> &Targets)
+{
+	if (InOwner && Range > 0.0f)
+	{
+		TArray<ARuleOfTheCharacter *> NewTargets;
+		StoneDefenceUtils::GetAllActor(InOwner->GetWorld(), NewTargets);
+		for (ARuleOfTheCharacter * Tmp : NewTargets)
+		{
+			if (InOwner->IsTeam() != Tmp->IsTeam())
+			{
+				if ((InOwner->GetActorLocation() - Tmp->GetActorLocation()).Size() <= Range)
+				{
+					Targets.Add(Tmp);
+				}
+			}
+		}
+	}
+}
+
 ARuleOfTheCharacter * StoneDefenceUtils::FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters, const FVector &Loc)
 {
 	if (InCharacters.Num())

@@ -22,6 +22,7 @@ class ASceneCapture2D;
 
 namespace StoneDefenceUtils
 {
+	void FindRangeTargetRecently(ARuleOfTheCharacter *InOwner, float Range, TArray<ARuleOfTheCharacter *> &Targets);
 
 	ARuleOfTheCharacter *FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters,const FVector &Loc);
 	
