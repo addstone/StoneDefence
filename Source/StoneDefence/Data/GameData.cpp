@@ -15,7 +15,7 @@ void FGameInstanceDatas::Init()
 	CurrentLevel = INDEX_NONE;
 	TimeInterval = 0.5f;
 	CurrentSpawnMosnterTime = 0.f;
-	MaxStagesAreMonsters = 0;
+	MaxStagesAreMonsters = 4;
 	GameCount = 6000;
 	MaxGameCount = 0;
 	GoldGrowthTime = 1.f;

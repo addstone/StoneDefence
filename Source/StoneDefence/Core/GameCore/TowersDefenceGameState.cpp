@@ -40,8 +40,28 @@ void ATowersDefenceGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	GetGameData().GameCount -= DeltaSeconds;
-
+	if (GetGameData().GameCount <= 0.f)
+	{
+		GetGameData().bGameOver = true;
+	}
+	else
+	{
+		GetGameData().GameCount -= DeltaSeconds;
+	}
+	int32 TowersNum = 0;
+	TArray<ARuleOfTheCharacter*> InTowers;
+	StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), InTowers);
+	for (ARuleOfTheCharacter* Tower : InTowers)
+	{
+		if (Tower->IsActive())
+		{
+			TowersNum++;
+		}
+	}
+	if (TowersNum == 0)
+	{
+		GetGameData().bGameOver = true;
+	}
 	//Éú³É¹ÖÎï
 	SpawnMonstersRule(DeltaSeconds);
 }
@@ -96,6 +116,8 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 	const FVector &Location, 
 	const FRotator &Rotator)
 {
+	ARuleOfTheCharacter * InCharacter = nullptr;
+
 	if (InCharacterData)
 	{
 		TArray<FCharacterData*> Datas;
@@ -137,13 +159,13 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
 					CharacterData->UpdateHealth();
 					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
-					return RuleOfTheCharacter;
+					InCharacter = RuleOfTheCharacter;
 				}
 			}
 		}
 	}
 
-	return nullptr;
+	return InCharacter;
 }
 
 AStaticMeshActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
@@ -418,7 +440,7 @@ int32 GetMonsterLevel(UWorld *InWorld)
 	{
 		ReturnLevel++;
 	}
-	//ReturnLevel += FMath::Abs(2 - FMath::Sqrt(TowersDD.Variance / 10.f));
+	ReturnLevel += FMath::Abs(2 - FMath::Sqrt(TowersDD.Variance / 10.f));
 
 	return ReturnLevel;
 }
