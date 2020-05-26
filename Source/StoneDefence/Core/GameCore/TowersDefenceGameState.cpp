@@ -29,6 +29,7 @@ void ATowersDefenceGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetGameData().AssignedMonsterAmount();
 	//if (1)
 	//{
 	//	SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
@@ -346,6 +347,39 @@ UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
 	return SlotList;
 }
 
+struct FDifficultyDetermination
+{
+	FDifficultyDetermination()
+		:Level(0)
+		, Combination(0.f)
+		, Attack(0.f)
+		, Defense(0.f)
+		, Variance(0.f)
+	{
+
+	}
+	float Level;
+	float Combination;
+	float Attack;
+	float Defense;
+	float Variance;
+};
+
+FDifficultyDetermination GetDifficultyDetermination()
+{
+	FDifficultyDetermination DifficultyDetermination;
+	int32 Index = 0;
+	TArray<ATowers*> Towers;
+	StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), Towers);
+	for (ATowers *Tmp : Towers)
+	{
+		if (Tmp->IsActive)
+		{
+			Index++;
+		}
+	}
+}
+
 void ATowersDefenceGameState::SpawnMonstersRule(float DeltaSeconds)
 {
 	if (!GetGameData().bCurrentLevelMissionSuccess)
@@ -358,7 +392,9 @@ void ATowersDefenceGameState::SpawnMonstersRule(float DeltaSeconds)
 				if (GetGameData().IsAllowSpawnMosnter())
 				{
 					GetGameData().ResetSpawnMosnterTime();
-					if (ARuleOfTheCharacter* MyMonster = SpawnMonster(0, 1, FVector::ZeroVector, FRotator::ZeroRotator))
+					int32 MonsterLevel = 1;
+
+					if (ARuleOfTheCharacter* MyMonster = SpawnMonster(0, MonsterLevel, FVector::ZeroVector, FRotator::ZeroRotator))
 					{
 						TArray<ASpawnPoint *> MosnterSpawnPoints;
 						for (ASpawnPoint* TargetPoint : StoneDefenceUtils::GetAllActor<ASpawnPoint>(GetWorld()))
@@ -370,6 +406,7 @@ void ATowersDefenceGameState::SpawnMonstersRule(float DeltaSeconds)
 						}
 						ASpawnPoint *TargetPoint = MosnterSpawnPoints[FMath::RandRange(0, MosnterSpawnPoints.Num() - 1)];
 						MyMonster->SetActorLocationAndRotation(TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
+						GetGameData().StageDecision();
 					}
 				}
 			}
