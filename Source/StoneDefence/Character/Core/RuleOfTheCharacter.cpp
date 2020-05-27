@@ -20,7 +20,9 @@
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
-	:bAttack(false)
+	: DelayDeath(10.f)
+	, bAttack(false)
+
 {
 	GUID = FGuid::NewGuid();
 	//SD_print_r(Error, "The xxxxxxxxcurrent [%i] is invalid", *GUID.ToString());
@@ -110,8 +112,15 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 	GetCharacterData().Health -= DamageValue;
 	if (!IsActive())
 	{
+
+		//½±ÉÍ»úÖÆ
+		if (GetGameState()->GetPlayerData().bTeam != IsTeam())
+		{
+			GetGameState()->GetPlayerData().GameGold += GetCharacterData().Glod;
+		}
+
 		GetCharacterData().Health = 0.0f;
-		SetLifeSpan(3.f);
+		SetLifeSpan(10.f);
 
 		Widget->SetVisibility(false);
 
@@ -120,7 +129,7 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 		{
 			if (CauserCharacter->IsActive())
 			{
-				if (CauserCharacter->GetCharacterData().UpdateLevel(GetCharacterData().AddEmpiricalValue))
+				if (CauserCharacter->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue))
 				{
 
 				}
@@ -137,7 +146,7 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 				{
 					if (InEnemy->IsActive())
 					{
-						if (InEnemy->GetCharacterData().UpdateLevel(GetCharacterData().AddEmpiricalValue) * 0.3)
+						if (InEnemy->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue) * 0.3)
 						{
 
 						}

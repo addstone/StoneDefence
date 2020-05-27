@@ -52,34 +52,39 @@ void FCharacterData::UpdateHealth()
 	Health = MaxHealth;
 }
 
-bool FCharacterData::UpdateLevel(float InExp)
+bool FCharacterData::UpdateEP(float InExp)
 {
 	EmpircalValue += InExp;
 	if (EmpircalValue >= MaxEmpircalValue)
 	{
 		EmpircalValue -= MaxEmpircalValue;
 
-		//被动技能加成
-		float Coefficient = .1f;
-
-		Lv += 1;
-		Glod += (Lv - 1)*AddGlod * Coefficient;
-		MaxHealth += (Lv - 1)*AddHealth * Coefficient;
-		PhysicalAttack += (Lv - 1)*AddPhysicalAttack * Coefficient;
-		AttackSpeed += (Lv - 1)*AddAttackSpeed * Coefficient;
-		Armor += (Lv - 1)*AddArmor * Coefficient;
-		MaxEmpircalValue += (Lv - 1)*AddEmpiricalValue * Coefficient;
-		RestoreHealth += (RestoreHealth * Lv) / 100;
-
-
-		AddPassiveSkillHealth += ((Lv - 1)*AddPassiveSkillHealth)* (Coefficient - 0.09f);
-		AddPassiveSkillPhyscialAttack += (Lv - 1)*AddPassiveSkillPhyscialAttack *(Coefficient - 0.09f);
-		AddPassiveSkillAttackSpeed += (Lv - 1)*AddPassiveSkillAttackSpeed *(Coefficient - 0.09f);
-		AddPassiveSkillArmor = +(Lv - 1)*AddPassiveSkillArmor * (Coefficient - 0.09f);
-
-		Health = MaxHealth;
+		UpdateLevel();
 
 		return true;
 	}
 	return false;
+}
+
+void FCharacterData::UpdateLevel()
+{
+	//被动技能加成
+	float Coefficient = .1f;
+
+	Lv += 1;
+	Glod += (Lv - 1)*AddGlod * Coefficient;
+	MaxHealth += (Lv - 1)*AddHealth * Coefficient;
+	PhysicalAttack += (Lv - 1)*AddPhysicalAttack * Coefficient;
+	AttackSpeed += (Lv - 1)*AddAttackSpeed * Coefficient;
+	Armor += (Lv - 1)*AddArmor * Coefficient;
+	MaxEmpircalValue += (Lv - 1)*AddEmpiricalValue * Coefficient;
+	RestoreHealth += (RestoreHealth * Lv) / 100;
+
+
+	AddPassiveSkillHealth += ((Lv - 1)*AddPassiveSkillHealth)* (Coefficient - 0.09f);
+	AddPassiveSkillPhyscialAttack += (Lv - 1)*AddPassiveSkillPhyscialAttack *(Coefficient - 0.09f);
+	AddPassiveSkillAttackSpeed += (Lv - 1)*AddPassiveSkillAttackSpeed *(Coefficient - 0.09f);
+	AddPassiveSkillArmor = +(Lv - 1)*AddPassiveSkillArmor * (Coefficient - 0.09f);
+
+	Health = MaxHealth;
 }

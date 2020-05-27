@@ -42,6 +42,15 @@ void ATowersDefenceGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	GetPlayerData().GameGoldTime += DeltaSeconds;
+
+	if (GetPlayerData().IsAllowIncrease())
+	{
+		GetPlayerData().GameGoldTime = 0;
+		GetPlayerData().GameGold++;
+	}
+
+
 	if (GetGameData().GameCount <= 0.f)
 	{
 		GetGameData().bGameOver = true;
@@ -160,6 +169,16 @@ ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
 					//RuleOfTheCharacter->GetUniqueID();
 					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
 					CharacterData->UpdateHealth();
+					
+
+					if (CharacterLevel > 1)
+					{
+						for (int32 i = 0; i < CharacterLevel; i++)
+						{
+							CharacterData->UpdateLevel();
+						}
+					}
+
 					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
 					InCharacter = RuleOfTheCharacter;
 				}

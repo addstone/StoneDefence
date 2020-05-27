@@ -43,6 +43,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 		TSubclassOf<class ADrawText> DrawTextClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = Death)
+		float DelayDeath;
+
 public:
 	// Sets default values for this character's properties
 	ARuleOfTheCharacter();

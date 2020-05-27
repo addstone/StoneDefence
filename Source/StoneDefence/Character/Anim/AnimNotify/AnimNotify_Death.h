@@ -9,9 +9,14 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(const, hidecategories = Object, collapsecategories, meta = (DisplayName = "Death"))
 class STONEDEFENCE_API UAnimNotify_Death : public UAnimNotify
 {
 	GENERATED_BODY()
 	
+public:
+	UAnimNotify_Death();
+
+protected:
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

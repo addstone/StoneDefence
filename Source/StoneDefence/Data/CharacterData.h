@@ -160,5 +160,7 @@ public:
 
 	void UpdateHealth();
 
-	bool UpdateLevel(float InExp);
+	bool UpdateEP(float InExp);
+
+	void UpdateLevel();
 };
