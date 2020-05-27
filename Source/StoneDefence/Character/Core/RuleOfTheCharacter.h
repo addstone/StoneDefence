@@ -95,5 +95,8 @@ public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Attrubute")
 		bool IsActive() { return !IsDeath(); }
 
-	
+#if WITH_EDITOR
+private:
+	FCharacterData NULLData;
+#endif
 };

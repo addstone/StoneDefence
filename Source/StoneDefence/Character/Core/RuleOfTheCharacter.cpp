@@ -188,7 +188,15 @@ bool ARuleOfTheCharacter::IsTeam()
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 {
+#if WITH_EDITOR
+	if (GetGameState())
+	{
+		return GetGameState()->GetCharacterData(GUID);
+	}
+	return NULLData;
+#else
 	return GetGameState()->GetCharacterData(GUID);
+#endif
 }
 
 UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 MeshID)
