@@ -188,11 +188,7 @@ bool ARuleOfTheCharacter::IsTeam()
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 {
-	if (GetGameState())
-	{
-		return GetGameState()->GetCharacterData(GUID);
-	}
-	return CharacterDataNULL;
+	return GetGameState()->GetCharacterData(GUID);
 }
 
 UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 MeshID)

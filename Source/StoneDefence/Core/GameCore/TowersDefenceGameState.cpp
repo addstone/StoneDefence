@@ -22,8 +22,7 @@
 #pragma optimize("",off) 
 #endif
 
-FCharacterData CharacterDataNULL;
-FBuildingTower BuildingTowerNULL;
+
 
 void ATowersDefenceGameState::BeginPlay()
 {
@@ -366,6 +365,16 @@ FPlayerData & ATowersDefenceGameState::GetPlayerData()
 FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
 {
 	return GetSaveData()->GamerDatas;
+}
+
+FCharacterData & ATowersDefenceGameState::GetCharacterDataNULL()
+{
+	return CharacterDataNULL;
+}
+
+FBuildingTower & ATowersDefenceGameState::GetBuildingDataNULL()
+{
+	return BuildingTowerNULL;
 }
 
 UGameSaveData * ATowersDefenceGameState::GetSaveData()

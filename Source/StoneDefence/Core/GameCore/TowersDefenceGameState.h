@@ -11,8 +11,8 @@
 
 
 
-extern FCharacterData CharacterDataNULL;
-extern FBuildingTower BuildingTowerNULL;
+//extern FCharacterData CharacterDataNULL;
+//extern FBuildingTower BuildingTowerNULL;
 class ARuleOfTheCharacter;
 class AMonsters;
 class ATowers;
@@ -76,6 +76,9 @@ public:
 
 	FPlayerData &GetPlayerData();
 	FGameInstanceDatas &GetGameData();
+
+	FCharacterData &GetCharacterDataNULL();
+	FBuildingTower &GetBuildingDataNULL();
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();
@@ -92,4 +95,7 @@ private:
 	TArray<const FCharacterData*> CacheTowerDatas;
 
 	TArray<const FCharacterData*> CacheMonsterDatas;
+
+	FCharacterData CharacterDataNULL;
+	FBuildingTower BuildingTowerNULL;
 };
