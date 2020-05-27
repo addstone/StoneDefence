@@ -21,12 +21,14 @@ EBTNodeResult::Type UBTTaskAttackTarget::ExecuteTask(UBehaviorTreeComponent& Own
 				{
 					if (ARuleOfTheCharacter* TargetTower = Cast<ARuleOfTheCharacter>(MyBlackBoard->GetValueAsObject(Blackboard_Actor.SelectedKeyName)))
 					{
+						MyPawn->AttackBegin();
 						MyPawn->bAttack = true;
 						MyAIConroller->AttackTarget(TargetTower);
 						return EBTNodeResult::Succeeded;
 					}
 					else
 					{
+						MyPawn->AttackEnd();
 						MyPawn->bAttack = false;
 						return EBTNodeResult::Succeeded;
 					}

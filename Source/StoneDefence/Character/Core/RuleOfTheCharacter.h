@@ -83,6 +83,12 @@ public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")
 		UStaticMesh *GetDollMesh(FTransform &Transform, int32 MeshID);
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void AttackBegin();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void AttackEnd();
+
 public:
 	FORCEINLINE ATowersDefencePlayerController* GetGameController() { return GetWorld() ? GetWorld()->GetFirstPlayerController<ATowersDefencePlayerController>() : nullptr; }
 	FORCEINLINE ATowersDefenceGameState* GetGameState() { return GetWorld() ? GetWorld()->GetGameState<ATowersDefenceGameState>() : nullptr; }
