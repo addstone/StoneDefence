@@ -20,7 +20,9 @@
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
-	:bAttack(false)
+	: DelayDeath(10.f)
+	, bAttack(false)
+
 {
 	GUID = FGuid::NewGuid();
 	//SD_print_r(Error, "The xxxxxxxxcurrent [%i] is invalid", *GUID.ToString());
@@ -56,7 +58,7 @@ void ARuleOfTheCharacter::BeginPlay()
 		SpawnDefaultController();
 	}
 
-	UpdateUI();
+
 }
 
 void ARuleOfTheCharacter::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
@@ -68,17 +70,17 @@ void ARuleOfTheCharacter::UpdateUI()
 {
 	if (Widget)
 	{
-		//if (const FCharacterData *InCharacterData = GetCharacterData())
+		//if (const FCharacterData &InCharacterData = GetCharacterData())
 		//{
-		//	if (InCharacterData->IsValid())
-		//	{
+			if (GetCharacterData().IsValid())
+			{
 				if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
 				{
 					HealthUI->SetTitle(GetCharacterData().Name.ToString());
 					HealthUI->SetHealth(GetHealth() / GetMaxHealth());
 				}
 			}
-	//	}
+		}
 	//}
 }
 
@@ -86,30 +88,80 @@ void ARuleOfTheCharacter::UpdateUI()
 void ARuleOfTheCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UpdateUI();
 }
 
 float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	auto DrawGameText = [&](ARuleOfTheCharacter* InOwner, const TCHAR* InText, float InDamageValue, FLinearColor InColor)
+	{
+		if (DrawTextClass)
+		{
+			if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, InOwner->GetActorLocation(), FRotator::ZeroRotator))
+			{
+				FString DamageText = FString::Printf(InText, InDamageValue);
+				MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().MaxHealth);
+			}
+		}
+	};
+
 	float DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
 
 	GetCharacterData().Health -= DamageValue;
 	if (!IsActive())
 	{
-		GetCharacterData().Health = 0.0f;
-	}
-
-	UpdateUI();
-
-	if (DrawTextClass)
-	{
-		if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, GetActorLocation(), FRotator::ZeroRotator))
+		CharacterDeath();
+		//奖赏机制
+		if (GetGameState()->GetPlayerData().bTeam != IsTeam())
 		{
-			FString DamageText = FString::Printf(TEXT("-%0.f"), DamageValue);
-			MyValueText->SetTextBlock(DamageText, FLinearColor::Red, DamageValue / GetCharacterData().MaxHealth);
+			GetGameState()->GetPlayerData().GameGold += GetCharacterData().Glod;
 		}
+
+		GetCharacterData().Health = 0.0f;
+		SetLifeSpan(10.f);
+
+		Widget->SetVisibility(false);
+
+		//谁杀死我 谁就得到我提供的最多经验
+		if (ARuleOfTheCharacter *CauserCharacter = Cast<ARuleOfTheCharacter>(DamageCauser))
+		{
+			if (CauserCharacter->IsActive())
+			{
+				if (CauserCharacter->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue))
+				{
+
+				}
+
+				DrawGameText(CauserCharacter, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue, FLinearColor::Yellow);
+			}
+
+			//寻找范围内最近的敌人 升级
+			TArray<ARuleOfTheCharacter*> EnemyCharacters;
+			StoneDefenceUtils::FindRangeTargetRecently(this, 1000.f, EnemyCharacters);
+			for (ARuleOfTheCharacter* InEnemy : EnemyCharacters)
+			{
+				if (InEnemy != CauserCharacter)
+				{
+					if (InEnemy->IsActive())
+					{
+						if (InEnemy->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue) * 0.3)
+						{
+
+						}
+
+						DrawGameText(InEnemy, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue * 0.3, FLinearColor::Yellow);
+					}
+				}
+			}
+		}
+
+		GetGameState()->RemoveCharacterData(GUID);
 	}
+
+	DrawGameText(this, TEXT("-%0.f"), DamageValue, FLinearColor::Red);
+
 	return DamageValue;
 }
 
@@ -136,11 +188,15 @@ bool ARuleOfTheCharacter::IsTeam()
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()
 {
+#if WITH_EDITOR
 	if (GetGameState())
 	{
 		return GetGameState()->GetCharacterData(GUID);
 	}
-	return CharacterDataNULL;
+	return NULLData;
+#else
+	return GetGameState()->GetCharacterData(GUID);
+#endif
 }
 
 UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 MeshID)

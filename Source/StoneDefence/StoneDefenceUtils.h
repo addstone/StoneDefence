@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
 #include "StoneDefenceType.h"
+#include "EngineUtils.h"
 
 
 class USizeBox;
@@ -21,9 +22,46 @@ class ASceneCapture2D;
 
 namespace StoneDefenceUtils
 {
+	void FindRangeTargetRecently(ARuleOfTheCharacter *InOwner, float Range, TArray<ARuleOfTheCharacter *> &Targets);
 
 	ARuleOfTheCharacter *FindTargetRecently(const TArray<ARuleOfTheCharacter*> &InCharacters,const FVector &Loc);
 	
+	template<class A, class B>
+	void GetAllActor(UWorld *World, TArray<B*> &Array)
+	{
+		for (TActorIterator<A>It(World, A::StaticClass()); It; ++It)
+		{
+			if (B* Tmp = Cast<A>(*It))
+			{
+				Array.Add(Tmp);
+			}
+		}
+	}
+
+	template<class Type>
+	void GetAllActor(UWorld *World, TArray<Type*> &Array)
+	{
+		for (TActorIterator<Type>It(World, Type::StaticClass()); It; ++It)
+		{
+			Array.Add(*It);
+		}
+	}
+
+	//获取比较少的数组
+	template<class Type>
+	TArray<Type*> GetAllActor(UWorld *World)
+	{
+		TArray<Type*> Array;
+		for (TActorIterator<Type>It(World, Type::StaticClass()); It; ++It)
+		{
+			if (Type* A = Cast<Type>(*It))
+			{
+				Array.Add(A);
+			}
+		}
+
+		return Array;
+	}
 }
 
 namespace Expression

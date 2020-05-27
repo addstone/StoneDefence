@@ -32,7 +32,14 @@ public class StoneDefence : ModuleRules
             "Landscape"
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+        if (Target.bBuildEditor == true)
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] {
+                "Persona"
+            });
+        }
+
+        PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

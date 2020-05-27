@@ -9,9 +9,13 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(const, hidecategories = Object, collapsecategories, meta = (DisplayName = "New Tag"))
 class STONEDEFENCE_API UAnimNotify_Tag : public UAnimNotify
 {
 	GENERATED_BODY()
-	
+public:
+	UAnimNotify_Tag();
+
+protected:
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

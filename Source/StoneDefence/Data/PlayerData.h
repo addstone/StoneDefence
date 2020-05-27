@@ -51,8 +51,8 @@ struct FPlayerData
 		FName PlayName;
 
 	//队伍
-	//UPROPERTY(SaveGame)
-	//	TEnumAsByte<ETeam> Team;
+	UPROPERTY(SaveGame)
+		bool bTeam;
 
 	//玩家账户
 	UPROPERTY(SaveGame)
@@ -83,4 +83,6 @@ struct FPlayerData
 	//玩家游戏中数据状态
 	UPROPERTY(SaveGame)
 		TArray<FPlayerSkillData> SkillData;
+
+	bool IsAllowIncrease();
 };

@@ -5,4 +5,4 @@
 #include "CoreMinimal.h"
 
 DECLARE_DELEGATE_RetVal_OneParam(bool, FSimpleTutoriaMulticastDelegate, const FString &);
-static FSimpleTutoriaMulticastDelegate SimpleTutoriaMulticastDelegate;//不加static编译不通过
+FSimpleTutoriaMulticastDelegate SimpleTutoriaMulticastDelegate;//不加static编译不通过

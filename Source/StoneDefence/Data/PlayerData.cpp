@@ -29,6 +29,7 @@ FPlayerData::FPlayerData()
 void FPlayerData::Init()
 {
 	PlayID = INDEX_NONE;
+	bTeam = true;
 	PlayName = NAME_None;
 	GameGold = 0;
 	Diamonds = 0;
@@ -41,4 +42,9 @@ void FPlayerData::Init()
 bool FPlayerData::IsValid()
 {
 	return PlayID != INDEX_NONE;
+}
+
+bool FPlayerData::IsAllowIncrease()
+{
+	return GameGoldTime >= MaxGameGoldTime;
 }

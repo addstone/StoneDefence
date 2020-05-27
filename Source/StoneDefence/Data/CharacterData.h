@@ -154,7 +154,13 @@ public:
 
 
 public:
+	float GetEPPercent() const;
+
 	bool IsValid() const;
 
 	void UpdateHealth();
+
+	bool UpdateEP(float InExp);
+
+	void UpdateLevel();
 };

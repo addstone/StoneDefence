@@ -43,6 +43,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 		TSubclassOf<class ADrawText> DrawTextClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = Death)
+		float DelayDeath;
+
 public:
 	// Sets default values for this character's properties
 	ARuleOfTheCharacter();
@@ -80,6 +83,18 @@ public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")
 		UStaticMesh *GetDollMesh(FTransform &Transform, int32 MeshID);
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void AttackBegin();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void AttackEnd();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void CharacterDeath();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimTag();
+
 public:
 	FORCEINLINE ATowersDefencePlayerController* GetGameController() { return GetWorld() ? GetWorld()->GetFirstPlayerController<ATowersDefencePlayerController>() : nullptr; }
 	FORCEINLINE ATowersDefenceGameState* GetGameState() { return GetWorld() ? GetWorld()->GetGameState<ATowersDefenceGameState>() : nullptr; }
@@ -92,5 +107,8 @@ public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Attrubute")
 		bool IsActive() { return !IsDeath(); }
 
-	
+#if WITH_EDITOR
+private:
+	FCharacterData NULLData;
+#endif
 };
