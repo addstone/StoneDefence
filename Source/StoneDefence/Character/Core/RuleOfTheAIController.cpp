@@ -4,10 +4,10 @@
 #include "RuleOfTheAIController.h"
 #include "RuleOfTheCharacter.h"
 
-//ARuleOfTheCharacter * ARuleOfTheAIController::GetTarget()
-//{
-//	return nullptr;
-//}
+ARuleOfTheCharacter * ARuleOfTheAIController::GetTarget()
+{
+	return Target.Get();
+}
 //
 //void ARuleOfTheAIController::Tick(float DeltaTime)
 //{

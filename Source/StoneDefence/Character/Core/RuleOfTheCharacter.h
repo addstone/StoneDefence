@@ -89,6 +89,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void AttackEnd();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void CharacterDeath();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimTag();
+
 public:
 	FORCEINLINE ATowersDefencePlayerController* GetGameController() { return GetWorld() ? GetWorld()->GetFirstPlayerController<ATowersDefencePlayerController>() : nullptr; }
 	FORCEINLINE ATowersDefenceGameState* GetGameState() { return GetWorld() ? GetWorld()->GetGameState<ATowersDefenceGameState>() : nullptr; }

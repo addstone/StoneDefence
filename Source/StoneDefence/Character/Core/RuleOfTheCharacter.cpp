@@ -112,7 +112,7 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 	GetCharacterData().Health -= DamageValue;
 	if (!IsActive())
 	{
-
+		CharacterDeath();
 		//½±ÉÍ»úÖÆ
 		if (GetGameState()->GetPlayerData().bTeam != IsTeam())
 		{
