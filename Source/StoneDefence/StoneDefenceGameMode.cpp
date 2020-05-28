@@ -192,7 +192,7 @@ void AStoneDefenceGameMode::SpawnMonstersRule(float DeltaSeconds)
 							TArray<ASpawnPoint *> MosnterSpawnPoints;
 							for (ASpawnPoint* TargetPoint : StoneDefenceUtils::GetAllActor<ASpawnPoint>(GetWorld()))
 							{
-								if (MyMonster->IsTeam() == TargetPoint->bTeam)
+								if (MyMonster->GetTeamType() == TargetPoint->Team)
 								{
 									MosnterSpawnPoints.Add(TargetPoint);
 								}
@@ -216,7 +216,7 @@ void AStoneDefenceGameMode::SpawnMainTowersRule()
 {
 	for (ASpawnPoint *TargetPoint : StoneDefenceUtils::GetAllActor<ASpawnPoint>(GetWorld()))
 	{
-		if (TargetPoint->bTeam)
+		if (TargetPoint->Team == ETeam::RED)
 		{
 			SpawnTower(0, 1, TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
 		}

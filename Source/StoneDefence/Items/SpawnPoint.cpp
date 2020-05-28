@@ -2,6 +2,12 @@
 
 
 #include "SpawnPoint.h"
+#include "../StoneDefenceType.h"
+
+ASpawnPoint::ASpawnPoint()
+{
+	Team = ETeam::BLUE;
+}
 
 void ASpawnPoint::BeginPlay()
 {

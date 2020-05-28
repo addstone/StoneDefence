@@ -81,7 +81,7 @@ void StoneDefenceUtils::FindRangeTargetRecently(ARuleOfTheCharacter *InOwner, fl
 		StoneDefenceUtils::GetAllActor(InOwner->GetWorld(), NewTargets);
 		for (ARuleOfTheCharacter * Tmp : NewTargets)
 		{
-			if (InOwner->IsTeam() != Tmp->IsTeam())
+			if (InOwner->GetTeamType() != Tmp->GetTeamType())
 			{
 				if ((InOwner->GetActorLocation() - Tmp->GetActorLocation()).Size() <= Range)
 				{

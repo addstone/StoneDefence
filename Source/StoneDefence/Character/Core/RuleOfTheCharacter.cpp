@@ -25,6 +25,7 @@ ARuleOfTheCharacter::ARuleOfTheCharacter()
 
 {
 	GUID = FGuid::NewGuid();
+	CharacterType = EGameCharacterType::MINI;
 	//SD_print_r(Error, "The xxxxxxxxcurrent [%i] is invalid", *GUID.ToString());
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -114,7 +115,7 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 	{
 		CharacterDeath();
 		//½±ÉÍ»úÖÆ
-		if (GetPlayerState()->GetPlayerData().bTeam != IsTeam())
+		if (GetPlayerState()->GetPlayerData().Team != GetTeamType())
 		{
 			GetPlayerState()->GetPlayerData().GameGold += GetCharacterData().Glod;
 		}
@@ -181,9 +182,9 @@ float ARuleOfTheCharacter::GetMaxHealth()
 	return GetCharacterData().MaxHealth;
 }
 
-bool ARuleOfTheCharacter::IsTeam()
+ETeam ARuleOfTheCharacter::GetTeamType()
 {
-	return false;
+	return ETeam::MAX;
 }
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()
@@ -259,5 +260,5 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 
 EGameCharacterType::Type ARuleOfTheCharacter::GetCharacterType()
 {
-	return EGameCharacterType::Type::MAX;
+	return CharacterType;
 }

@@ -68,6 +68,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ID")
 		FGuid GUID;
 
+	UPROPERTY(EditDefaultsOnly, Category = Type)
+		TEnumAsByte<EGameCharacterType::Type> CharacterType;
+
 protected:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -76,7 +79,7 @@ public:
 	virtual bool IsDeath();
 	virtual float GetHealth();
 	virtual float GetMaxHealth();
-	virtual bool IsTeam();
+	virtual ETeam GetTeamType();
 
 	virtual FCharacterData &GetCharacterData();
 

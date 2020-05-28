@@ -19,14 +19,9 @@ ATowers::ATowers()
 	ParticleMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-EGameCharacterType::Type ATowers::GetCharacterType()
+ETeam ATowers::GetTeamType()
 {
-	return EGameCharacterType::Type::TOWER;
-}
-
-bool ATowers::IsTeam()
-{
-	return true;
+	return ETeam::RED;
 }
 
 float ATowers::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
