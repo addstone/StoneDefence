@@ -117,3 +117,29 @@ Developed with Unreal Engine 4
 |第八节：视频列表|:heavy_check_mark:|
 |第九节：视频UI动画代码编写|:heavy_check_mark:|
 |第十节：视频倍速与视频声音问题|:heavy_check_mark:|
+---
+# 第九章：怪物生成器和角色升级系统
+|||
+| --------   | -----  |
+|第一节：怪物的生成方案|:heavy_check_mark:|
+|第二节：每波怪物生成的抢红包算法|:heavy_check_mark:|
+|第三节：如何设计怪物的出场难度|:heavy_check_mark:|
+|第四节：测试怪物生成器|:heavy_check_mark:|
+|第五节：角色的升级系统开发|:heavy_check_mark:|
+|第六节：升级系统测试|:heavy_check_mark:|
+|第七节：角色死亡方案和金币增益方案|:heavy_check_mark:|
+|第八节：主塔模型导入和修正|:heavy_check_mark:|
+|第九节：主塔特效制作|:heavy_check_mark:|
+|第十节：主塔攻击与攻击材质和特效|:heavy_check_mark:|
+|第十一节：家庭作业第三个塔的检查|:heavy_check_mark:|
+---
+# 第十章：如何重构自己的项目
+|||
+| --------   | -----  |
+|第一节：什么是ECS和MVC架构|:heavy_check_mark:|
+|第二节：调整我们游戏的整体架构|:heavy_check_mark:|
+|第三节：调整游戏数据架构|:heavy_check_mark:|
+|第四节：客户端如何调用服务器对象的生成权限|:heavy_check_mark:|
+|第五节：技能系统设计和战斗系统设计详讲|:heavy_check_mark:|
+|第六节：战斗流程测试场景搭建|:heavy_check_mark:|
+|第七节：战斗流程中塔旋转和阵营类型问题|:heavy_check_mark:|

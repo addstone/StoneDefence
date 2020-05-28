@@ -4,6 +4,9 @@
 #include "TowersDefencePlayerController.h"
 #include "TowerDefenceGameCamera.h"
 #include "../../UI/Core/UI_Data.h"
+#include "../../StoneDefenceGameMode.h"
+#include "TowersDefenceGameState.h"
+#include "TowersDefencePlayerState.h"
 
 ATowersDefencePlayerController::ATowersDefencePlayerController()
 {
@@ -93,4 +96,34 @@ void ATowersDefencePlayerController::MouseMiddleButtonReleased()
 const FHitResult & ATowersDefencePlayerController::GetHitResult()
 {
 	return MouseTaceHit;
+}
+
+AStoneDefenceGameMode * ATowersDefencePlayerController::GetGameMode()
+{
+	return GetWorld()->GetAuthGameMode<AStoneDefenceGameMode>();
+}
+
+ATowersDefenceGameState * ATowersDefencePlayerController::GetGameState()
+{
+	return GetWorld()->GetGameState<ATowersDefenceGameState>();
+}
+
+ATowers * ATowersDefencePlayerController::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)
+{
+	if (GetGameMode())
+	{
+		return GetGameMode()->SpawnTower(CharacterID, CharacterLevel, Loction, Rotator);
+	}
+
+	return nullptr;
+}
+
+AMonsters * ATowersDefencePlayerController::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)
+{
+	if (GetGameMode())
+	{
+		return GetGameMode()->SpawnMonster(CharacterID, CharacterLevel, Loction, Rotator);
+	}
+
+	return nullptr;
 }

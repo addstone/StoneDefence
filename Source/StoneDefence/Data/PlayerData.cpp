@@ -2,6 +2,7 @@
 
 
 #include "PlayerData.h"
+#include "../StoneDefenceType.h"
 
 FPlayerSkillData::FPlayerSkillData()
 {
@@ -29,7 +30,7 @@ FPlayerData::FPlayerData()
 void FPlayerData::Init()
 {
 	PlayID = INDEX_NONE;
-	bTeam = true;
+	Team = ETeam::RED;
 	PlayName = NAME_None;
 	GameGold = 0;
 	Diamonds = 0;

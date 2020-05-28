@@ -7,7 +7,8 @@
 #include "Tool/ScreenMove.h"
 #include "TowersDefencePlayerController.generated.h"
 
-
+class ATowers;
+class AMonsters;
 /**
  * 
  */
@@ -40,6 +41,16 @@ public:
 	void MouseMiddleButtonReleased();
 
 	const FHitResult &GetHitResult();
+
+	class AStoneDefenceGameMode *GetGameMode();
+	class ATowersDefenceGameState *GetGameState();
+
+	UFUNCTION()
+		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
+
+	UFUNCTION()
+		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
+
 
 protected:
 	FScreenMoveUnits ScreenMoveUnits;

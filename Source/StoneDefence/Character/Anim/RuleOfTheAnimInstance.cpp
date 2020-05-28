@@ -21,12 +21,14 @@ void URuleOfTheAnimInstance::NativeInitializeAnimation()
 
 void URuleOfTheAnimInstance::NativeUpdateAnimation(float Deltaseconds)
 {
-
-	if (ARuleOfTheCharacter *RuleOfTheCharacter = Cast<ARuleOfTheCharacter>(TryGetPawnOwner()))
+	if (IsDelayUpdate(Deltaseconds))
 	{
-		bAttack = RuleOfTheCharacter->bAttack;
-		Speed = RuleOfTheCharacter->GetVelocity().Size();
-		bDeath = !RuleOfTheCharacter->IsActive();
+		if (ARuleOfTheCharacter *RuleOfTheCharacter = Cast<ARuleOfTheCharacter>(TryGetPawnOwner()))
+		{
+			bAttack = RuleOfTheCharacter->bAttack;
+			Speed = RuleOfTheCharacter->GetVelocity().Size();
+			bDeath = !RuleOfTheCharacter->IsActive();
+		}
 	}
 }
 

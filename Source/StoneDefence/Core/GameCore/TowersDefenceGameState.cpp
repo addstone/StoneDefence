@@ -23,59 +23,6 @@
 #endif
 
 
-
-void ATowersDefenceGameState::BeginPlay()
-{
-	Super::BeginPlay();
-
-	GetGameData().AssignedMonsterAmount();
-
-	//GetSaveData()->CharacterDatas.Empty();
-	//if (1)
-	//{
-	//	SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
-	//}
-}
-
-void ATowersDefenceGameState::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	GetPlayerData().GameGoldTime += DeltaSeconds;
-
-	if (GetPlayerData().IsAllowIncrease())
-	{
-		GetPlayerData().GameGoldTime = 0;
-		GetPlayerData().GameGold++;
-	}
-
-
-	if (GetGameData().GameCount <= 0.f)
-	{
-		GetGameData().bGameOver = true;
-	}
-	else
-	{
-		GetGameData().GameCount -= DeltaSeconds;
-	}
-	int32 TowersNum = 0;
-	TArray<ARuleOfTheCharacter*> InTowers;
-	StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), InTowers);
-	for (ARuleOfTheCharacter* Tower : InTowers)
-	{
-		if (Tower->IsActive())
-		{
-			TowersNum++;
-		}
-	}
-	if (TowersNum == 0)
-	{
-		GetGameData().bGameOver = true;
-	}
-	//生成怪物
-	SpawnMonstersRule(DeltaSeconds);
-}
-
 ATowersDefenceGameState::ATowersDefenceGameState()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -84,20 +31,7 @@ ATowersDefenceGameState::ATowersDefenceGameState()
 	AITowerCharacterData = MyTable_Towers.Object;
 	AIMonsterCharacterData = MyTable_Monsters.Object;
 
-	for (int32 i = 0; i < 21; i++)
-	{
-		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
-	}
-}
 
-AMonsters * ATowersDefenceGameState::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
-{
-	return SpawnCharacter<AMonsters>(CharacterID, CharacterLevel, AIMonsterCharacterData, Location, Rotator);
-}
-
-ATowers * ATowersDefenceGameState::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
-{
-	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, AITowerCharacterData, Location, Rotator);
 }
 
 bool ATowersDefenceGameState::SaveGameData(int32 SaveNumber)
@@ -119,129 +53,9 @@ bool ATowersDefenceGameState::ReadGameData(int32 SaveNumber)
 	return SaveData != NULL;
 }
 
-ARuleOfTheCharacter *ATowersDefenceGameState::SpawnCharacter(
-	int32 CharacterID, 
-	int32 CharacterLevel,
-	UDataTable *InCharacterData, 
-	const FVector &Location, 
-	const FRotator &Rotator)
-{
-	ARuleOfTheCharacter * InCharacter = nullptr;
-
-	if (InCharacterData)
-	{
-		TArray<FCharacterData*> Datas;
-		InCharacterData->GetAllRows(TEXT("CharacterData"), Datas);
-		auto GetCharacterData = [&](int32 ID) ->FCharacterData*
-		{
-			for (auto &Tmp : Datas)
-			{
-				if (Tmp->ID == ID)
-				{
-					return Tmp;
-				}
-			}
-			return nullptr;
-		};
-
-		//auto GetCharacterData = [&](int32 ID) ->const FCharacterData*
-		//{
-		//	for (auto &Tmp : Datas)
-		//	{
-		//		if (Tmp->ID == ID)
-		//		{
-		//			return Tmp;
-		//		}
-		//	}
-
-		//	return nullptr;
-		//};
-
-		if (FCharacterData *CharacterData = GetCharacterData(CharacterID))
-		{	
-			//https://blog.csdn.net/qq_29523119/article/details/84455486
-			UClass *NewClass = CharacterData->CharacterBlueprintKey.LoadSynchronous();
-			if (GetWorld() && NewClass)
-			{
-				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, Location, Rotator))
-				{
-					//RuleOfTheCharacter->GetUniqueID();
-					//RuleOfTheCharacter->GUID = FGuid::NewGuid();
-					CharacterData->UpdateHealth();
-					
-
-					if (CharacterLevel > 1)
-					{
-						for (int32 i = 0; i < CharacterLevel; i++)
-						{
-							CharacterData->UpdateLevel();
-						}
-					}
-
-					AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
-					InCharacter = RuleOfTheCharacter;
-				}
-			}
-		}
-	}
-
-	return InCharacter;
-}
-
-AStaticMeshActor* ATowersDefenceGameState::SpawnTowersDoll(int32 ID)
-{
-	AStaticMeshActor *OutActor = nullptr;
-	TArray<const FCharacterData*> InDatas;
-	GetTowerDataFromTable(InDatas);
-	for (const auto &Tmp : InDatas)
-	{
-		if (Tmp->ID == ID)
-		{
-			UClass *NewClass = Tmp->CharacterBlueprintKey.LoadSynchronous();
-			if (NewClass)
-			{
-				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, FVector::ZeroVector, FRotator::ZeroRotator))
-				{
-					//AStaticMeshActor
-					if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
-					{
-						FTransform Transform;
-						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
-						{
-							MeshActor->SetMobility(EComponentMobility::Movable);
-							MeshActor->GetStaticMeshComponent()->SetRelativeTransform(Transform);
-							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
-							MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
-							OutActor = MeshActor;
-							RuleOfTheCharacter->Destroy();
-						}
-						else
-						{
-							MeshActor->Destroy();
-							RuleOfTheCharacter->Destroy();
-						}
-					}
-					else
-					{
-						RuleOfTheCharacter->Destroy();
-					}
-				}
-			}
-			break;
-		}
-	}
-
-	return OutActor;
-}
-
-const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
+FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
 {
 	return GetSaveData()->CharacterDatas.Add(ID, Data);
-}
-
-const FBuildingTower & ATowersDefenceGameState::AddBuildingTower(const FGuid &ID, const FBuildingTower &Data)
-{
-	return GetSaveData()->BuildingTowers.Add(ID, Data);
 }
 
 bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &ID)
@@ -288,27 +102,6 @@ const FCharacterData & ATowersDefenceGameState::GetCharacterDataByID(int32 ID, E
 	return CharacterDataNULL;
 }
 
-FBuildingTower & ATowersDefenceGameState::GetBuildingTower(const FGuid &ID)
-{
-	if (GetSaveData()->BuildingTowers.Contains(ID))
-	{
-		return GetSaveData()->BuildingTowers[ID];
-	}
-
-	SD_print(Error, "The current [%i] is invalid", *ID.ToString());
-	return BuildingTowerNULL;
-}
-
-const TArray<const FGuid*> ATowersDefenceGameState::GetBuildingTowersID()
-{
-	TArray<const FGuid*> TowersID;
-	for (const auto &Tmp: GetSaveData()->BuildingTowers)
-	{
-		TowersID.Add(&Tmp.Key);
-	}
-	return TowersID;
-}
-
 bool ATowersDefenceGameState::GetTowerDataFromTable(TArray<const FCharacterData*> &Datas)
 {
 	if (!CacheTowerDatas.Num())
@@ -339,29 +132,6 @@ bool ATowersDefenceGameState::GetMonsterDataFromTable(TArray<const FCharacterDat
 	return Datas.Num() > 0;
 }
 
-void ATowersDefenceGameState::RequestInventorySlotSwap(const FGuid &A, const FGuid &B)
-{
-	FBuildingTower &ASlot = GetBuildingTower(A);
-	FBuildingTower &BSlot = GetBuildingTower(B);
-
-	if (ASlot.IsValid()) //交换
-	{
-		FBuildingTower TmpSlot = ASlot;
-		ASlot = BSlot;
-		BSlot = TmpSlot;
-	}
-	else //移动
-	{
-		ASlot = BSlot;
-		BSlot.Init();
-	}
-}
-
-FPlayerData & ATowersDefenceGameState::GetPlayerData()
-{
-	return GetSaveData()->PlayerData;
-}
-
 FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
 {
 	return GetSaveData()->GamerDatas;
@@ -370,11 +140,6 @@ FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
 FCharacterData & ATowersDefenceGameState::GetCharacterDataNULL()
 {
 	return CharacterDataNULL;
-}
-
-FBuildingTower & ATowersDefenceGameState::GetBuildingDataNULL()
-{
-	return BuildingTowerNULL;
 }
 
 UGameSaveData * ATowersDefenceGameState::GetSaveData()
@@ -399,119 +164,9 @@ UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
 	return SlotList;
 }
 
-int32 GetMonsterLevel(UWorld *InWorld)
-{
-	struct FDifficultyDetermination
-	{
-		FDifficultyDetermination()
-			:Level(0)
-			, Combination(0.f)
-			, Attack(0.f)
-			, Defense(0.f)
-			, Variance(0.f)
-		{
 
-		}
-		float Level;
-		float Combination;
-		float Attack;
-		float Defense;
-		float Variance;
-	};
 
-	auto GetDifficultyDetermination = [](TArray<ARuleOfTheCharacter*> &RuleOfTheCharacter)->FDifficultyDetermination
-	{
-		int32 Index = 0;
-		FDifficultyDetermination DifficultyDetermination;
-		for (ARuleOfTheCharacter *Tmp : RuleOfTheCharacter)
-		{
-			if (Tmp->IsActive())
-			{
-				//拿到等级
-				DifficultyDetermination.Level += (float)Tmp->GetCharacterData().Lv;
-				DifficultyDetermination.Attack += Tmp->GetCharacterData().PhysicalAttack;
-				DifficultyDetermination.Defense += Tmp->GetCharacterData().Armor;
-				Index++;
-			}
-		}
 
-		DifficultyDetermination.Level /= Index; //平均值代表着 怪物的起始等级
-		DifficultyDetermination.Attack /= Index; //攻击力平均值
-		DifficultyDetermination.Defense /= Index; //防御力平均值
-
-		for (ARuleOfTheCharacter *Tmp : RuleOfTheCharacter)
-		{
-			if (Tmp->IsActive())
-			{
-				float InValue = (float)Tmp->GetCharacterData().Lv - DifficultyDetermination.Level;
-				DifficultyDetermination.Variance += InValue * InValue;
-			}
-		}
-
-		DifficultyDetermination.Variance /= Index;
-
-		return DifficultyDetermination;
-	};
-
-	TArray<ARuleOfTheCharacter*> Towers;
-	TArray<ARuleOfTheCharacter*> Monsters;
-	StoneDefenceUtils::GetAllActor<ATowers>(InWorld, Towers);
-	StoneDefenceUtils::GetAllActor<AMonsters>(InWorld, Monsters);
-
-	FDifficultyDetermination TowersDD = GetDifficultyDetermination(Towers);
-	FDifficultyDetermination MonsterDD = GetDifficultyDetermination(Monsters);
-
-	int32 ReturnLevel = TowersDD.Level;
-	if (TowersDD.Attack > MonsterDD.Attack)
-	{
-		ReturnLevel++;
-	}
-	if (TowersDD.Defense > MonsterDD.Defense)
-	{
-		ReturnLevel++;
-	}
-	ReturnLevel += FMath::Abs(2 - FMath::Sqrt(TowersDD.Variance / 10.f));
-
-	return ReturnLevel;
-}
-
-void ATowersDefenceGameState::SpawnMonstersRule(float DeltaSeconds)
-{
-	if (!GetGameData().bCurrentLevelMissionSuccess)
-	{
-		if (!GetGameData().bGameOver)
-		{
-			if (GetGameData().PerNumberOfMonsters.Num())
-			{
-				GetGameData().CurrentSpawnMosnterTime += DeltaSeconds;
-				if (GetGameData().IsAllowSpawnMosnter())
-				{
-					GetGameData().ResetSpawnMosnterTime();
-					int32 MonsterLevel = GetMonsterLevel(GetWorld());
-
-					if (ARuleOfTheCharacter* MyMonster = SpawnMonster(0, MonsterLevel, FVector::ZeroVector, FRotator::ZeroRotator))
-					{
-						TArray<ASpawnPoint *> MosnterSpawnPoints;
-						for (ASpawnPoint* TargetPoint : StoneDefenceUtils::GetAllActor<ASpawnPoint>(GetWorld()))
-						{
-							if (MyMonster->IsTeam() == TargetPoint->bTeam)
-							{
-								MosnterSpawnPoints.Add(TargetPoint);
-							}
-						}
-						ASpawnPoint *TargetPoint = MosnterSpawnPoints[FMath::RandRange(0, MosnterSpawnPoints.Num() - 1)];
-						MyMonster->SetActorLocationAndRotation(TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
-						GetGameData().StageDecision();
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-
-	}
-}
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",on) 

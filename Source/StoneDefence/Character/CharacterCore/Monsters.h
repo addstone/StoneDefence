@@ -24,9 +24,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual bool IsTeam();
+	virtual ETeam GetTeamType();
 
-	virtual EGameCharacterType::Type GetCharacterType();
 
 protected:
 	virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);

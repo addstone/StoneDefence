@@ -26,8 +26,7 @@ FCharacterData::FCharacterData()
 	AddContinueHealth(0.f),
 	AddPassiveSkillPhyscialAttack(0.f),
 	AddPassiveSkillArmor(0),
-	ReducePassiveSkillCDTime(0.45f),
-	ConstructionTime(5)
+	ReducePassiveSkillCDTime(0.45f)
 {
 
 }

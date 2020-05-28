@@ -25,6 +25,7 @@ ARuleOfTheCharacter::ARuleOfTheCharacter()
 
 {
 	GUID = FGuid::NewGuid();
+	CharacterType = EGameCharacterType::MINI;
 	//SD_print_r(Error, "The xxxxxxxxcurrent [%i] is invalid", *GUID.ToString());
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -114,9 +115,9 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 	{
 		CharacterDeath();
 		//½±ÉÍ»úÖÆ
-		if (GetGameState()->GetPlayerData().bTeam != IsTeam())
+		if (GetPlayerState()->GetPlayerData().Team != GetTeamType())
 		{
-			GetGameState()->GetPlayerData().GameGold += GetCharacterData().Glod;
+			GetPlayerState()->GetPlayerData().GameGold += GetCharacterData().Glod;
 		}
 
 		GetCharacterData().Health = 0.0f;
@@ -181,9 +182,9 @@ float ARuleOfTheCharacter::GetMaxHealth()
 	return GetCharacterData().MaxHealth;
 }
 
-bool ARuleOfTheCharacter::IsTeam()
+ETeam ARuleOfTheCharacter::GetTeamType()
 {
-	return false;
+	return ETeam::MAX;
 }
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()
@@ -215,22 +216,27 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (UParticleSystemComponent *NewParticleSystemComponent = Cast<UParticleSystemComponent>(Tmp))
 		{
-			if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+			//if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+			//{
+			//	for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
+			//	{
+			//		if (Tmp_->LODLevels[0]->bEnabled)
+			//		{
+			//			if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
+			//			{
+			//				if (MyParticleDataMesh->Mesh)
+			//				{
+			//					Transform = NewParticleSystemComponent->GetComponentTransform();
+			//					return MyParticleDataMesh->Mesh;
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+			if (UStaticMesh *NewMesh = MeshUtils::ParticleSystemCompnentToStaticMesh(NewParticleSystemComponent))
 			{
-				for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
-				{
-					if (Tmp_->LODLevels[0]->bEnabled)
-					{
-						if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
-						{
-							if (MyParticleDataMesh->Mesh)
-							{
-								Transform = NewParticleSystemComponent->GetComponentTransform();
-								return MyParticleDataMesh->Mesh;
-							}
-						}
-					}
-				}
+				Transform = NewParticleSystemComponent->GetComponentTransform();
+				return NewMesh;
 			}
 		}
 		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))
@@ -254,5 +260,5 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 
 EGameCharacterType::Type ARuleOfTheCharacter::GetCharacterType()
 {
-	return EGameCharacterType::Type::MAX;
+	return CharacterType;
 }
