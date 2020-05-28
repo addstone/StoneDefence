@@ -9,6 +9,7 @@
 #include "UI_InventorySlot.h"
 #include "../../../Core/UI_RuleOfTheWidget.h"
 #include "../../../Core/UI_Data.h"
+#include "../../../../StoneDefenceUtils.h"
 
 void UUI_Inventory::NativeConstruct()
 {
@@ -22,7 +23,7 @@ void UUI_Inventory::NativeConstruct()
 
 FBuildingTower &UUI_Inventory::GetBuildingTower()
 {
-	return GetGameState()->GetBuildingTower(TowerICOGUID);
+	return GetPlayerState()->GetBuildingTower(TowerICOGUID);
 }
 void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 {
@@ -47,7 +48,7 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 			}
 		}
 
-		const TArray<const FGuid*> ID = GetGameState()->GetBuildingTowersID();
+		const TArray<const FGuid*> ID = GetPlayerState()->GetBuildingTowersID();
 		for (int32 i = 0; i < ColumNumber * RowNumber; i++)
 		{
 			InventorySlotArray[i]->GUID = *ID[i];
@@ -77,7 +78,7 @@ void UUI_Inventory::SpawnTowersDollPressed()
 		if (GetBuildingTower().TowersConstructionNumber >= 1)
 		{
 			int32 TowerID = GetBuildingTower().TowerID;
-			if (AStaticMeshActor * MeshActor = GetGameState()->SpawnTowersDoll(TowerID))
+			if (AStaticMeshActor * MeshActor = StoneDefenceUtils::SpawnTowersDoll(GetWorld(), TowerID))
 			{
 				for (int32 i = 0; i < MeshActor->GetStaticMeshComponent()->GetNumMaterials(); i++)
 				{

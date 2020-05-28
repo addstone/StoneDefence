@@ -215,22 +215,27 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (UParticleSystemComponent *NewParticleSystemComponent = Cast<UParticleSystemComponent>(Tmp))
 		{
-			if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+			//if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+			//{
+			//	for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
+			//	{
+			//		if (Tmp_->LODLevels[0]->bEnabled)
+			//		{
+			//			if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
+			//			{
+			//				if (MyParticleDataMesh->Mesh)
+			//				{
+			//					Transform = NewParticleSystemComponent->GetComponentTransform();
+			//					return MyParticleDataMesh->Mesh;
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+			if (UStaticMesh *NewMesh = MeshUtils::ParticleSystemCompnentToStaticMesh(NewParticleSystemComponent))
 			{
-				for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
-				{
-					if (Tmp_->LODLevels[0]->bEnabled)
-					{
-						if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
-						{
-							if (MyParticleDataMesh->Mesh)
-							{
-								Transform = NewParticleSystemComponent->GetComponentTransform();
-								return MyParticleDataMesh->Mesh;
-							}
-						}
-					}
-				}
+				Transform = NewParticleSystemComponent->GetComponentTransform();
+				return NewMesh;
 			}
 		}
 		else if (USkeletalMeshComponent *NewSkeletalMeshComponent = Cast<USkeletalMeshComponent>(Tmp))

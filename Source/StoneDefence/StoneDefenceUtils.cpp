@@ -12,55 +12,63 @@
 #include "Rendering/SkeletalMeshLODRenderData.h"
 #include "Math/UnrealMathSSE.h"
 #include "RawIndexBuffer.h"
+#include "Core/GameCore/TowersDefenceGameState.h"
+#include "Engine/StaticMeshActor.h"
 
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
 #endif
 
-AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(int32 ID)
+AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(UWorld *World, int32 ID)
 {
 	AStaticMeshActor *OutActor = nullptr;
-	TArray<const FCharacterData*> InDatas;
-	GetTowerDataFromTable(InDatas);
-	for (const auto &Tmp : InDatas)
+	if (World)
 	{
-		if (Tmp->ID == ID)
+		if (ATowersDefenceGameState *InGameState = World->GetGameState<ATowersDefenceGameState>())
 		{
-			UClass *NewClass = Tmp->CharacterBlueprintKey.LoadSynchronous();
-			if (NewClass)
+			//const TArray<FCharacterData*> &InDatas = InGameState->GetTowerDataFormTable();
+			TArray<const FCharacterData*> InDatas;
+			InGameState->GetTowerDataFromTable(InDatas);
+			for (const auto &Tmp : InDatas)
 			{
-				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, FVector::ZeroVector, FRotator::ZeroRotator))
+				if (Tmp->ID == ID)
 				{
-					//AStaticMeshActor
-					if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+					UClass *NewClass = Tmp->CharacterBlueprintKey.LoadSynchronous();
+					if (NewClass)
 					{
-						FTransform Transform;
-						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
+						if (ARuleOfTheCharacter *RuleOfTheCharacter = World->SpawnActor<ARuleOfTheCharacter>(NewClass, FVector::ZeroVector, FRotator::ZeroRotator))
 						{
-							MeshActor->SetMobility(EComponentMobility::Movable);
-							MeshActor->GetStaticMeshComponent()->SetRelativeTransform(Transform);
-							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
-							MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
-							OutActor = MeshActor;
-							RuleOfTheCharacter->Destroy();
-						}
-						else
-						{
-							MeshActor->Destroy();
-							RuleOfTheCharacter->Destroy();
+							//AStaticMeshActor
+							if (AStaticMeshActor *MeshActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+							{
+								FTransform Transform;
+								if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
+								{
+									MeshActor->SetMobility(EComponentMobility::Movable);
+									MeshActor->GetStaticMeshComponent()->SetRelativeTransform(Transform);
+									MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
+									MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+									OutActor = MeshActor;
+									RuleOfTheCharacter->Destroy();
+								}
+								else
+								{
+									MeshActor->Destroy();
+									RuleOfTheCharacter->Destroy();
+								}
+							}
+							else
+							{
+								RuleOfTheCharacter->Destroy();
+							}
 						}
 					}
-					else
-					{
-						RuleOfTheCharacter->Destroy();
-					}
+					break;
 				}
 			}
-			break;
 		}
 	}
-
 	return OutActor;
 }
 
@@ -134,23 +142,23 @@ float Expression::GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner)
 UStaticMesh * MeshUtils::ParticleSystemCompnentToStaticMesh(UParticleSystemComponent *NewParticleSystemComponent)
 {
 	UStaticMesh *NewStaticMesh = nullptr;
-	//if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
-	//{
-	//	for (const UParticleEmitter *Tmp : NewParticleSystemComponent->Template->Emitters)
-	//	{
-	//		if (Tmp->LODLevels[0]->bEnabled)
-	//		{
-	//			if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp->LODLevels[0]->TypeDataModule))
-	//			{
-	//				if (MyParticleDataMesh->Mesh)
-	//				{
-	//					NewStaticMesh = MyParticleDataMesh->Mesh;
-	//					break;
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+	if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
+	{
+		for (const UParticleEmitter *Tmp : NewParticleSystemComponent->Template->Emitters)
+		{
+			if (Tmp->LODLevels[0]->bEnabled)
+			{
+				if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp->LODLevels[0]->TypeDataModule))
+				{
+					if (MyParticleDataMesh->Mesh)
+					{
+						NewStaticMesh = MyParticleDataMesh->Mesh;
+						break;
+					}
+				}
+			}
+		}
+	}
 
 	return NewStaticMesh;
 }

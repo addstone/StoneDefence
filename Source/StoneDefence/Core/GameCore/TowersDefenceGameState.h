@@ -52,21 +52,21 @@ protected:
 public:
 
 	const FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
-	const FBuildingTower &AddBuildingTower(const FGuid &ID, const FBuildingTower &Data);
+
 	bool RemoveCharacterData(const FGuid &ID);
 	FCharacterData &GetCharacterData(const FGuid &ID);
-	FBuildingTower &GetBuildingTower(const FGuid &ID);
-	const TArray<const FGuid*> GetBuildingTowersID();
+
+
 	bool GetTowerDataFromTable(TArray<const FCharacterData*> &Datas);
 	bool GetMonsterDataFromTable(TArray<const FCharacterData*> &Datas);
 	const FCharacterData &GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
-	void RequestInventorySlotSwap(const FGuid &A, const FGuid &B);
 
-	FPlayerData &GetPlayerData();
+
+	
 	FGameInstanceDatas &GetGameData();
 
 	FCharacterData &GetCharacterDataNULL();
-	FBuildingTower &GetBuildingDataNULL();
+
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();

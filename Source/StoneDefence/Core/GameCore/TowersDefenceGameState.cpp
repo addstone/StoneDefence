@@ -31,10 +31,7 @@ ATowersDefenceGameState::ATowersDefenceGameState()
 	AITowerCharacterData = MyTable_Towers.Object;
 	AIMonsterCharacterData = MyTable_Monsters.Object;
 
-	for (int32 i = 0; i < 21; i++)
-	{
-		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
-	}
+
 }
 
 bool ATowersDefenceGameState::SaveGameData(int32 SaveNumber)
@@ -59,11 +56,6 @@ bool ATowersDefenceGameState::ReadGameData(int32 SaveNumber)
 const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
 {
 	return GetSaveData()->CharacterDatas.Add(ID, Data);
-}
-
-const FBuildingTower & ATowersDefenceGameState::AddBuildingTower(const FGuid &ID, const FBuildingTower &Data)
-{
-	return GetSaveData()->BuildingTowers.Add(ID, Data);
 }
 
 bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &ID)
@@ -110,27 +102,6 @@ const FCharacterData & ATowersDefenceGameState::GetCharacterDataByID(int32 ID, E
 	return CharacterDataNULL;
 }
 
-FBuildingTower & ATowersDefenceGameState::GetBuildingTower(const FGuid &ID)
-{
-	if (GetSaveData()->BuildingTowers.Contains(ID))
-	{
-		return GetSaveData()->BuildingTowers[ID];
-	}
-
-	SD_print(Error, "The current [%i] is invalid", *ID.ToString());
-	return BuildingTowerNULL;
-}
-
-const TArray<const FGuid*> ATowersDefenceGameState::GetBuildingTowersID()
-{
-	TArray<const FGuid*> TowersID;
-	for (const auto &Tmp: GetSaveData()->BuildingTowers)
-	{
-		TowersID.Add(&Tmp.Key);
-	}
-	return TowersID;
-}
-
 bool ATowersDefenceGameState::GetTowerDataFromTable(TArray<const FCharacterData*> &Datas)
 {
 	if (!CacheTowerDatas.Num())
@@ -161,29 +132,6 @@ bool ATowersDefenceGameState::GetMonsterDataFromTable(TArray<const FCharacterDat
 	return Datas.Num() > 0;
 }
 
-void ATowersDefenceGameState::RequestInventorySlotSwap(const FGuid &A, const FGuid &B)
-{
-	FBuildingTower &ASlot = GetBuildingTower(A);
-	FBuildingTower &BSlot = GetBuildingTower(B);
-
-	if (ASlot.IsValid()) //½»»»
-	{
-		FBuildingTower TmpSlot = ASlot;
-		ASlot = BSlot;
-		BSlot = TmpSlot;
-	}
-	else //ÒÆ¶¯
-	{
-		ASlot = BSlot;
-		BSlot.Init();
-	}
-}
-
-FPlayerData & ATowersDefenceGameState::GetPlayerData()
-{
-	return GetSaveData()->PlayerData;
-}
-
 FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
 {
 	return GetSaveData()->GamerDatas;
@@ -192,11 +140,6 @@ FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
 FCharacterData & ATowersDefenceGameState::GetCharacterDataNULL()
 {
 	return CharacterDataNULL;
-}
-
-FBuildingTower & ATowersDefenceGameState::GetBuildingDataNULL()
-{
-	return BuildingTowerNULL;
 }
 
 UGameSaveData * ATowersDefenceGameState::GetSaveData()
