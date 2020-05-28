@@ -53,7 +53,7 @@ bool ATowersDefenceGameState::ReadGameData(int32 SaveNumber)
 	return SaveData != NULL;
 }
 
-const FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
+FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
 {
 	return GetSaveData()->CharacterDatas.Add(ID, Data);
 }

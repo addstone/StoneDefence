@@ -30,6 +30,8 @@ void AStoneDefenceGameMode::BeginPlay()
 	{
 		InGameState->GetGameData().AssignedMonsterAmount();
 	}
+
+	SpawnMainTowersRule();
 }
 
 
@@ -164,7 +166,7 @@ int32 GetMonsterLevel(UWorld *InWorld)
 	{
 		ReturnLevel++;
 	}
-	ReturnLevel += FMath::Abs(2 - FMath::Sqrt(TowersDD.Variance / 10.f));
+	//ReturnLevel += FMath::Abs(2 - FMath::Sqrt(TowersDD.Variance / 10.f));
 
 	return ReturnLevel;
 }
@@ -210,6 +212,17 @@ void AStoneDefenceGameMode::SpawnMonstersRule(float DeltaSeconds)
 	}
 }
 
+void AStoneDefenceGameMode::SpawnMainTowersRule()
+{
+	for (ASpawnPoint *TargetPoint : StoneDefenceUtils::GetAllActor<ASpawnPoint>(GetWorld()))
+	{
+		if (TargetPoint->bTeam)
+		{
+			SpawnTower(0, 1, TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
+		}
+	}
+}
+
 ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 	int32 CharacterID,
 	int32 CharacterLevel,
@@ -225,7 +238,7 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 		{
 			TArray<FCharacterData*> Datas;
 			InCharacterData->GetAllRows(TEXT("CharacterData"), Datas);
-			auto GetCharacterData = [&](int32 ID) ->FCharacterData*
+			auto GetCharacterData = [&](int32 ID) ->const FCharacterData*
 			{
 				for (auto &Tmp : Datas)
 				{
@@ -237,20 +250,7 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 				return nullptr;
 			};
 
-			//auto GetCharacterData = [&](int32 ID) ->const FCharacterData*
-			//{
-			//	for (auto &Tmp : Datas)
-			//	{
-			//		if (Tmp->ID == ID)
-			//		{
-			//			return Tmp;
-			//		}
-			//	}
-
-			//	return nullptr;
-			//};
-
-			if (FCharacterData *CharacterData = GetCharacterData(CharacterID))
+			if (const FCharacterData *CharacterData = GetCharacterData(CharacterID))
 			{
 				//https://blog.csdn.net/qq_29523119/article/details/84455486
 				UClass *NewClass = CharacterData->CharacterBlueprintKey.LoadSynchronous();
@@ -260,18 +260,17 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 					{
 						//RuleOfTheCharacter->GetUniqueID();
 						//RuleOfTheCharacter->GUID = FGuid::NewGuid();
-						CharacterData->UpdateHealth();
+						FCharacterData &CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
+						CharacterDataInst.UpdateHealth();
 
 
 						if (CharacterLevel > 1)
 						{
 							for (int32 i = 0; i < CharacterLevel; i++)
 							{
-								CharacterData->UpdateLevel();
+								CharacterDataInst.UpdateLevel();
 							}
 						}
-
-						InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
 						InCharacter = RuleOfTheCharacter;
 					}
 				}

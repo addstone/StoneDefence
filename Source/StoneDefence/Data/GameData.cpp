@@ -13,7 +13,7 @@ void FGameInstanceDatas::Init()
 	bGameOver =false;
 	bCurrentLevelMissionSuccess = false;
 	CurrentLevel = INDEX_NONE;
-	TimeInterval = 2.f;
+	TimeInterval = 4.f;
 	CurrentSpawnMosnterTime = 0.f;
 	MaxStagesAreMonsters = 4;
 	GameCount = 6000;

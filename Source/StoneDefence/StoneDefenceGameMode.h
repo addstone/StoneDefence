@@ -35,7 +35,7 @@ public:
 
 protected:
 	void SpawnMonstersRule(float DeltaSeconds);
-
+	void SpawnMainTowersRule();
 	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
 
 	template<class T>

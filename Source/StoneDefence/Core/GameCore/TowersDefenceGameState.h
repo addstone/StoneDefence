@@ -53,7 +53,7 @@ protected:
 
 public:
 
-	const FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
+	FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
 
 	bool RemoveCharacterData(const FGuid &ID);
 	FCharacterData &GetCharacterData(const FGuid &ID);

@@ -5,16 +5,22 @@
 #include "CoreMinimal.h"
 #include "StoneDefenceType.generated.h"
 
+UENUM()
+enum ETeam
+{
+	RED,
+	BLUE,
+	MAX,
+};
+
 UENUM(BlueprintType)
 namespace EGameCharacterType
 {
 	enum Type
 	{
-		TOWER,
-		MAIN_TOWER,
-		MONSTER,
-		BOSS_MONSTER,
-		MAX,
+		MINI,
+		BOSS,
+		MAX
 	};
 }
 

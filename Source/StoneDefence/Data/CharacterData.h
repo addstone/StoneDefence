@@ -143,9 +143,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 		float ReducePassiveSkillCDTime;
 
-	//角色多久建立好
-	UPROPERTY(EditDefaultsOnly, Category = "Build")
-		float ConstructionTime;
 
 	//技能
 	//////////////////////////////////////////////////////////////////////////
