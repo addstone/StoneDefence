@@ -16,4 +16,6 @@ class STONEDEFENCE_API AStoneDefenceGameModeBase : public AGameMode
 	
 public:
 	AStoneDefenceGameModeBase();
+
+	virtual void Tick(float DeltaSeconds);
 };
