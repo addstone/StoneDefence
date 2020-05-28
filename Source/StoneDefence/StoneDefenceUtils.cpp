@@ -18,6 +18,52 @@
 #pragma optimize("",off) 
 #endif
 
+AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(int32 ID)
+{
+	AStaticMeshActor *OutActor = nullptr;
+	TArray<const FCharacterData*> InDatas;
+	GetTowerDataFromTable(InDatas);
+	for (const auto &Tmp : InDatas)
+	{
+		if (Tmp->ID == ID)
+		{
+			UClass *NewClass = Tmp->CharacterBlueprintKey.LoadSynchronous();
+			if (NewClass)
+			{
+				if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, FVector::ZeroVector, FRotator::ZeroRotator))
+				{
+					//AStaticMeshActor
+					if (AStaticMeshActor *MeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator))
+					{
+						FTransform Transform;
+						if (UStaticMesh *InMesh = RuleOfTheCharacter->GetDollMesh(Transform, ID))
+						{
+							MeshActor->SetMobility(EComponentMobility::Movable);
+							MeshActor->GetStaticMeshComponent()->SetRelativeTransform(Transform);
+							MeshActor->GetStaticMeshComponent()->SetStaticMesh(InMesh);
+							MeshActor->GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+							OutActor = MeshActor;
+							RuleOfTheCharacter->Destroy();
+						}
+						else
+						{
+							MeshActor->Destroy();
+							RuleOfTheCharacter->Destroy();
+						}
+					}
+					else
+					{
+						RuleOfTheCharacter->Destroy();
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	return OutActor;
+}
+
 void StoneDefenceUtils::FindRangeTargetRecently(ARuleOfTheCharacter *InOwner, float Range, TArray<ARuleOfTheCharacter *> &Targets)
 {
 	if (InOwner && Range > 0.0f)

@@ -14,4 +14,8 @@ class STONEDEFENCE_API ATowersDefencePlayerState : public ARuleOfThePlayerState
 {
 	GENERATED_BODY()
 	
+
+protected:
+	UPROPERTY()
+		UPlayerSaveData *SaveData;
 };

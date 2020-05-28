@@ -76,14 +76,6 @@ public:
 	UPROPERTY(SaveGame)
 		TMap<FGuid, FCharacterData> CharacterDatas;
 
-	//被曝数据
-	UPROPERTY(SaveGame)
-		TMap <FGuid, FBuildingTower> BuildingTowers;
-
-	//玩家数据
-	UPROPERTY(SaveGame)
-		FPlayerData PlayerData;
-
 	//当前关卡内游戏数据
 	UPROPERTY(SaveGame)
 		FGameInstanceDatas GamerDatas;
