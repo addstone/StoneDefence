@@ -28,8 +28,8 @@ void UUI_ToolBarSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	//当前还有多少怪物
 	GSQProgressBar->SetPercent(GetGameState()->GetGameData().GetPerOfRemMonsters());
 	//当前阶段 04/04
-	GameLevelSurplusQuantity->SetText(FText(
-		FText::FromString(FString::Printf(TEXT("%2d / %2d"), 
+	GameLevelSurplusQuantity->SetText(
+		FText(FText::FromString(FString::Printf(TEXT("%2d / %2d"), 
 			GetGameState()->GetGameData().MaxStagesAreMonsters, 
 			GetGameState()->GetGameData().MaxStagesAreMonsters - GetGameState()->GetGameData().PerNumberOfMonsters.Num()))));
 }
