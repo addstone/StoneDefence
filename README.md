@@ -132,3 +132,14 @@ Developed with Unreal Engine 4
 |第九节：主塔特效制作|:heavy_check_mark:|
 |第十节：主塔攻击与攻击材质和特效|:heavy_check_mark:|
 |第十一节：家庭作业第三个塔的检查|:heavy_check_mark:|
+---
+# 第十章：如何重构自己的项目
+|||
+| --------   | -----  |
+|第一节：什么是ECS和MVC架构|:heavy_check_mark:|
+|第二节：调整我们游戏的整体架构|:heavy_check_mark:|
+|第三节：调整游戏数据架构|:heavy_check_mark:|
+|第四节：客户端如何调用服务器对象的生成权限|:heavy_check_mark:|
+|第五节：技能系统设计和战斗系统设计详讲|:heavy_check_mark:|
+|第六节：战斗流程测试场景搭建|:heavy_check_mark:|
+|第七节：战斗流程中塔旋转和阵营类型问题|:heavy_check_mark:|
