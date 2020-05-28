@@ -4,6 +4,7 @@
 #include "UI_ToolBarSystem.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "../../Core/UI_RuleOfTheWidget.h"
 
 #define LOCTEXT_NAMESPACE "UUI_ToolBarSystem"
 
@@ -19,7 +20,7 @@ void UUI_ToolBarSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	//倒计时
 	GameCount->SetText(FText::FromString(GetCurrentCount(GetGameState()->GetGameData().GameCount)));
 	//玩家金币
-	GameGlob->SetText(FText::Format(LOCTEXT("GameGlob", "Glob: {0}"), GetGameState()->GetPlayerData().GameGold));
+	GameGlob->SetText(FText::Format(LOCTEXT("GameGlob", "Glob: {0}"), GetPlayerState()->GetPlayerData().GameGold));
 	//塔的死亡数
 	TowersDeathNumber->SetText(FText::Format(LOCTEXT("TowersDeathNumber", "TowersDeathNumber : {0}"), GetGameState()->GetGameData().TowersDeathNumber));
 	//杀死敌人数量

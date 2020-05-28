@@ -6,7 +6,9 @@
 #include "../Core/SaveGameCore.h"
 #include "../PlayerData.h"
 #include "GameSaveData.h"
+#include "../BuildingTowerData.h"
 #include "PlayerSaveData.generated.h"
+
 
 
 

@@ -39,13 +39,20 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
-		GetPlayerData().GameGoldTime += DeltaSeconds;
-
-		if (GetPlayerData().IsAllowIncrease())
+		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 		{
-			GetPlayerData().GameGoldTime = 0;
-			GetPlayerData().GameGold++;
+			if (ATowersDefencePlayerState *InPlayerState = It->Get()->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				InPlayerState->GetPlayerData().GameGoldTime += DeltaSeconds;
+
+				if (InPlayerState->GetPlayerData().IsAllowIncrease())
+				{
+					InPlayerState->GetPlayerData().GameGoldTime = 0;
+					InPlayerState->GetPlayerData().GameGold++;
+				}
+			}
 		}
+
 
 
 		if (InGameState->GetGameData().GameCount <= 0.f)
@@ -70,9 +77,8 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 		{
 			InGameState->GetGameData().bGameOver = true;
 		}
-		
-	}
 
+	}
 	//Éú³É¹ÖÎï
 	SpawnMonstersRule(DeltaSeconds);
 }
@@ -165,18 +171,18 @@ int32 GetMonsterLevel(UWorld *InWorld)
 
 void AStoneDefenceGameMode::SpawnMonstersRule(float DeltaSeconds)
 {
-	if (ATowersDefenceGameState *GameState = GetGameState<ATowersDefenceGameState>())
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
-		if (!GameState->GetGameData().bCurrentLevelMissionSuccess)
+		if (!InGameState->GetGameData().bCurrentLevelMissionSuccess)
 		{
-			if (!GameState->GetGameData().bGameOver)
+			if (!InGameState->GetGameData().bGameOver)
 			{
-				if (GameState->GetGameData().PerNumberOfMonsters.Num())
+				if (InGameState->GetGameData().PerNumberOfMonsters.Num())
 				{
-					GameState->GetGameData().CurrentSpawnMosnterTime += DeltaSeconds;
-					if (GameState->GetGameData().IsAllowSpawnMosnter())
+					InGameState->GetGameData().CurrentSpawnMosnterTime += DeltaSeconds;
+					if (InGameState->GetGameData().IsAllowSpawnMosnter())
 					{
-						GameState->GetGameData().ResetSpawnMosnterTime();
+						InGameState->GetGameData().ResetSpawnMosnterTime();
 						int32 MonsterLevel = GetMonsterLevel(GetWorld());
 
 						if (ARuleOfTheCharacter* MyMonster = SpawnMonster(0, MonsterLevel, FVector::ZeroVector, FRotator::ZeroRotator))
@@ -191,7 +197,7 @@ void AStoneDefenceGameMode::SpawnMonstersRule(float DeltaSeconds)
 							}
 							ASpawnPoint *TargetPoint = MosnterSpawnPoints[FMath::RandRange(0, MosnterSpawnPoints.Num() - 1)];
 							MyMonster->SetActorLocationAndRotation(TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
-							GameState->GetGameData().StageDecision();
+							InGameState->GetGameData().StageDecision();
 						}
 					}
 				}
@@ -213,7 +219,7 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 {
 	ARuleOfTheCharacter * InCharacter = nullptr;
 
-	if (ATowersDefenceGameState *GameState = GetGameState<ATowersDefenceGameState>())
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
 		if (InCharacterData)
 		{
@@ -265,7 +271,7 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 							}
 						}
 
-						GameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
+						InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
 						InCharacter = RuleOfTheCharacter;
 					}
 				}

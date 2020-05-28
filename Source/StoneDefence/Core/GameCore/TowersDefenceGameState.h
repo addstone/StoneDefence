@@ -7,7 +7,9 @@
 #include "../../Data/CharacterData.h"
 #include "../../Data/Save/GameSaveData.h"
 #include "../../StoneDefenceType.h"
+#include "../../Data/BuildingTowerData.h"
 #include "TowersDefenceGameState.generated.h"
+
 
 
 

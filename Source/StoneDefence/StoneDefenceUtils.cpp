@@ -14,7 +14,8 @@
 #include "RawIndexBuffer.h"
 #include "Core/GameCore/TowersDefenceGameState.h"
 #include "Engine/StaticMeshActor.h"
-
+#include "Particles/ParticleEmitter.h"
+#include "Particles/ParticleLODLevel.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 

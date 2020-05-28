@@ -98,7 +98,7 @@ void UUI_Inventory::SpawnTowersDollReleased()
 		{
 			if (GetBuildingTower().TowersConstructionNumber >= 1)
 			{
-				if (/*AActor*/ATowers *CharacterActor = GetGameState()->SpawnTower(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
+				if (/*AActor*/ATowers *CharacterActor = GetPlayerController()->SpawnTower(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
 				{
 					GetBuildingTower().TowersConstructionNumber--;
 				}
