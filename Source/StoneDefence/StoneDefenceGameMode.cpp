@@ -125,8 +125,8 @@ int32 GetMonsterLevel(UWorld *InWorld)
 			{
 				//ÄÃµ½µÈ¼¶
 				DifficultyDetermination.Level += (float)Tmp->GetCharacterData().Lv;
-				DifficultyDetermination.Attack += Tmp->GetCharacterData().PhysicalAttack;
-				DifficultyDetermination.Defense += Tmp->GetCharacterData().Armor;
+				DifficultyDetermination.Attack += Tmp->GetCharacterData().GetAttack();
+				DifficultyDetermination.Defense += Tmp->GetCharacterData().GetArmor();
 				Index++;
 			}
 		}

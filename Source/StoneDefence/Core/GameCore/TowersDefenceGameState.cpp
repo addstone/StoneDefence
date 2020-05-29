@@ -142,6 +142,55 @@ FCharacterData & ATowersDefenceGameState::GetCharacterDataNULL()
 	return CharacterDataNULL;
 }
 
+FSkillData & ATowersDefenceGameState::AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data)
+{
+	FCharacterData &InCharacterData = GetCharacterData(CharacterID);
+	
+		if (InCharacterData.IsValid())
+		{
+			return InCharacterData.AdditionalSkillData.Add(SkillID, Data);
+		}
+	
+
+	return SkillDataNULL;
+}
+
+FSkillData & ATowersDefenceGameState::GetSkillData(const FGuid &SkillID)
+{
+	for (auto &Tmp : GetSaveData()->CharacterDatas)
+	{
+		if (Tmp.Value.AdditionalSkillData.Contains(SkillID))
+		{
+			return Tmp.Value.AdditionalSkillData[SkillID];
+		}
+	}
+	return SkillDataNULL;
+}
+
+FSkillData & ATowersDefenceGameState::GetSkillData(const FGuid &CharacterID, const FGuid &SkillID)
+{
+	FCharacterData &InCharacterData = GetCharacterData(CharacterID);
+		if (InCharacterData.IsValid())
+		{
+			if (InCharacterData.AdditionalSkillData.Contains(SkillID))
+			{
+				return InCharacterData.AdditionalSkillData[SkillID];
+			}
+		}
+	
+	return SkillDataNULL;
+}
+
+int32 ATowersDefenceGameState::RemoveSkillData(const FGuid &SkillID)
+{
+	for (auto &Tmp : GetSaveData()->CharacterDatas)
+	{
+		return Tmp.Value.AdditionalSkillData.Remove(SkillID);
+	}
+
+	return INDEX_NONE;
+}
+
 UGameSaveData * ATowersDefenceGameState::GetSaveData()
 {
 	if (!SaveData)

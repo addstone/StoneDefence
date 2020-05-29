@@ -64,8 +64,10 @@ public:
 	FCharacterData &GetCharacterDataNULL();
 
 	//动态技能的操作
-	FSkillData &AddSkillData(const FGuid &CharacterID, const FSkillData &Data);
-
+	FSkillData &AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data);
+	FSkillData &GetSkillData(const FGuid &SkillID);
+	FSkillData &GetSkillData(const FGuid &CharacterID, const FGuid &SkillID);
+	int32 RemoveSkillData(const FGuid &SkillID);
 
 protected:
 	UGameSaveData *GetSaveData();
@@ -85,5 +87,5 @@ private:
 	TArray<const FCharacterData*> CacheMonsterDatas;
 
 	FCharacterData CharacterDataNULL;
-	FBuildingTower BuildingTowerNULL;
+	FSkillData SkillDataNULL;
 };

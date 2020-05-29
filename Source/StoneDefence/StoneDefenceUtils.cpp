@@ -132,7 +132,7 @@ float Expression::GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner)
 		//{
 		//	if (FCharacterData *EnemyCharacterData = Enemy->GetCharacterData())
 		//	{
-				return Enemy->GetCharacterData().PhysicalAttack / ((Owner->GetCharacterData().Armor / 100.f) + 1.f);
+				return Enemy->GetCharacterData().GetAttack() / ((Owner->GetCharacterData().GetArmor() / 100.f) + 1.f);
 			}
 	//	}
 	//}

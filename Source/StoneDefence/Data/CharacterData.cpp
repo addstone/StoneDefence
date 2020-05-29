@@ -43,7 +43,7 @@ float FCharacterData::GetEPPercent() const
 
 void FCharacterData::UpdateHealth()
 {
-	Health = MaxHealth;
+	Health = GetMaxHealth();
 }
 
 bool FCharacterData::UpdateEP(float InExp)

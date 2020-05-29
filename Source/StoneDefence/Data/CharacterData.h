@@ -119,7 +119,7 @@ public:
 		TArray<FSkillData> CharacterSkill;
 
 	//动态技能 这个是别人添加到我们这边技能
-	//UPROPERTY()
+	UPROPERTY()
 		TMap<FGuid, FSkillData> AdditionalSkillData;
 
 public:
