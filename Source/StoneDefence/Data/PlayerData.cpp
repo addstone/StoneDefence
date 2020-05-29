@@ -4,24 +4,6 @@
 #include "PlayerData.h"
 #include "../StoneDefenceType.h"
 
-FPlayerSkillData::FPlayerSkillData()
-{
-	Init();
-}
-
-void FPlayerSkillData::Init()
-{
-	SkillID = INDEX_NONE;
-	SkillCD = 0.f;
-	MaxSkillCD = 0.f;
-	SkillNumber = INDEX_NONE;
-}
-
-bool FPlayerSkillData::IsValid()
-{
-	return SkillID != INDEX_NONE;
-}
-
 FPlayerData::FPlayerData()
 {
 	Init();

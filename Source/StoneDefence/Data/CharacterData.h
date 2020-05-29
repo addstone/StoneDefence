@@ -1,13 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
+#include "Core/DataCore.h"
 #include "SkillData.h"
 #include "CharacterData.generated.h"
 
 
+
 USTRUCT(BlueprintType)
-struct FCharacterData : public FTableRowBase
+struct FCharacterData : public FDataCore
 {
 	GENERATED_BODY()
 
@@ -28,14 +29,6 @@ public:
 	//角色图片
 	UPROPERTY(EditDefaultsOnly, Category = "Table")
 		TAssetPtr<class UTexture2D> Icon;
-
-	//角色名字
-	UPROPERTY(EditDefaultsOnly, Category = "Character Attribute")
-		FName Name;
-
-	//ID
-	UPROPERTY(EditDefaultsOnly, Category = "Character Attribute")
-		int32 ID;
 
 	//属性
 	////////////////////////////////////////////////////////
@@ -116,33 +109,6 @@ public:
 	//自动恢复生命值
 	UPROPERTY(EditDefaultsOnly, Category = "Character Profit")
 		float RestoreHealth;
-
-	//塔的技能
-	//////////////////////////////////////////////////////////////////////////
-	//添加被动生命值
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-		float AddPassiveSkillHealth;
-
-	//添加持续恢复生命值
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-		float AddContinueHealth;
-		
-	//添加被动攻击力
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-		float AddPassiveSkillPhyscialAttack;
-
-	//添加被动护甲
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-		float AddPassiveSkillArmor;
-
-	//添加被动攻击速度
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-		float AddPassiveSkillAttackSpeed;
-
-	//减少被动CD
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-		float ReducePassiveSkillCDTime;
-
 
 	//技能
 	//////////////////////////////////////////////////////////////////////////

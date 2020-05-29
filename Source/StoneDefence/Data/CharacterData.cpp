@@ -1,8 +1,6 @@
 #include "CharacterData.h"
 
-FCharacterData::FCharacterData()
-	:Name(NAME_None),
-	ID(INDEX_NONE),
+FCharacterData::FCharacterData():
 	Lv(1),
 	MaxHealth(100),
 	Health(MaxHealth),
@@ -20,13 +18,7 @@ FCharacterData::FCharacterData()
 	AddArmor(8.f),
 	AddEmpiricalValue(100),
 	AddAttackSpeed(0.001f),
-	RestoreHealth(0.2f),
-
-	AddPassiveSkillHealth(0.f),
-	AddContinueHealth(0.f),
-	AddPassiveSkillPhyscialAttack(0.f),
-	AddPassiveSkillArmor(0),
-	ReducePassiveSkillCDTime(0.45f)
+	RestoreHealth(0.2f)
 {
 
 }
@@ -80,10 +72,10 @@ void FCharacterData::UpdateLevel()
 	RestoreHealth += (RestoreHealth * Lv) / 100;
 
 
-	AddPassiveSkillHealth += ((Lv - 1)*AddPassiveSkillHealth)* (Coefficient - 0.09f);
-	AddPassiveSkillPhyscialAttack += (Lv - 1)*AddPassiveSkillPhyscialAttack *(Coefficient - 0.09f);
-	AddPassiveSkillAttackSpeed += (Lv - 1)*AddPassiveSkillAttackSpeed *(Coefficient - 0.09f);
-	AddPassiveSkillArmor = +(Lv - 1)*AddPassiveSkillArmor * (Coefficient - 0.09f);
+	//AddPassiveSkillHealth += ((Lv - 1)*AddPassiveSkillHealth)* (Coefficient - 0.09f);
+	//AddPassiveSkillPhyscialAttack += (Lv - 1)*AddPassiveSkillPhyscialAttack *(Coefficient - 0.09f);
+	//AddPassiveSkillAttackSpeed += (Lv - 1)*AddPassiveSkillAttackSpeed *(Coefficient - 0.09f);
+	//AddPassiveSkillArmor = +(Lv - 1)*AddPassiveSkillArmor * (Coefficient - 0.09f);
 
 	Health = MaxHealth;
 }
