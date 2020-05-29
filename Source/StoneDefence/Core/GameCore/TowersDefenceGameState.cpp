@@ -196,6 +196,22 @@ int32 ATowersDefenceGameState::RemoveSkillData(const FGuid &SkillID)
 	return INDEX_NONE;
 }
 
+void ATowersDefenceGameState::InitSkill(FCharacterData &InCharacterData)
+{
+	const TArray<FSkillData*> &InSkillData = GetSkillDataFromTable();
+	for (auto &Tmp : InCharacterData.CharacterSkillID)
+	{
+		for (const FSkillData *NewSkill : InSkillData)
+		{
+			if (Tmp == NewSkill->ID)
+			{
+				InCharacterData.CharacterSkill.Add(*NewSkill);
+				break;
+			}
+		}
+	}
+}
+
 UGameSaveData * ATowersDefenceGameState::GetSaveData()
 {
 	if (!SaveData)

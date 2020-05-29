@@ -274,6 +274,9 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 								CharacterDataInst.UpdateLevel();
 							}
 						}
+
+						InGameState->InitSkill(CharacterDataInst);
+						RuleOfTheCharacter->RegisterTeam();
 						InCharacter = RuleOfTheCharacter;
 					}
 				}
@@ -285,29 +288,99 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 
 void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 {
+	//auto GetTeam = [&](TArray<TPair<FGuid, FCharacterData>*> &TeamArray,TPair<FGuid, FCharacterData> &Onwer,float InRange,bool bReversed = false)
+	//{
+	//	auto TeamIner = [&](TPair<FGuid, FCharacterData> &Target)
+	//	{
+	//		if (InRange != 0)
+	//		{
+	//			float Distance = (Target.Value.Location - Onwer.Value.Location).Size();
+	//			if (Distance <= InRange)
+	//			{
+	//				TeamArray.Add(&Target);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			TeamArray.Add(&Target);
+	//		}
+	//	};
+
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
+		//获取范围 有效友军
+		auto GetTeam = [&](TArray<FCharacterData*> &TeamArray, ETeam Type,const FVector &Loc, float InRange)
+		{
+			for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+			{
+				if (Tmp.Value.Team == Type)
+				{
+					if (InRange != 0)
+					{
+						float Distance = (Tmp.Value.Location - Loc).Size();
+						if (Distance <= InRange)
+						{
+							TeamArray.Add(&Tmp.Value);
+						}
+					}
+					else
+					{
+						TeamArray.Add(&Tmp.Value);
+					}
+			
+				}
+			}
+		};
 		//获取的模板
 		const TArray<FSkillData*> &SkillDataTemplate = InGameState->GetSkillDataFromTable();
 
 		for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
 		{
+			for (auto &InSkill : Tmp.Value.CharacterSkill)
+			{
+				InSkill.CDTime += DeltaSeconds;
+				if (InSkill.CDTime >= InSkill.CD)
+				{
+					InSkill.CDTime = 0.f;
+
+					if (InSkill.SkillType.SkillAttackType == ESkillAttackType::MULTIPLE)
+					{
+						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
+						{
+							TArray<FCharacterData*> RecentFriendlyForces;
+							GetTeam(RecentFriendlyForces, Tmp.Value.Team, Tmp.Value.Location, InSkill.AttackRange);
+						}
+						else
+						{
+
+						}
+					}
+					else
+					{
+
+					}
+				}
+			}
+
+
+
 			//计算和更新
 			TArray<FGuid> RemoveSkill;
 			for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
 			{
-				SkillTmp.Value.SkillDuration -= DeltaSeconds;
+				
 
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
-				{
-					RemoveSkill.Add(SkillTmp.Key);
-				}
+				//if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
+				//{
+				//	RemoveSkill.Add(SkillTmp.Key);
+				//}
 
 				//时间到了自然移除
 				if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
 					SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
 				{
-					if (SkillTmp.Value.SkillDuration <= 0)
+					SkillTmp.Value.SkillDuration += DeltaSeconds;
+					if (SkillTmp.Value.SkillDuration >= SkillTmp.Value.MaxSkillDuration)
 					{
 						RemoveSkill.Add(SkillTmp.Key);
 					}

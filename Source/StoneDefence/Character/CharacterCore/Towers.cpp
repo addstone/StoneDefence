@@ -19,9 +19,9 @@ ATowers::ATowers()
 	ParticleMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-ETeam ATowers::GetTeamType()
+void ATowers::RegisterTeam()
 {
-	return ETeam::RED;
+	GetCharacterData().Team = ETeam::RED;
 }
 
 float ATowers::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

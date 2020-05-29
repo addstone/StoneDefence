@@ -22,10 +22,10 @@ public:
 
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")
 		ARuleOfTheCharacter *GetTarget();
-//
-//	// Called every frame
-//	virtual void Tick(float DeltaTime) override;
-//
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	TWeakObjectPtr<class ARuleOfTheCharacter> Target;
 };

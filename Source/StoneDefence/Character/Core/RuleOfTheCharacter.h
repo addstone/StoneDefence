@@ -75,6 +75,9 @@ protected:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
+	//由服务器调用
+	virtual void RegisterTeam() {}
+
 	virtual EGameCharacterType::Type GetCharacterType();
 	virtual bool IsDeath();
 	virtual float GetHealth();

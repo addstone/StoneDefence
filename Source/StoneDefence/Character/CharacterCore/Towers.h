@@ -34,8 +34,7 @@ public:
 public:
 	ATowers();
 
-
-	virtual ETeam GetTeamType();
+	virtual void RegisterTeam();
 protected:
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

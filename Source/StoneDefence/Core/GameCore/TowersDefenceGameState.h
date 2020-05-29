@@ -75,6 +75,8 @@ public:
 	FSkillData &GetSkillData(const FGuid &CharacterID, const FGuid &SkillID);
 	int32 RemoveSkillData(const FGuid &SkillID);
 
+	void InitSkill(FCharacterData &InCharacterData);
+
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();

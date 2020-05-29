@@ -112,11 +112,23 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Character Profit")
 		float RestoreHealth;
 
+	UPROPERTY()
+		TEnumAsByte<ETeam> Team;
+
+	UPROPERTY()
+		FVector Location;
+
+	UPROPERTY()
+		FRotator Rotator;
+
 	//技能
 	//////////////////////////////////////////////////////////////////////////
 	//角色拥有的实体技能数据
 	UPROPERTY(EditDefaultsOnly, Category = "Characte Skill")
 		TArray<FSkillData> CharacterSkill;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Characte Skill")
+		TArray<int32> CharacterSkillID;
 
 	//动态技能 这个是别人添加到我们这边技能
 	UPROPERTY()

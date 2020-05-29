@@ -184,7 +184,7 @@ float ARuleOfTheCharacter::GetMaxHealth()
 
 ETeam ARuleOfTheCharacter::GetTeamType()
 {
-	return ETeam::MAX;
+	return GetCharacterData().Team;
 }
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()

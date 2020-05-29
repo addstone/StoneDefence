@@ -29,6 +29,10 @@ void FCharacterData::Init()
 	AddAttackSpeed = 0.001f;
 	RestoreHealth = 0.2f;
 	WalkSpeed = 356.f;
+
+	Location = FVector::ZeroVector;
+	Rotator = FRotator::ZeroRotator;
+	Team = ETeam::RED;
 }
 
 float FCharacterData::GetEPPercent() const

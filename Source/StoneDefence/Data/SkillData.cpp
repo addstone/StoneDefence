@@ -19,7 +19,7 @@ void FSkillData::Init()
 	SkillDuration = 0.f;
 	CD = 60.f;
 	SkillDurationTime = 0.f;
-	//CDTime = 0.0f;
+	CDTime = 0.0f;
 	//WalkSpeed = 0.0f;
 	//bBecomeEffective = false;
 	//SubmissionSkillRequestType = ESubmissionSkillRequestType::AUTO;

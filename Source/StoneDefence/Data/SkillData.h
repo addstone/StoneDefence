@@ -66,4 +66,7 @@ struct FSkillData : public FDataCore
 	//技能持续时间
 	UPROPERTY(EditDefaultsOnly, Category = "Main Skill")
 		float CD;
+
+	UPROPERTY()
+		float CDTime;
 };
