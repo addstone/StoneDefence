@@ -28,13 +28,6 @@ enum class ESkillAttackType :uint8
 };
 
 UENUM(BlueprintType)
-enum class ESkillContinuedType :uint8
-{
-	NONE,
-	CONTINUED,
-};
-
-UENUM(BlueprintType)
 enum class ESkillEffectType :uint8
 {
 	ADD,
@@ -51,7 +44,6 @@ struct FSkillType
 		, TargetType(ESkillTargetType::FRIENDLY_FORCES)
 		, SkillEffectType(ESkillEffectType::ADD)
 		, SkillAttackType(ESkillAttackType::MULTIPLE)
-		, SkillContinuedType(ESkillContinuedType::CONTINUED)
 	{
 
 	}
@@ -67,9 +59,6 @@ struct FSkillType
 
 	UPROPERTY(EditDefaultsOnly, Category = "Type")
 		ESkillAttackType SkillAttackType;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Type")
-		ESkillContinuedType SkillContinuedType;
 };
 
 UENUM()

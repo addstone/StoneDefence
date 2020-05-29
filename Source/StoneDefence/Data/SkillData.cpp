@@ -16,12 +16,11 @@ void FSkillData::Init()
 	Armor = 0.f;
 	AttackRange = 0.f;
 	MaxSkillDuration = 5.f;
-	SkillDuration = 0.0f;
+	SkillDuration = 0.f;
 	CD = 60.f;
-	//SkillDurationTime = 0.f;
+	SkillDurationTime = 0.f;
 	//CDTime = 0.0f;
 	//WalkSpeed = 0.0f;
 	//bBecomeEffective = false;
 	//SubmissionSkillRequestType = ESubmissionSkillRequestType::AUTO;
 }
-

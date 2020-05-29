@@ -54,9 +54,9 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 			InventorySlotArray[i]->GUID = *ID[i];
 		}
 
-		TArray<const FCharacterData*> Datas;
-		if (GetGameState()->GetTowerDataFromTable(Datas))
-		{
+		
+		const TArray<FCharacterData*> &Datas = GetGameState()->GetTowerDataFromTable();
+		
 			for (int32 i = 0; i < Datas.Num(); i++)
 			{
 				InventorySlotArray[i]->GetBuildingTower().TowerID = Datas[i]->ID;
@@ -66,7 +66,7 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 
 				InventorySlotArray[i]->UpdateUI();
 			}
-		}
+		
 	}
 }
 

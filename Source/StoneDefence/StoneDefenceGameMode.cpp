@@ -83,6 +83,9 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 	}
 	//生成怪物
 	SpawnMonstersRule(DeltaSeconds);
+
+	//更新技能
+	UpdateSkill(DeltaSeconds);
 }
 
 AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
@@ -278,4 +281,65 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 		}
 	}
 	return InCharacter;
+}
+
+void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		//获取的模板
+		const TArray<FSkillData*> &SkillDataTemplate = InGameState->GetSkillDataFromTable();
+
+		for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+		{
+			//计算和更新
+			TArray<FGuid> RemoveSkill;
+			for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
+			{
+				SkillTmp.Value.SkillDuration -= DeltaSeconds;
+
+				if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
+				{
+					RemoveSkill.Add(SkillTmp.Key);
+				}
+
+				//时间到了自然移除
+				if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
+					SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+				{
+					if (SkillTmp.Value.SkillDuration <= 0)
+					{
+						RemoveSkill.Add(SkillTmp.Key);
+					}
+				}
+
+				//迭代 进行持续更新技能
+				if (SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+				{
+					SkillTmp.Value.SkillDurationTime += DeltaSeconds;
+					if (SkillTmp.Value.SkillDurationTime >= 1.0f)
+					{
+						SkillTmp.Value.SkillDurationTime = 0.0f;
+
+						if (SkillTmp.Value.SkillType.SkillEffectType == ESkillEffectType::ADD)
+						{
+							Tmp.Value.Health += SkillTmp.Value.Health;
+							Tmp.Value.PhysicalAttack += SkillTmp.Value.PhysicalAttack;
+							Tmp.Value.Armor += SkillTmp.Value.Armor;
+							Tmp.Value.AttackSpeed += SkillTmp.Value.AttackSpeed;
+							Tmp.Value.Glod += SkillTmp.Value.Glod;
+						}
+						else
+						{
+							Tmp.Value.Health -= SkillTmp.Value.Health;
+							Tmp.Value.PhysicalAttack -= SkillTmp.Value.PhysicalAttack;
+							Tmp.Value.Armor -= SkillTmp.Value.Armor;
+							Tmp.Value.AttackSpeed -= SkillTmp.Value.AttackSpeed;
+							Tmp.Value.Glod -= SkillTmp.Value.Glod;
+						}
+					}
+				}
+			}
+		}
+	}
 }

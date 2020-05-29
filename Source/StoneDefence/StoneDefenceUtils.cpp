@@ -28,9 +28,7 @@ AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(UWorld *World, int32 ID)
 	{
 		if (ATowersDefenceGameState *InGameState = World->GetGameState<ATowersDefenceGameState>())
 		{
-			//const TArray<FCharacterData*> &InDatas = InGameState->GetTowerDataFormTable();
-			TArray<const FCharacterData*> InDatas;
-			InGameState->GetTowerDataFromTable(InDatas);
+			const TArray<FCharacterData*> &InDatas = InGameState->GetTowerDataFromTable();			
 			for (const auto &Tmp : InDatas)
 			{
 				if (Tmp->ID == ID)

@@ -43,4 +43,6 @@ protected:
 	{
 		return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
 	}
+
+	void UpdateSkill(float DeltaSeconds);
 };

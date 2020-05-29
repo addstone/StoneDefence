@@ -59,6 +59,10 @@ struct FSkillData : public FDataCore
 	UPROPERTY()//"Dynamic Skills"
 		float SkillDuration;
 
+	//技能间隔 比如 每隔一秒激活一次 这个是具体数值 为迭代类型的技能做准备
+	UPROPERTY()//"Dynamic Skills"
+		float SkillDurationTime;
+
 	//技能持续时间
 	UPROPERTY(EditDefaultsOnly, Category = "Main Skill")
 		float CD;
