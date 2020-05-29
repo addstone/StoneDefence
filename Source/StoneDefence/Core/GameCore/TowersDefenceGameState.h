@@ -57,17 +57,15 @@ public:
 
 	bool RemoveCharacterData(const FGuid &ID);
 	FCharacterData &GetCharacterData(const FGuid &ID);
-
-
 	bool GetTowerDataFromTable(TArray<const FCharacterData*> &Datas);
 	bool GetMonsterDataFromTable(TArray<const FCharacterData*> &Datas);
 	const FCharacterData &GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
-
-
-	
 	FGameInstanceDatas &GetGameData();
-
 	FCharacterData &GetCharacterDataNULL();
+
+	//动态技能的操作
+	FSkillData &AddSkillData(const FGuid &CharacterID, const FSkillData &Data);
+
 
 protected:
 	UGameSaveData *GetSaveData();

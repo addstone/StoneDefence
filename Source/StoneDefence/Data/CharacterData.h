@@ -12,6 +12,7 @@ struct FCharacterData : public FDataCore
 {
 	GENERATED_BODY()
 
+	typedef FDataCore Super;
 /*
 *!记一次奇怪的编译经历
 *由于在Data/Core文件夹下提早创建了CharacterData文件，随后忘记，导致这里莫名其妙的编译不过，排查好久才发现文件重名导致的问题
@@ -19,6 +20,7 @@ struct FCharacterData : public FDataCore
 public:
 	FCharacterData();
 
+	virtual void Init() override;
 	//资源
 	//////////////////////////////////////////////////////////////////////////
 	//角色蓝图实例
@@ -112,18 +114,28 @@ public:
 
 	//技能
 	//////////////////////////////////////////////////////////////////////////
+	//角色拥有的实体技能数据
 	UPROPERTY(EditDefaultsOnly, Category = "Characte Skill")
-		TMap<int32, FSkillData> CharacterSkill;
+		TArray<FSkillData> CharacterSkill;
 
+	//动态技能 这个是别人添加到我们这边技能
+	//UPROPERTY()
+		TMap<FGuid, FSkillData> AdditionalSkillData;
 
 public:
 	float GetEPPercent() const;
-
-	bool IsValid() const;
 
 	void UpdateHealth();
 
 	bool UpdateEP(float InExp);
 
 	void UpdateLevel();
+
+public:
+	float GetMaxHealth() const;
+	float GetAttack() const;
+	float GetArmor() const;
+	float GetCD() const;
+	float GetAttackSpeed()const;
+	float GetWalkSpeed()const;
 };

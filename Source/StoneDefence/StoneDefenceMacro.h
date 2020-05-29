@@ -18,29 +18,29 @@ UE_LOG(LogStoneDefence,Type,TEXT("%s"),*Msg);}
 #define SD_print_r(Type,Format,...) \
 SD_print(Type,Format, ##__VA_ARGS__)
 #endif
-//
-//#define SKILL_TABLE_ACQUISITION(ValueBase,SkillAttrName) \
-//float Value = ValueBase; \
-//for (const auto &Tmp : AdditionalSkillData) \
-//{ \
-//	switch (Tmp.Value.SkillType.SkillEffectType)\
-//	{\
-//		case  ESkillEffectType::ADD:\
-//			Value += Tmp.Value.SkillAttrName;\
-//			break;\
-//		case  ESkillEffectType::SUBTRACT:\
-//			Value -= Tmp.Value.SkillAttrName;\
-//			break;\
-//	}\
-//} \
-//return Value;
-//
-//#define SKILL_TABLE_ACQUISITION_CD(InCD) \
-//float Value = InCD; \
-//for (const auto &Tmp : AdditionalSkillData) \
-//{ \
-//	Value -= Tmp.Value.InCD; \
-//} \
-//return Value;
-//
-//#define GAMETHUMBNAIL_SCREENSHOT(InWidth,InHeight,InTexture,InOuter) (new RenderingUtils::FScreenShot(InWidth,InHeight,InTexture,InOuter))
+
+#define SKILL_TABLE_ACQUISITION(ValueBase,SkillAttrName) \
+float Value = ValueBase; \
+for (const auto &Tmp : AdditionalSkillData) \
+{ \
+	switch (Tmp.Value.SkillType.SkillEffectType)\
+	{\
+		case  ESkillEffectType::ADD:\
+			Value += Tmp.Value.SkillAttrName;\
+			break;\
+		case  ESkillEffectType::SUBTRACT:\
+			Value -= Tmp.Value.SkillAttrName;\
+			break;\
+	}\
+} \
+return Value;
+
+#define SKILL_TABLE_ACQUISITION_CD(InCD) \
+float Value = InCD; \
+for (const auto &Tmp : AdditionalSkillData) \
+{ \
+	Value -= Tmp.Value.InCD; \
+} \
+return Value;
+
+#define GAMETHUMBNAIL_SCREENSHOT(InWidth,InHeight,InTexture,InOuter) (new RenderingUtils::FScreenShot(InWidth,InHeight,InTexture,InOuter))

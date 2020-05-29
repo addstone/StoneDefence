@@ -13,7 +13,11 @@ struct FSkillData : public FDataCore
 {
 	GENERATED_BODY()
 
+	typedef FDataCore Super;
+
 	FSkillData();
+
+	virtual void Init() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attribute")
 		FSkillType SkillType;
@@ -36,6 +40,12 @@ struct FSkillData : public FDataCore
 	//添加护甲
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
 		float Armor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
+		float AttackSpeed;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
+		float WalkSpeed;
 
 	//0 代表全场景所有敌人 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
