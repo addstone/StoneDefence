@@ -32,14 +32,6 @@ FString UAnimNotify_SpawnBullet::GetNotifyName_Implementation() const
 
 void UAnimNotify_SpawnBullet::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-//#if WITH_EDITOR
-//	FVector ComponentLocation = MeshComp->GetSocketLocation(InSocketName);
-//	FRotator ComponentRotation = MeshComp->GetSocketRotation(InSocketName);
-//#else
-//	FVector ComponentLocation = Character->GetFirePoint()->GetComponentLocation();
-//	FRotator ComponentRotation = Character->GetFirePoint()->GetComponentRotation();
-//#endif
-
 #if WITH_EDITOR
 	FVector ComponentLocation = MeshComp->GetSocketLocation(InSocketName);
 	FRotator ComponentRotation = MeshComp->GetSocketRotation(InSocketName);
@@ -47,7 +39,6 @@ void UAnimNotify_SpawnBullet::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 #else
 	FVector ComponentLocation = Character->GetFirePoint()->GetComponentLocation();
 	FRotator ComponentRotation = Character->GetFirePoint()->GetComponentRotation();
-	//if (ARuleOfTheCharacter *Character = Cast<ARuleOfTheCharacter>(MeshComp->GetOuter()))
 #endif
 	if (AActor *Character = Cast<AActor>(MeshComp->GetOuter()))
 	{
@@ -56,17 +47,6 @@ void UAnimNotify_SpawnBullet::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 		//	//Bullet->SubmissionSkillRequestType = ESubmissionSkillRequestType::MANUAL;
 		//	//Bullet->InitSkill();
 		//}
-		FTransform Transform;
-		Transform.SetLocation(ComponentLocation);
-		Transform.SetRotation(ComponentRotation.Quaternion());
-
-		FActorSpawnParameters ActorSpawnParameters;
-
-		ActorSpawnParameters.Instigator = Cast<APawn>(Character);
-
-		if (ARuleOfTheBullet *Bullet = Character->GetWorld()->SpawnActor<ARuleOfTheBullet>(BulletClass, Transform, ActorSpawnParameters))
-		{
-
-		}
+		StoneDefenceUtils::SpawnBullet(Character->GetWorld(), Cast<APawn>(Character), BulletClass, ComponentLocation, ComponentRotation);
 	}
 }

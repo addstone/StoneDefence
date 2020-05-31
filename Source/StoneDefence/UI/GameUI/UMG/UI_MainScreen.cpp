@@ -9,8 +9,8 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Tip/UI_TowerTip.h"
-#include "../../Core/UI_Data.h"
 #include "Components/Image.h"
+#include "../../../Global/UI_Data.h"
 
 void UUI_MainScreen::NativeConstruct()
 {

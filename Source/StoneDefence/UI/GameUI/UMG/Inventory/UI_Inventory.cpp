@@ -8,8 +8,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "UI_InventorySlot.h"
 #include "../../../Core/UI_RuleOfTheWidget.h"
-#include "../../../Core/UI_Data.h"
 #include "../../../../StoneDefenceUtils.h"
+#include "../../../../Global/UI_Data.h"
 
 void UUI_Inventory::NativeConstruct()
 {

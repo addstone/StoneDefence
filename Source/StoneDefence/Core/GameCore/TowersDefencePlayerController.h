@@ -9,6 +9,9 @@
 
 class ATowers;
 class AMonsters;
+
+DECLARE_DELEGATE_OneParam(FAddSkillDelegate, FGuid);
+DECLARE_DELEGATE_TwoParams(FSpawnBulletDelegate, FGuid, UClass*);
 /**
  * 
  */
@@ -22,6 +25,10 @@ public:
 	FSimpleDelegate EventMouseMiddlePressed;
 	//松开鼠标的代理
 	FSimpleDelegate EventFMouseMiddleReleased;
+	//添加技能的代理
+	FAddSkillDelegate AddSkillDelegate;
+	//生成子弹的代理
+	FSpawnBulletDelegate SpawnBulletDelegate;
 
 public:
 	ATowersDefencePlayerController();
@@ -44,6 +51,12 @@ public:
 
 	class AStoneDefenceGameMode *GetGameMode();
 	class ATowersDefenceGameState *GetGameState();
+
+	UFUNCTION()
+		void AddSkillSlot_Client(const FGuid &SlotID);
+
+	UFUNCTION()
+		void SpawnBullet_Client(const FGuid &CharacterID,UClass *InClass);
 
 	UFUNCTION()
 		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);

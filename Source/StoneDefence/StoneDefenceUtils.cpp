@@ -24,30 +24,39 @@
 #pragma optimize("",off) 
 #endif
 
-AActor * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass)
+ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass)
 {
-	TArray<ARuleOfTheCharacter*> Characters;
-	GetAllActor(World, Characters);
+	TArray<ARuleOfTheCharacter *> Characters;
+	StoneDefenceUtils::GetAllActor(World, Characters);
 
 	for (auto &Tmp : Characters)
 	{
 		if (Tmp->GUID == CharacterID)
 		{
-			FTransform Transform;
-			Transform.SetLocation(Tmp->GetFirePoint()->GetComponentLocation());
-			Transform.SetRotation(Tmp->GetFirePoint()->GetComponentRotation().Quaternion());
-
-			FActorSpawnParameters ActorSpawnParameters;
-
-			ActorSpawnParameters.Instigator = Tmp;
-
-			if (ARuleOfTheBullet *Bullet = World->SpawnActor<ARuleOfTheBullet>(InClass, Transform, ActorSpawnParameters))
-			{
-				return Bullet;
-			}
-			break;
+			return SpawnBullet(World, Tmp, InClass, Tmp->GetFirePoint()->GetComponentLocation(), Tmp->GetFirePoint()->GetComponentRotation());
 		}
 	}
+
+	return nullptr;
+}
+
+ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot)
+{
+	if (World && NewPawn && InClass)
+	{
+		FTransform Transform;
+		Transform.SetLocation(Loc);
+		Transform.SetRotation(Rot.Quaternion());
+
+		FActorSpawnParameters ActorSpawnParameters;
+		ActorSpawnParameters.Instigator = NewPawn;
+
+		if (ARuleOfTheBullet *Bullet = World->SpawnActor<ARuleOfTheBullet>(InClass, Transform, ActorSpawnParameters))
+		{
+			return Bullet;
+		}
+	}
+
 	return nullptr;
 }
 

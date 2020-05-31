@@ -2,8 +2,8 @@
 
 
 #include "Monsters.h"
-#include "../../UI/Core/UI_Data.h"
 #include "../../StoneDefenceMacro.h"
+#include "../../Global/UI_Data.h"
 
 void AMonsters::BeginPlay()
 {

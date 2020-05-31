@@ -43,9 +43,9 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
-		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+		CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController)
 		{
-			if (ATowersDefencePlayerState *InPlayerState = It->Get()->GetPlayerState<ATowersDefencePlayerState>())
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
 			{
 				InPlayerState->GetPlayerData().GameGoldTime += DeltaSeconds;
 
@@ -56,6 +56,7 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 				}
 			}
 		}
+		);
 
 
 
@@ -365,11 +366,13 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 		{
 			if (!IsVerificationSkill(*CharacterElement, InSkill.ID))
 			{
-
-				//代理
-
 				FGuid MySkillID = FGuid::NewGuid();
 				CharacterElement->AdditionalSkillData.Add(MySkillID, InSkill);
+
+				//通知客户端更新添加的UI
+				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
+					MyPlayerController->AddSkillSlot_Client(MySkillID);
+				});
 			}
 		};
 
@@ -394,7 +397,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 		};
 
 		//寻找最近的那个数据目标
-		auto FindRangeTargetRecently = [&](const TPair<FGuid, FCharacterData> &Owner,bool bReversed = false) -> FCharacterData*
+		auto FindRangeTargetRecently = [&](const TPair<FGuid, FCharacterData> &InOwner,bool bReversed = false) -> FCharacterData*
 		{
 			float TargetDistance = 99999999;
 			FGuid Index;
@@ -402,7 +405,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			auto InitTargetRecently = [&](TPair<FGuid, FCharacterData> &Pair)
 			{
 				FVector Location = Pair.Value.Location;
-				FVector TmpVector = Location - Owner.Value.Location;
+				FVector TmpVector = Location - InOwner.Value.Location;
 				float Distance = TmpVector.Size();
 
 				if (Distance < TargetDistance && Pair.Value.Health > 0)
@@ -414,12 +417,12 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 			for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
 			{
-				if (Owner.Key != Tmp.Key) //排除自己
+				if (InOwner.Key != Tmp.Key) //排除自己
 				{
 					if (bReversed)
 					{
 						//寻找敌人
-						if (Owner.Value.Team != Tmp.Value.Team)
+						if (InOwner.Value.Team != Tmp.Value.Team)
 						{
 							InitTargetRecently(Tmp);
 						}
@@ -427,7 +430,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 					else
 					{
 						//寻找友军
-						if (Owner.Value.Team == Tmp.Value.Team)
+						if (InOwner.Value.Team == Tmp.Value.Team)
 						{
 							InitTargetRecently(Tmp);
 						}		
@@ -496,6 +499,10 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 						}
 					}
 				}
+				//通知客户端进行特效子弹播放
+				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
+					MyPlayerController->SpawnBullet_Client(Tmp.Key, SkillTmp.Value.BulletClass);
+				});
 			}
 
 			//清理
@@ -546,6 +553,17 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 
 			
+		}
+	}
+}
+
+void AStoneDefenceGameMode::CallUpdateAllClient(TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement)
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (ATowersDefencePlayerController *MyPlayerController = Cast<ATowersDefencePlayerController>(It->Get()))
+		{
+			InImplement(MyPlayerController);
 		}
 	}
 }

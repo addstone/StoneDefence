@@ -1,5 +1,6 @@
 #include "UI_Data.h"
-#include "../../Character/Core/RuleOfTheCharacter.h"
+#include "../Character/Core/RuleOfTheCharacter.h"
+
 
 FGuid TowerICOGUID;
 AActor *TowerDoll = nullptr;

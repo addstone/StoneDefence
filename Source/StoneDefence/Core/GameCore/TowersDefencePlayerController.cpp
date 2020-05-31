@@ -3,10 +3,10 @@
 
 #include "TowersDefencePlayerController.h"
 #include "TowerDefenceGameCamera.h"
-#include "../../UI/Core/UI_Data.h"
 #include "../../StoneDefenceGameMode.h"
 #include "TowersDefenceGameState.h"
 #include "TowersDefencePlayerState.h"
+#include "../../Global/UI_Data.h"
 
 ATowersDefencePlayerController::ATowersDefencePlayerController()
 {
@@ -106,6 +106,16 @@ AStoneDefenceGameMode * ATowersDefencePlayerController::GetGameMode()
 ATowersDefenceGameState * ATowersDefencePlayerController::GetGameState()
 {
 	return GetWorld()->GetGameState<ATowersDefenceGameState>();
+}
+
+void ATowersDefencePlayerController::AddSkillSlot_Client(const FGuid & SlotID)
+{
+	AddSkillDelegate.ExecuteIfBound(SlotID);
+}
+
+void ATowersDefencePlayerController::SpawnBullet_Client(const FGuid &CharacterID, UClass *InClass)
+{
+	SpawnBulletDelegate.ExecuteIfBound(CharacterID, InClass);
 }
 
 ATowers * ATowersDefencePlayerController::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)
