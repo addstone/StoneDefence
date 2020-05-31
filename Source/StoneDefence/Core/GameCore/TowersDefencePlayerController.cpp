@@ -108,7 +108,7 @@ ATowersDefenceGameState * ATowersDefencePlayerController::GetGameState()
 	return GetWorld()->GetGameState<ATowersDefenceGameState>();
 }
 
-void ATowersDefencePlayerController::AddSkillSlot_Client(const FGuid & SlotID)
+void ATowersDefencePlayerController::AddSkillSlot_Client(const FGuid &CharacterID, const FGuid & SlotID)
 {
 	AddSkillDelegate.ExecuteIfBound(SlotID);
 }

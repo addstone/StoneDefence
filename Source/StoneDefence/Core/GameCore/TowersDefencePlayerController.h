@@ -53,7 +53,7 @@ public:
 	class ATowersDefenceGameState *GetGameState();
 
 	UFUNCTION()
-		void AddSkillSlot_Client(const FGuid &SlotID);
+		void AddSkillSlot_Client(const FGuid &CharacterID, const FGuid &SlotID);
 
 	UFUNCTION()
 		void SpawnBullet_Client(const FGuid &CharacterID,UClass *InClass);

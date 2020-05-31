@@ -311,39 +311,41 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
-		auto TeamIner = [](TArray<FCharacterData*> &TeamArray, FCharacterData* CharacterData, const FVector &Loc, float InRange)
-		{
-			if (InRange != 0)
-			{
-				float Distance = (CharacterData->Location - Loc).Size();
-				if (Distance <= InRange)
-				{
-					TeamArray.Add(CharacterData);
-				}
-			}
-			else
-			{
-				TeamArray.Add(CharacterData);
-			}
-		};
+
 
 		//获取范围 有效友军
-		auto GetTeam = [&](TArray<FCharacterData*> &TeamArray, ETeam Type, const FVector &Loc, float InRange, bool bReversed = false)
+		auto GetTeam = [&](TArray<TPair<FGuid, FCharacterData>*> &TeamArray, TPair<FGuid, FCharacterData> &InOwner, float InRange, bool bReversed = false)
 		{
-			for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+			auto TeamIner = [&](TPair<FGuid, FCharacterData> &Target)
 			{
-				if (bReversed)
+				if (InRange != 0)
 				{
-					if (Tmp.Value.Team == Type)
+					float Distance = (Target.Value.Location - InOwner.Value.Location).Size();
+					if (Distance <= InRange)
 					{
-						TeamIner(TeamArray, &Tmp.Value, Loc, InRange);
+						TeamArray.Add(&Target);
 					}
 				}
 				else
 				{
-					if (Tmp.Value.Team != Type)
+					TeamArray.Add(&Target);
+				}
+			};
+
+			for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+			{
+				if (bReversed)
+				{
+					if (Tmp.Value.Team == InOwner.Value.Team)
 					{
-						TeamIner(TeamArray, &Tmp.Value, Loc, InRange);
+						TeamIner(Tmp);
+					}
+				}
+				else
+				{
+					if (Tmp.Value.Team != InOwner.Value.Team)
+					{
+						TeamIner(Tmp);
 					}
 				}
 			}
@@ -362,22 +364,22 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 		};
 
 		//添加技能
-		auto AddSkill = [&](FCharacterData* &CharacterElement, FSkillData &InSkill)
+		auto AddSkill = [&](TPair<FGuid, FCharacterData> &InOwner, FSkillData &InSkill)
 		{
-			if (!IsVerificationSkill(*CharacterElement, InSkill.ID))
+			if (!IsVerificationSkill(InOwner.Value, InSkill.ID))
 			{
 				FGuid MySkillID = FGuid::NewGuid();
-				CharacterElement->AdditionalSkillData.Add(MySkillID, InSkill);
+				InOwner.Value.AdditionalSkillData.Add(MySkillID, InSkill);
 
 				//通知客户端更新添加的UI
 				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->AddSkillSlot_Client(MySkillID);
+					MyPlayerController->AddSkillSlot_Client(InOwner.Key, MySkillID);
 				});
 			}
 		};
 
 		//多个角色添加同样技能
-		auto AddSkills = [&](TArray<FCharacterData*> &RecentForces, FSkillData &InSkill)
+		auto AddSkills = [&](TArray<TPair<FGuid, FCharacterData>*> &RecentForces, FSkillData &InSkill)
 		{
 			//for (auto &CharacterElement : RecentForces)
 			//{
@@ -385,19 +387,12 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			//}
 			for (auto &CharacterElement : RecentForces)
 			{
-				if (!IsVerificationSkill(*CharacterElement, InSkill.ID))
-				{
-
-					//代理
-
-					FGuid MySkillID = FGuid::NewGuid();
-					CharacterElement->AdditionalSkillData.Add(MySkillID, InSkill);
-				}
+				AddSkill(*CharacterElement, InSkill);
 			}
 		};
 
 		//寻找最近的那个数据目标
-		auto FindRangeTargetRecently = [&](const TPair<FGuid, FCharacterData> &InOwner,bool bReversed = false) -> FCharacterData*
+		auto FindRangeTargetRecently = [&](const TPair<FGuid, FCharacterData> &InOwner,bool bReversed = false) -> TPair<FGuid, FCharacterData>*
 		{
 			float TargetDistance = 99999999;
 			FGuid Index;
@@ -440,7 +435,13 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 			if (Index != FGuid())
 			{
-				return &InGameState->GetSaveData()->CharacterDatas[Index];
+				for (auto &GameTmp : InGameState->GetSaveData()->CharacterDatas)
+				{
+					if (GameTmp.Key == Index)
+					{
+						return &GameTmp;
+					}
+				}
 			}
 
 			return nullptr;
@@ -523,20 +524,23 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 					if (InSkill.SkillType.SkillAttackType == ESkillAttackType::MULTIPLE)
 					{
-						TArray<FCharacterData*> Recent;
+						TArray< TPair<FGuid, FCharacterData>*> Recent;
 						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
 						{							
-							GetTeam(Recent, Tmp.Value.Team, Tmp.Value.Location, InSkill.AttackRange);
+							GetTeam(Recent, Tmp, InSkill.AttackRange);
 						}
 						else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
 						{
-							GetTeam(Recent, Tmp.Value.Team, Tmp.Value.Location, InSkill.AttackRange, true);
+							GetTeam(Recent, Tmp, InSkill.AttackRange, true);
 						}
-						AddSkills(Recent, InSkill);
+						if (Recent.Num())
+						{
+							AddSkills(Recent, InSkill);
+						}
 					}
 					else if (InSkill.SkillType.SkillAttackType == ESkillAttackType::SINGLE)
 					{
-						FCharacterData* Recent = nullptr;
+						TPair<FGuid, FCharacterData>* Recent = nullptr;
 						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
 						{
 							Recent = FindRangeTargetRecently(Tmp);
@@ -545,7 +549,10 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 						{
 							Recent = FindRangeTargetRecently(Tmp, true);
 						}
-						AddSkill(Recent, InSkill);
+						if (Recent)
+						{
+							AddSkill(*Recent, InSkill);
+						}
 					}
 				}
 			}
