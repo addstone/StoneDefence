@@ -6,6 +6,7 @@
 #include "../../../Core/UI_RuleOfTheWidget.h"
 #include "UI_SkillTip.generated.h"
 
+class URichTextBlock;
 /**
  * 
  */
@@ -13,5 +14,7 @@ UCLASS()
 class STONEDEFENCE_API UUI_SkillTip : public UUI_RuleOfTheWidget
 {
 	GENERATED_BODY()
-	
+
+	UPROPERTY(meta = (BindWidget))
+		URichTextBlock *RichText;
 };

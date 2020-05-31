@@ -16,10 +16,49 @@
 #include "Engine/StaticMeshActor.h"
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
+#include "Components/SceneComponent.h"
+#include "Components/ArrowComponent.h"
+#include "Bullet/RuleOfTheBullet.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
 #endif
+
+ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass)
+{
+	TArray<ARuleOfTheCharacter *> Characters;
+	StoneDefenceUtils::GetAllActor(World, Characters);
+
+	for (auto &Tmp : Characters)
+	{
+		if (Tmp->GUID == CharacterID)
+		{
+			return SpawnBullet(World, Tmp, InClass, Tmp->GetFirePoint()->GetComponentLocation(), Tmp->GetFirePoint()->GetComponentRotation());
+		}
+	}
+
+	return nullptr;
+}
+
+ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot)
+{
+	if (World && NewPawn && InClass)
+	{
+		FTransform Transform;
+		Transform.SetLocation(Loc);
+		Transform.SetRotation(Rot.Quaternion());
+
+		FActorSpawnParameters ActorSpawnParameters;
+		ActorSpawnParameters.Instigator = NewPawn;
+
+		if (ARuleOfTheBullet *Bullet = World->SpawnActor<ARuleOfTheBullet>(InClass, Transform, ActorSpawnParameters))
+		{
+			return Bullet;
+		}
+	}
+
+	return nullptr;
+}
 
 AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(UWorld *World, int32 ID)
 {
@@ -28,9 +67,7 @@ AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(UWorld *World, int32 ID)
 	{
 		if (ATowersDefenceGameState *InGameState = World->GetGameState<ATowersDefenceGameState>())
 		{
-			//const TArray<FCharacterData*> &InDatas = InGameState->GetTowerDataFormTable();
-			TArray<const FCharacterData*> InDatas;
-			InGameState->GetTowerDataFromTable(InDatas);
+			const TArray<FCharacterData*> &InDatas = InGameState->GetTowerDataFromTable();			
 			for (const auto &Tmp : InDatas)
 			{
 				if (Tmp->ID == ID)
@@ -132,7 +169,7 @@ float Expression::GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner)
 		//{
 		//	if (FCharacterData *EnemyCharacterData = Enemy->GetCharacterData())
 		//	{
-				return Enemy->GetCharacterData().PhysicalAttack / ((Owner->GetCharacterData().Armor / 100.f) + 1.f);
+				return Enemy->GetCharacterData().GetAttack() / ((Owner->GetCharacterData().GetArmor() / 100.f) + 1.f);
 			}
 	//	}
 	//}

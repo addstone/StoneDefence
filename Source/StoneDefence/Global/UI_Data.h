@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../../Character/Core/RuleOfTheCharacter.h"
+#include "../Character/Core/RuleOfTheCharacter.h"
+
 
 extern FGuid TowerICOGUID;
 extern AActor *TowerDoll;

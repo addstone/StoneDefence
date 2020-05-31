@@ -11,7 +11,8 @@
 #include "Blueprint/UserWidget.h"
 #include "../Tip/UI_TowerTip.h"
 #include "../../../../Data/CharacterData.h"
-#include "../../../Core/UI_Data.h"
+#include "../../../../Global/UI_Data.h"
+
 
 void UUI_InventorySlot::NativeConstruct()
 {

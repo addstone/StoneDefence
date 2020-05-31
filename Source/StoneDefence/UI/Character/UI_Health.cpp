@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/WrapBox.h"
+#include "../GameUI/UMG/Skill/UI_CharacterSkillSlot.h"
 
 void UUI_Health::NativeConstruct()
 {
@@ -23,10 +24,35 @@ void UUI_Health::SetHealth(float HealthValue)
 
 void UUI_Health::AddSkillSlot(FGuid SkillID)
 {
-	
+	if (CharacterSkillSlotClass)
+	{
+		if (UUI_CharacterSkillSlot *SkillSlot = CreateWidget<UUI_CharacterSkillSlot>(GetWorld(), CharacterSkillSlotClass))
+		{
+			SkillSlot->GUID = SkillID;
+			if (SkillSlot->GetSkillData().IsValid())
+			{
+				UTexture2D *ICONTexture = SkillSlot->GetSkillData().Icon.LoadSynchronous();
+				SkillSlot->SetTexture(ICONTexture);
+				SkillList->AddChild(SkillSlot);
+			}
+		}
+	}
 }
 
 bool UUI_Health::RemoveSkillSlot(FGuid SkillID)
 {
-	return false;
+	UUI_CharacterSkillSlot *RemoveSkillSlot = nullptr;
+	for (UPanelSlot *PanelSlot : SkillList->GetSlots())
+	{
+		if (UUI_CharacterSkillSlot *SkillSlot = Cast<UUI_CharacterSkillSlot>(PanelSlot->Content))
+		{
+			if (SkillSlot->GUID == SkillID)
+			{
+				RemoveSkillSlot = SkillSlot;
+				break;
+			}
+		}
+	}
+
+	return SkillList->RemoveChild(RemoveSkillSlot);
 }

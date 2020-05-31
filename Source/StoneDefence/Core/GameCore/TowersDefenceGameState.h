@@ -39,6 +39,9 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 	UPROPERTY()
 		UDataTable* AIMonsterCharacterData;
 
+	//角色的技能
+	UPROPERTY()
+		UDataTable* SkillCharacterData;
 
 public:
 	ATowersDefenceGameState();
@@ -57,17 +60,22 @@ public:
 
 	bool RemoveCharacterData(const FGuid &ID);
 	FCharacterData &GetCharacterData(const FGuid &ID);
-
-
-	bool GetTowerDataFromTable(TArray<const FCharacterData*> &Datas);
-	bool GetMonsterDataFromTable(TArray<const FCharacterData*> &Datas);
+	const TArray<FCharacterData*> &GetTowerDataFromTable();
+	const TArray<FCharacterData*> &GetMonsterDataFromTable();
 	const FCharacterData &GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
-
-
-	
 	FGameInstanceDatas &GetGameData();
-
 	FCharacterData &GetCharacterDataNULL();
+
+	//模板技能
+	const TArray<FSkillData*> &GetSkillDataFromTable();
+
+	//动态技能的操作
+	FSkillData &AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data);
+	FSkillData &GetSkillData(const FGuid &SkillID);
+	FSkillData &GetSkillData(const FGuid &CharacterID, const FGuid &SkillID);
+	int32 RemoveSkillData(const FGuid &SkillID);
+
+	void InitSkill(FCharacterData &InCharacterData);
 
 protected:
 	UGameSaveData *GetSaveData();
@@ -82,10 +90,10 @@ private:
 		UGameSaveSlotList *SlotList;
 
 
-	TArray<const FCharacterData*> CacheTowerDatas;
-
-	TArray<const FCharacterData*> CacheMonsterDatas;
+	TArray<FCharacterData*> CacheTowerDatas;
+	TArray<FCharacterData*> CacheMonsterDatas;
+	TArray<FSkillData*> CacheSkillDatas;
 
 	FCharacterData CharacterDataNULL;
-	FBuildingTower BuildingTowerNULL;
+	FSkillData SkillDataNULL;
 };

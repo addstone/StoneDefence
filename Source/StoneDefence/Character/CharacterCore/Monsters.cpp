@@ -2,8 +2,8 @@
 
 
 #include "Monsters.h"
-#include "../../UI/Core/UI_Data.h"
 #include "../../StoneDefenceMacro.h"
+#include "../../Global/UI_Data.h"
 
 void AMonsters::BeginPlay()
 {
@@ -15,9 +15,9 @@ void AMonsters::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-ETeam AMonsters::GetTeamType()
+void AMonsters::RegisterTeam()
 {
-	return ETeam::BLUE;
+	GetCharacterData().Team = ETeam::BLUE;
 }
 
 void AMonsters::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)

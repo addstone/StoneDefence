@@ -5,6 +5,62 @@
 #include "CoreMinimal.h"
 #include "StoneDefenceType.generated.h"
 
+UENUM(BlueprintType)
+enum class ESkillType :uint8
+{
+	BURST,		//一次造成的伤害
+	SECTION,	//在一定范围内属性提升 时间过来就还原
+	ITERATION,	//持续一定时间内进行恢复
+};
+
+UENUM(BlueprintType)
+enum class ESkillTargetType :uint8
+{
+	FRIENDLY_FORCES = 0,
+	ENEMY,
+};
+
+UENUM(BlueprintType)
+enum class ESkillAttackType :uint8
+{
+	SINGLE,
+	MULTIPLE,
+};
+
+UENUM(BlueprintType)
+enum class ESkillEffectType :uint8
+{
+	ADD,
+	SUBTRACT,
+};
+
+USTRUCT(BlueprintType)
+struct FSkillType
+{
+	GENERATED_USTRUCT_BODY()
+
+	FSkillType()
+		:SkillType(ESkillType::SECTION)
+		, TargetType(ESkillTargetType::FRIENDLY_FORCES)
+		, SkillEffectType(ESkillEffectType::ADD)
+		, SkillAttackType(ESkillAttackType::MULTIPLE)
+	{
+
+	}
+
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+		ESkillType SkillType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+		ESkillTargetType TargetType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+		ESkillEffectType SkillEffectType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+		ESkillAttackType SkillAttackType;
+};
+
 UENUM()
 enum ETeam
 {

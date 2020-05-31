@@ -103,7 +103,7 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 			if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, InOwner->GetActorLocation(), FRotator::ZeroRotator))
 			{
 				FString DamageText = FString::Printf(InText, InDamageValue);
-				MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().MaxHealth);
+				MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().GetMaxHealth());
 			}
 		}
 	};
@@ -179,12 +179,12 @@ float ARuleOfTheCharacter::GetHealth()
 
 float ARuleOfTheCharacter::GetMaxHealth()
 {
-	return GetCharacterData().MaxHealth;
+	return GetCharacterData().GetMaxHealth();
 }
 
 ETeam ARuleOfTheCharacter::GetTeamType()
 {
-	return ETeam::MAX;
+	return GetCharacterData().Team;
 }
 
 FCharacterData & ARuleOfTheCharacter::GetCharacterData()

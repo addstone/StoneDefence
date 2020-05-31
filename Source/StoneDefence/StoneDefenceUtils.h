@@ -22,6 +22,9 @@ class ASceneCapture2D;
 
 namespace StoneDefenceUtils
 {
+	ARuleOfTheBullet *SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass);
+	ARuleOfTheBullet *SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot);
+
 	AStaticMeshActor* SpawnTowersDoll(UWorld *World, int32 ID);
 
 	void FindRangeTargetRecently(ARuleOfTheCharacter *InOwner, float Range, TArray<ARuleOfTheCharacter *> &Targets);

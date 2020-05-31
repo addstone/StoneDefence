@@ -8,8 +8,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "UI_InventorySlot.h"
 #include "../../../Core/UI_RuleOfTheWidget.h"
-#include "../../../Core/UI_Data.h"
 #include "../../../../StoneDefenceUtils.h"
+#include "../../../../Global/UI_Data.h"
 
 void UUI_Inventory::NativeConstruct()
 {
@@ -54,19 +54,19 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 			InventorySlotArray[i]->GUID = *ID[i];
 		}
 
-		TArray<const FCharacterData*> Datas;
-		if (GetGameState()->GetTowerDataFromTable(Datas))
-		{
+		
+		const TArray<FCharacterData*> &Datas = GetGameState()->GetTowerDataFromTable();
+		
 			for (int32 i = 0; i < Datas.Num(); i++)
 			{
 				InventorySlotArray[i]->GetBuildingTower().TowerID = Datas[i]->ID;
 				InventorySlotArray[i]->GetBuildingTower().NeedGold = Datas[i]->Glod;
-				InventorySlotArray[i]->GetBuildingTower().MaxConstructionTowersCD = Datas[i]->CD;
+				InventorySlotArray[i]->GetBuildingTower().MaxConstructionTowersCD = Datas[i]->GetCD();
 				InventorySlotArray[i]->GetBuildingTower().ICO = Datas[i]->Icon.LoadSynchronous();
 
 				InventorySlotArray[i]->UpdateUI();
 			}
-		}
+		
 	}
 }
 

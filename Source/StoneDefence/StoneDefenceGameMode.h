@@ -33,6 +33,7 @@ public:
 		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
 
 
+
 protected:
 	void SpawnMonstersRule(float DeltaSeconds);
 	void SpawnMainTowersRule();
@@ -43,4 +44,8 @@ protected:
 	{
 		return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
 	}
+
+	void UpdateSkill(float DeltaSeconds);
+
+	void CallUpdateAllClient(TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement);
 };

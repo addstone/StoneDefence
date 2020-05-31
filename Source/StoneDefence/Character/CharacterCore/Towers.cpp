@@ -5,8 +5,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "DestructibleComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "../../UI/Core/UI_Data.h"
 #include "../../StoneDefenceMacro.h"
+#include "../../Global/UI_Data.h"
 
 ATowers::ATowers()
 {
@@ -19,9 +19,9 @@ ATowers::ATowers()
 	ParticleMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-ETeam ATowers::GetTeamType()
+void ATowers::RegisterTeam()
 {
-	return ETeam::RED;
+	GetCharacterData().Team = ETeam::RED;
 }
 
 float ATowers::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
