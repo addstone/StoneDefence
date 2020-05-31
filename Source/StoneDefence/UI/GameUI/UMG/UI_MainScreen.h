@@ -49,6 +49,5 @@ public:
 	//Tick
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 };

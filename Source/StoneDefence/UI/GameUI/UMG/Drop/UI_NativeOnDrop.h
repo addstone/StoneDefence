@@ -14,4 +14,6 @@ class STONEDEFENCE_API UUI_NativeOnDrop : public UUI_RuleOfTheWidget
 {
 	GENERATED_BODY()
 	
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 };
