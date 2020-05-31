@@ -19,11 +19,14 @@ struct FSkillData : public FDataCore
 
 	virtual void Init() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Attribute")
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
 		FSkillType SkillType;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Attribute")
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
 		TAssetPtr<class UTexture2D> Icon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
+		TSubclassOf<AActor> BulletClass;
 
 	//Ìí¼Ó½ð±Ò
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")

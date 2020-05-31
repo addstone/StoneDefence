@@ -33,6 +33,7 @@ public:
 		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
 
 
+
 protected:
 	void SpawnMonstersRule(float DeltaSeconds);
 	void SpawnMainTowersRule();

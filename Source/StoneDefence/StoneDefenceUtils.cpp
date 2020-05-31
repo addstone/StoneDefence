@@ -16,10 +16,40 @@
 #include "Engine/StaticMeshActor.h"
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
+#include "Components/SceneComponent.h"
+#include "Components/ArrowComponent.h"
+#include "Bullet/RuleOfTheBullet.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
 #endif
+
+AActor * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass)
+{
+	TArray<ARuleOfTheCharacter*> Characters;
+	GetAllActor(World, Characters);
+
+	for (auto &Tmp : Characters)
+	{
+		if (Tmp->GUID == CharacterID)
+		{
+			FTransform Transform;
+			Transform.SetLocation(Tmp->GetFirePoint()->GetComponentLocation());
+			Transform.SetRotation(Tmp->GetFirePoint()->GetComponentRotation().Quaternion());
+
+			FActorSpawnParameters ActorSpawnParameters;
+
+			ActorSpawnParameters.Instigator = Tmp;
+
+			if (ARuleOfTheBullet *Bullet = World->SpawnActor<ARuleOfTheBullet>(InClass, Transform, ActorSpawnParameters))
+			{
+				return Bullet;
+			}
+			break;
+		}
+	}
+	return nullptr;
+}
 
 AStaticMeshActor* StoneDefenceUtils::SpawnTowersDoll(UWorld *World, int32 ID)
 {
