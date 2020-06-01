@@ -264,8 +264,7 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 				{
 					if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, Location, Rotator))
 					{
-						//RuleOfTheCharacter->GetUniqueID();
-						//RuleOfTheCharacter->GUID = FGuid::NewGuid();
+						RuleOfTheCharacter->ResetGUID();
 						FCharacterData &CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
 						CharacterDataInst.UpdateHealth();
 
@@ -336,14 +335,14 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			{
 				if (bReversed)
 				{
-					if (Tmp.Value.Team == InOwner.Value.Team)
+					if (Tmp.Value.Team != InOwner.Value.Team)
 					{
 						TeamIner(Tmp);
 					}
 				}
 				else
 				{
-					if (Tmp.Value.Team != InOwner.Value.Team)
+					if (Tmp.Value.Team == InOwner.Value.Team)
 					{
 						TeamIner(Tmp);
 					}
@@ -369,7 +368,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			if (!IsVerificationSkill(InOwner.Value, InSkill.ID))
 			{
 				FGuid MySkillID = FGuid::NewGuid();
-				InOwner.Value.AdditionalSkillData.Add(MySkillID, InSkill);
+				InOwner.Value.AdditionalSkillData.Add(MySkillID, InSkill).ResetDuration();
 
 				//通知客户端更新添加的UI
 				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
@@ -456,7 +455,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			TArray<FGuid> RemoveSkill;
 			for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
 			{
-
+				SkillTmp.Value.SkillDuration -= DeltaSeconds;
 
 				if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
 				{
@@ -467,8 +466,8 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 				if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
 					SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
 				{
-					SkillTmp.Value.SkillDuration += DeltaSeconds;
-					if (SkillTmp.Value.SkillDuration >= SkillTmp.Value.MaxSkillDuration)
+					
+					if (SkillTmp.Value.SkillDuration <= 0)
 					{
 						RemoveSkill.Add(SkillTmp.Key);
 					}

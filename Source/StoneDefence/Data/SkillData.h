@@ -81,4 +81,10 @@ struct FSkillData : public FDataCore
 
 	//动态技能
 	float GetDurationPercent() const;
+
+	//只服务于动态技能
+	void ResetDuration();
+
+	//服务于主技能
+	void ResetCD();
 };

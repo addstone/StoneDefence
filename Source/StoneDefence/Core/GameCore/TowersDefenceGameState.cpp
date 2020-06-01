@@ -206,6 +206,7 @@ void ATowersDefenceGameState::InitSkill(FCharacterData &InCharacterData)
 			if (Tmp == NewSkill->ID)
 			{
 				InCharacterData.CharacterSkill.Add(*NewSkill);
+				InCharacterData.CharacterSkill[InCharacterData.CharacterSkill.Num() - 1].ResetCD();
 				break;
 			}
 		}

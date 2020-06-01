@@ -17,7 +17,7 @@ void FSkillData::Init()
 	AttackRange = 0.f;
 	MaxSkillDuration = 5.f;
 	SkillDuration = 0.f;
-	CD = 60.f;
+	CD = 2.f;
 	SkillDurationTime = 0.f;
 	CDTime = 0.0f;
 	//WalkSpeed = 0.0f;
@@ -33,4 +33,14 @@ float FSkillData::GetCDPercent() const
 float FSkillData::GetDurationPercent() const
 {
 	return MaxSkillDuration == 0.f ? 0 : (SkillDuration / MaxSkillDuration);
+}
+
+void FSkillData::ResetDuration()
+{
+	SkillDuration = MaxSkillDuration;
+}
+
+void FSkillData::ResetCD()
+{
+	CDTime = CD;
 }

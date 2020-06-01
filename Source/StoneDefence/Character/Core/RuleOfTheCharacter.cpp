@@ -46,6 +46,11 @@ ARuleOfTheCharacter::ARuleOfTheCharacter()
 
 }
 
+void ARuleOfTheCharacter::ResetGUID()
+{
+	GUID = FGuid::NewGuid();
+}
+
 // Called when the game starts or when spawned
 void ARuleOfTheCharacter::BeginPlay()
 {
