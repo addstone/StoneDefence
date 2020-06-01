@@ -43,6 +43,9 @@ public:
 
 	void InitSkill();
 
+	void ResetIteration();
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
 		TEnumAsByte<EBulletType> BulletType;
 
@@ -81,6 +84,8 @@ protected:
 
 	UFUNCTION()
 		void ChainAttack();
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -456,22 +456,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 						{
 							SkillTmp.Value.SkillDurationTime = 0.0f;
 
-							if (SkillTmp.Value.SkillType.SkillEffectType == ESkillEffectType::ADD)
-							{
-								Tmp.Value.Health += SkillTmp.Value.Health;
-								Tmp.Value.PhysicalAttack += SkillTmp.Value.PhysicalAttack;
-								Tmp.Value.Armor += SkillTmp.Value.Armor;
-								Tmp.Value.AttackSpeed += SkillTmp.Value.AttackSpeed;
-								Tmp.Value.Glod += SkillTmp.Value.Glod;
-							}
-							else
-							{
-								Tmp.Value.Health -= SkillTmp.Value.Health;
-								Tmp.Value.PhysicalAttack -= SkillTmp.Value.PhysicalAttack;
-								Tmp.Value.Armor -= SkillTmp.Value.Armor;
-								Tmp.Value.AttackSpeed -= SkillTmp.Value.AttackSpeed;
-								Tmp.Value.Glod -= SkillTmp.Value.Glod;
-							}
+
 							//通知客户端进行特效子弹播放
 							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
 								MyPlayerController->SpawnBullet_Client(Tmp.Key, SkillTmp.Value.ID);

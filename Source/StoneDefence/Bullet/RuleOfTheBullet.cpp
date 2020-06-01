@@ -17,6 +17,7 @@
 #include "../StoneDefenceUtils.h"
 #include "../Core/GameCore/TowersDefenceGameState.h"
 #include "../Data/SkillData.h"
+#include "../Character/Damage/RuleOfTheDamage.h"
 
 // Sets default values
 ARuleOfTheBullet::ARuleOfTheBullet()
@@ -146,6 +147,13 @@ void ARuleOfTheBullet::InitSkill()
 	}
 }
 
+void ARuleOfTheBullet::ResetIteration()
+{
+	BulletType = EBulletType::BULLET_NONE;
+
+	InitSkill();
+}
+
 // Called when the game starts or when spawned
 void ARuleOfTheBullet::BeginPlay()
 {
@@ -192,16 +200,26 @@ void ARuleOfTheBullet::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 						case EBulletType::BULLET_LINE:
 						case EBulletType::BULLET_TRACK_LINE:
 						case EBulletType::BULLET_TRACK_LINE_SP:
-							UGameplayStatics::ApplyDamage(
-								OtherCharacter,
-								DamageValue,
-								InstigatorCharacter->GetController(),
-								InstigatorCharacter,
-								UDamageType::StaticClass());
-							//提交数据中心
-							SubmissionSkillRequest();
+						{
+							UClass * RuleOfTheDamage = URuleOfTheDamage::StaticClass();
+							if (URuleOfTheDamage *DamageClass = RuleOfTheDamage->GetDefaultObject<URuleOfTheDamage>())
+							{
+								DamageClass->SkillData = InData;
+
+								UGameplayStatics::ApplyDamage(
+									OtherCharacter,
+									DamageValue,
+									InstigatorCharacter->GetController(),
+									InstigatorCharacter,
+									RuleOfTheDamage);
+
+								//提交数据中心
+								SubmissionSkillRequest();
+							}
 							Destroy();
 							break;
+							
+						}
 						case EBulletType::BULLET_RANGE_LINE:
 							RadialDamage(OtherCharacter->GetActorLocation(), InstigatorCharacter);
 							Destroy();
@@ -264,18 +282,23 @@ void ARuleOfTheBullet::RadialDamage(const FVector& Origin, ARuleOfTheCharacter *
 				}
 			}
 		
-		UGameplayStatics::ApplyRadialDamageWithFalloff(
-			GetWorld(), 
-			100.f, 10.f,
-			Origin, 
-			400.f, 
-			1000.f, 
-			1.f, 
-			UDamageType::StaticClass(), 
-			IgnoreActors, 
-			Instigator,
-			Instigator->GetController(),
-			ECollisionChannel::ECC_MAX);
+			UClass * RuleOfTheDamage = URuleOfTheDamage::StaticClass();
+			if (URuleOfTheDamage *DamageClass = RuleOfTheDamage->GetDefaultObject<URuleOfTheDamage>())
+			{
+				DamageClass->SkillData = InData;
+				UGameplayStatics::ApplyRadialDamageWithFalloff(
+					GetWorld(),
+					100.f, 10.f,
+					Origin,
+					400.f,
+					1000.f,
+					1.f,
+					RuleOfTheDamage,
+					IgnoreActors,
+					Instigator,
+					Instigator->GetController(),
+					ECollisionChannel::ECC_MAX);
+			}
 		}	
 	}
 }
@@ -288,22 +311,29 @@ void ARuleOfTheBullet::ChainAttack()
 	}
 
 	//主要伤害区
-	if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
+	if (const FSkillData *InData = GetSkillData())
 	{
-		if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
+		if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
 		{
-			if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+			if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
 			{
-				UGameplayStatics::SpawnEmitterAttached(DamgageParticle, TargetCharacter->GetHommingPoint());
-				UGameplayStatics::SpawnEmitterAttached(OpenFireParticle, InstigatorCharacter->GetHommingPoint());
+				if (ARuleOfTheCharacter *TargetCharacter = InstigatorController->Target.Get())
+				{
+					UGameplayStatics::SpawnEmitterAttached(DamgageParticle, TargetCharacter->GetHommingPoint());
+					UGameplayStatics::SpawnEmitterAttached(OpenFireParticle, InstigatorCharacter->GetHommingPoint());
 
-
-				UGameplayStatics::ApplyDamage(
-					TargetCharacter,
-					100.f,
-					InstigatorCharacter->GetController(),
-					InstigatorCharacter,
-					UDamageType::StaticClass());
+					UClass * RuleOfTheDamage = URuleOfTheDamage::StaticClass();
+					if (URuleOfTheDamage *DamageClass = RuleOfTheDamage->GetDefaultObject<URuleOfTheDamage>())
+					{
+						DamageClass->SkillData = InData;
+						UGameplayStatics::ApplyDamage(
+							TargetCharacter,
+							100.f,
+							InstigatorCharacter->GetController(),
+							InstigatorCharacter,
+							RuleOfTheDamage);
+					}
+				}
 			}
 		}
 	}

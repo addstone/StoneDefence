@@ -4,6 +4,7 @@
 #include "Monsters.h"
 #include "../../StoneDefenceMacro.h"
 #include "../../Global/UI_Data.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void AMonsters::BeginPlay()
 {
@@ -13,6 +14,15 @@ void AMonsters::BeginPlay()
 void AMonsters::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//速度设定
+	const FCharacterData &InCharacterData = GetCharacterData();
+	
+		if (InCharacterData.IsValid())
+		{
+			GetCharacterMovement()->MaxWalkSpeed = InCharacterData.GetWalkSpeed();
+		}
+	
 }
 
 void AMonsters::RegisterTeam()
