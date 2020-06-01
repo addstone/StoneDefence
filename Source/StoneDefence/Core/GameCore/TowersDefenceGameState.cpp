@@ -17,6 +17,7 @@
 #include "../../Data/GameData.h"
 #include "../../Items/SpawnPoint.h"
 #include "../../StoneDefenceUtils.h"
+#include "TowersDefencePlayerController.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -247,6 +248,73 @@ bool ATowersDefenceGameState::IsVerificationSkillTemplate(const FCharacterData &
 			return true;
 		}
 	}
+
+	return false;
+}
+
+bool ATowersDefenceGameState::IsVerificationSkill(const FCharacterData &CharacterSkill, int32 SkillID)
+{
+	for (auto &InSkill : CharacterSkill.AdditionalSkillData)
+	{
+		if (InSkill.Value.ID == SkillID)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ATowersDefenceGameState::IsVerificationSkill(const FGuid &CharacterID, int32 SkillID)
+{
+	const FCharacterData &InData = GetCharacterData(CharacterID);
+	
+		if (InData.IsValid())
+		{
+			return IsVerificationSkill(InData, SkillID);
+		}
+	
+
+	return false;
+}
+
+void ATowersDefenceGameState::AddSkill(const FGuid &CharacterGUID, int32 InSkillID)
+{
+
+}
+
+void ATowersDefenceGameState::AddSkill(TPair<FGuid, FCharacterData> &Owner, const FSkillData &InSkill)
+{
+	if (!IsVerificationSkill(Owner.Value, InSkill.ID))
+	{
+		FGuid MySkillID = FGuid::NewGuid();
+
+		Owner.Value.AdditionalSkillData.Add(MySkillID, InSkill).ResetDuration();
+
+		//通知客户端更新添加的UI
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			MyPlayerController->AddSkillSlot_Server(Owner.Key, MySkillID);
+		});
+	}
+}
+
+bool ATowersDefenceGameState::SetSubmissionDataType(FGuid CharacterID, int32 Skill, ESubmissionSkillRequestType Type)
+{
+	FCharacterData &InCharacterData = GetCharacterData(CharacterID);
+	
+		if (InCharacterData.IsValid())
+		{
+			for (auto &Tmp : InCharacterData.CharacterSkill)
+			{
+				if (Skill == Tmp.ID)
+				{
+					Tmp.SubmissionSkillRequestType = Type;
+					return true;
+				}
+			}
+		}
+	
 
 	return false;
 }

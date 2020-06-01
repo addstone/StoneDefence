@@ -81,9 +81,14 @@ public:
 
 	bool IsVerificationSkillTemplate(const FGuid &CharacterID, int32 SkillID);
 	bool IsVerificationSkillTemplate(const FCharacterData &CharacterData, int32 SkillID);
-	//bool IsVerificationSkill(const FCharacterData &CharacterSkill, int32 SkillID);
-	//bool IsVerificationSkill(const FGuid &CharacterID, int32 SkillID);
+	bool IsVerificationSkill(const FCharacterData &CharacterSkill, int32 SkillID);
+	bool IsVerificationSkill(const FGuid &CharacterID, int32 SkillID);
 
+	void AddSkill(const FGuid &CharacterGUID, int32 InSkillID);
+	void AddSkill(TPair<FGuid, FCharacterData> &Owner, const FSkillData &InSkill);
+
+	UFUNCTION(/*Server*/)
+		bool SetSubmissionDataType(FGuid CharacterID, int32 Skill, ESubmissionSkillRequestType Type);
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();

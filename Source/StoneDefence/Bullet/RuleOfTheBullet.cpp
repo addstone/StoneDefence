@@ -44,14 +44,12 @@ ARuleOfTheBullet::ARuleOfTheBullet()
 	ProjectileMovement->UpdatedComponent = BoxDamage;//加上此句话，子弹卡主，第四章，第三节，19:00//解决方案：将staticmesh作为boxdamage子物体
 	BulletType = EBulletType::BULLET_DIRECT_LINE;
 
+	SubmissionSkillRequestType = ESubmissionSkillRequestType::AUTO;
 	InitialLifeSpan = 4.0f;
 }
 
-// Called when the game starts or when spawned
-void ARuleOfTheBullet::BeginPlay()
+void ARuleOfTheBullet::InitSkill()
 {
-	Super::BeginPlay();
-
 	if (ARuleOfTheCharacter * InstigatorCharacter = Cast<ARuleOfTheCharacter>(Instigator))
 	{
 		if (ARuleOfTheAIController *InstigatorController = Cast<ARuleOfTheAIController>(InstigatorCharacter->GetController()))
@@ -126,7 +124,7 @@ void ARuleOfTheBullet::BeginPlay()
 					ProjectileMovement->SetVelocityInLocalSpace(FVector(1.0f, 0.f, 0.f) * ProjectileMovement->InitialSpeed);
 					break;
 				}
-				
+
 				case EBulletType::BULLET_RANGE:
 					ProjectileMovement->StopMovementImmediately();
 					ProjectileMovement->SetVelocityInLocalSpace(FVector(1.0f, 0.f, 0.f) * ProjectileMovement->InitialSpeed);//没有这句话，子弹会没有初速度而不动
@@ -146,6 +144,14 @@ void ARuleOfTheBullet::BeginPlay()
 			}
 		}
 	}
+}
+
+// Called when the game starts or when spawned
+void ARuleOfTheBullet::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
 	BoxDamage->OnComponentBeginOverlap.AddUniqueDynamic(this, &ARuleOfTheBullet::BeginOverlap);
 }
 
@@ -402,11 +408,11 @@ void ARuleOfTheBullet::SubmissionSkillRequest()
 							//客户都将请求提交到服务器
 							InGameState->AddSkillDataTemplateToCharacterData(InstigatorCharacter->GUID, SkillID);
 
-							//if (SubmissionSkillRequestType == ESubmissionSkillRequestType::MANUAL)
-							//{
-							//	//设置类型 这是发生在服务器上
-							//	InGameState->SetSubmissionDataType(InstigatorCharacter->GUID, SkillID, SubmissionSkillRequestType);
-							//}
+							if (SubmissionSkillRequestType == ESubmissionSkillRequestType::MANUAL)
+							{
+								//设置类型 这是发生在服务器上
+								InGameState->SetSubmissionDataType(InstigatorCharacter->GUID, SkillID, SubmissionSkillRequestType);
+							}
 						}
 					}
 				

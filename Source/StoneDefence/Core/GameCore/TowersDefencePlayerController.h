@@ -61,6 +61,9 @@ public:
 	UFUNCTION(/*Server*/)
 		void SpawnBullet_Server(const FGuid &CharacterID,UClass *InClass);
 
+	UFUNCTION(/*Client*/)
+		void SpawnBullet_Client(const FGuid &CharacterID, const int32 &SkillID);
+
 	UFUNCTION()
 		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
 

@@ -8,6 +8,7 @@
 #include "RuleOfTheBullet.generated.h"
 
 
+
 class ARuleOfTheCharacter;
 class USplineComponent;
 struct FSkillData;
@@ -40,8 +41,13 @@ public:
 	// Sets default values for this actor's properties
 	ARuleOfTheBullet();
 
+	void InitSkill();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
 		TEnumAsByte<EBulletType> BulletType;
+
+	UPROPERTY()
+		ESubmissionSkillRequestType SubmissionSkillRequestType;
 
 	//子弹的伤害特效(碰撞后产生的特效)
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")

@@ -6,6 +6,13 @@
 #include "StoneDefenceType.generated.h"
 
 UENUM(BlueprintType)
+enum class ESubmissionSkillRequestType :uint8
+{
+	AUTO,			//生成权力交给服务器
+	MANUAL,			//生成权力交给客户都
+};
+
+UENUM(BlueprintType)
 enum class ESkillType :uint8
 {
 	BURST,		//一次造成的伤害

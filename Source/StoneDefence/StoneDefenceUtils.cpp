@@ -24,6 +24,31 @@
 #pragma optimize("",off) 
 #endif
 
+void StoneDefenceUtils::CallUpdateAllClient(UWorld *World, TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement)
+{
+	if (World)
+	{
+		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		{
+			if (ATowersDefencePlayerController *MyPlayerController = Cast<ATowersDefencePlayerController>(It->Get()))
+			{
+				InImplement(MyPlayerController);
+			}
+		}
+	}
+}
+
+void StoneDefenceUtils::CallUpdateAllBaseClient(UWorld *World, TFunction<void(APlayerController *MyPlayerController)> InImplement)
+{
+	if (World)
+	{
+		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		{
+			InImplement(It->Get());
+		}
+	}
+}
+
 ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass)
 {
 	TArray<ARuleOfTheCharacter *> Characters;

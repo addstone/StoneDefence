@@ -131,6 +131,17 @@ void ATowersDefencePlayerController::SpawnBullet_Server(const FGuid &CharacterID
 	SpawnBulletDelegate.ExecuteIfBound(CharacterID, InClass);
 }
 
+void ATowersDefencePlayerController::SpawnBullet_Client(const FGuid &CharacterID, const int32 &SkillID)
+{
+	if (const FSkillData *InData = GetGameState()->GetSkillData(SkillID))
+	{
+		StoneDefenceUtils::Execution(GetWorld(), CharacterID, [&](ARuleOfTheCharacter *InCharacter)
+		{
+			InCharacter->UpdateSkill(SkillID);
+		});
+	}
+}
+
 ATowers * ATowersDefencePlayerController::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)
 {
 	if (GetGameMode())

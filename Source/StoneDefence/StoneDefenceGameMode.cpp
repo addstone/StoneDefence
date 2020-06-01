@@ -350,33 +350,6 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			}
 		};
 
-		auto IsVerificationSkill = [](const FCharacterData &CharacterSkill, int32 SkillID) -> bool
-		{
-			for (auto &InSkill : CharacterSkill.AdditionalSkillData)
-			{
-				if (InSkill.Value.ID == SkillID)
-				{
-					return true;
-				}
-			}
-			return false;
-		};
-
-		//添加技能
-		auto AddSkill = [&](TPair<FGuid, FCharacterData> &InOwner, FSkillData &InSkill)
-		{
-			if (!IsVerificationSkill(InOwner.Value, InSkill.ID))
-			{
-				FGuid MySkillID = FGuid::NewGuid();
-				InOwner.Value.AdditionalSkillData.Add(MySkillID, InSkill).ResetDuration();
-
-				//通知客户端更新添加的UI
-				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->AddSkillSlot_Server(InOwner.Key, MySkillID);
-				});
-			}
-		};
-
 		//多个角色添加同样技能
 		auto AddSkills = [&](TArray<TPair<FGuid, FCharacterData>*> &RecentForces, FSkillData &InSkill)
 		{
@@ -386,7 +359,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			//}
 			for (auto &CharacterElement : RecentForces)
 			{
-				AddSkill(*CharacterElement, InSkill);
+				InGameState->AddSkill(*CharacterElement, InSkill);
 			}
 		};
 
@@ -451,129 +424,138 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 		for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
 		{
-			//计算和更新
-			TArray<FGuid> RemoveSkill;
-			for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
+			if (Tmp.Value.Health > 0.f)
 			{
-				SkillTmp.Value.SkillDuration -= DeltaSeconds;
-
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
+				//计算和更新
+				TArray<FGuid> RemoveSkill;
+				for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
 				{
-					RemoveSkill.Add(SkillTmp.Key);
-				}
+					SkillTmp.Value.SkillDuration -= DeltaSeconds;
 
-				//时间到了自然移除
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
-					SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
-				{
-					
-					if (SkillTmp.Value.SkillDuration <= 0)
+					if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
 					{
 						RemoveSkill.Add(SkillTmp.Key);
 					}
+
+					//时间到了自然移除
+					if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
+						SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+					{
+
+						if (SkillTmp.Value.SkillDuration <= 0)
+						{
+							RemoveSkill.Add(SkillTmp.Key);
+						}
+					}
+
+					//迭代 进行持续更新技能
+					if (SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+					{
+						SkillTmp.Value.SkillDurationTime += DeltaSeconds;
+						if (SkillTmp.Value.SkillDurationTime >= 1.0f)
+						{
+							SkillTmp.Value.SkillDurationTime = 0.0f;
+
+							if (SkillTmp.Value.SkillType.SkillEffectType == ESkillEffectType::ADD)
+							{
+								Tmp.Value.Health += SkillTmp.Value.Health;
+								Tmp.Value.PhysicalAttack += SkillTmp.Value.PhysicalAttack;
+								Tmp.Value.Armor += SkillTmp.Value.Armor;
+								Tmp.Value.AttackSpeed += SkillTmp.Value.AttackSpeed;
+								Tmp.Value.Glod += SkillTmp.Value.Glod;
+							}
+							else
+							{
+								Tmp.Value.Health -= SkillTmp.Value.Health;
+								Tmp.Value.PhysicalAttack -= SkillTmp.Value.PhysicalAttack;
+								Tmp.Value.Armor -= SkillTmp.Value.Armor;
+								Tmp.Value.AttackSpeed -= SkillTmp.Value.AttackSpeed;
+								Tmp.Value.Glod -= SkillTmp.Value.Glod;
+							}
+						}
+					}
+					//通知客户端进行特效子弹播放
+					StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
+						MyPlayerController->SpawnBullet_Server(Tmp.Key, SkillTmp.Value.BulletClass);
+					});
 				}
 
-				//迭代 进行持续更新技能
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+				//清理
+				for (FGuid &RemoveID : RemoveSkill)
 				{
-					SkillTmp.Value.SkillDurationTime += DeltaSeconds;
-					if (SkillTmp.Value.SkillDurationTime >= 1.0f)
-					{
-						SkillTmp.Value.SkillDurationTime = 0.0f;
+					//通知客户端移除技能
+					StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
+						MyPlayerController->RemoveSkillSlot_Server(Tmp.Key, RemoveID);
+					});
+					Tmp.Value.AdditionalSkillData.Remove(RemoveID);
+				}
 
-						if (SkillTmp.Value.SkillType.SkillEffectType == ESkillEffectType::ADD)
+				TArray<FSkillData> RemoveSkills;
+				//技能释放
+				for (auto &InSkill : Tmp.Value.CharacterSkill)
+				{
+					InSkill.CDTime += DeltaSeconds;
+
+					//触发
+					if (InSkill.CDTime >= InSkill.CD)
+					{
+						InSkill.CDTime = 0.f;
+						if (!InSkill.bBecomeEffective)
 						{
-							Tmp.Value.Health += SkillTmp.Value.Health;
-							Tmp.Value.PhysicalAttack += SkillTmp.Value.PhysicalAttack;
-							Tmp.Value.Armor += SkillTmp.Value.Armor;
-							Tmp.Value.AttackSpeed += SkillTmp.Value.AttackSpeed;
-							Tmp.Value.Glod += SkillTmp.Value.Glod;
+							if (InSkill.SkillType.SkillAttackType == ESkillAttackType::MULTIPLE)
+							{
+								TArray< TPair<FGuid, FCharacterData>*> Recent;
+								if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
+								{
+									GetTeam(Recent, Tmp, InSkill.AttackRange);
+								}
+								else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
+								{
+									GetTeam(Recent, Tmp, InSkill.AttackRange, true);
+								}
+								if (Recent.Num())
+								{
+									AddSkills(Recent, InSkill);
+								}
+							}
+							else if (InSkill.SkillType.SkillAttackType == ESkillAttackType::SINGLE)
+							{
+								TPair<FGuid, FCharacterData>* Recent = nullptr;
+								if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
+								{
+									Recent = FindRangeTargetRecently(Tmp);
+								}
+								else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
+								{
+									Recent = FindRangeTargetRecently(Tmp, true);
+								}
+								if (Recent)
+								{
+									InGameState->AddSkill(*Recent, InSkill);
+								}
+							}
+							InSkill.bBecomeEffective = true;
 						}
 						else
 						{
-							Tmp.Value.Health -= SkillTmp.Value.Health;
-							Tmp.Value.PhysicalAttack -= SkillTmp.Value.PhysicalAttack;
-							Tmp.Value.Armor -= SkillTmp.Value.Armor;
-							Tmp.Value.AttackSpeed -= SkillTmp.Value.AttackSpeed;
-							Tmp.Value.Glod -= SkillTmp.Value.Glod;
+							RemoveSkills.Add(InSkill);
 						}
 					}
 				}
-				//通知客户端进行特效子弹播放
-				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->SpawnBullet_Server(Tmp.Key, SkillTmp.Value.BulletClass);
-				});
-			}
-
-			//清理
-			for (FGuid &RemoveID : RemoveSkill)
-			{
-				//通知客户端移除技能
-				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->RemoveSkillSlot_Server(Tmp.Key, RemoveID);
-				});
-				Tmp.Value.AdditionalSkillData.Remove(RemoveID);
-			}
-
-			//技能释放
-			for (auto &InSkill : Tmp.Value.CharacterSkill)
-			{
-				InSkill.CDTime += DeltaSeconds;
-
-				//触发
-				if (InSkill.CDTime >= InSkill.CD)
+				for (auto &InSkill : RemoveSkills)
 				{
-					InSkill.CDTime = 0.f;
-
-					if (InSkill.SkillType.SkillAttackType == ESkillAttackType::MULTIPLE)
+					Tmp.Value.CharacterSkill.Remove(InSkill);
+					if (InSkill.SubmissionSkillRequestType == ESubmissionSkillRequestType::AUTO)
 					{
-						TArray< TPair<FGuid, FCharacterData>*> Recent;
-						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
-						{							
-							GetTeam(Recent, Tmp, InSkill.AttackRange);
-						}
-						else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
+						//Call客户端 进行特效子弹播放
+						StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
 						{
-							GetTeam(Recent, Tmp, InSkill.AttackRange, true);
-						}
-						if (Recent.Num())
-						{
-							AddSkills(Recent, InSkill);
-						}
+							MyPlayerController->SpawnBullet_Client(Tmp.Key, InSkill.ID);
+						});
 					}
-					else if (InSkill.SkillType.SkillAttackType == ESkillAttackType::SINGLE)
-					{
-						TPair<FGuid, FCharacterData>* Recent = nullptr;
-						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
-						{
-							Recent = FindRangeTargetRecently(Tmp);
-						}
-						else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
-						{
-							Recent = FindRangeTargetRecently(Tmp, true);
-						}
-						if (Recent)
-						{
-							AddSkill(*Recent, InSkill);
-						}
-					}
-				}
+				}				
 			}
-
-
-
 			
-		}
-	}
-}
-
-void AStoneDefenceGameMode::CallUpdateAllClient(TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement)
-{
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-	{
-		if (ATowersDefencePlayerController *MyPlayerController = Cast<ATowersDefencePlayerController>(It->Get()))
-		{
-			InImplement(MyPlayerController);
 		}
 	}
 }

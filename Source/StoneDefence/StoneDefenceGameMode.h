@@ -47,5 +47,5 @@ protected:
 
 	void UpdateSkill(float DeltaSeconds);
 
-	void CallUpdateAllClient(TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement);
+
 };
