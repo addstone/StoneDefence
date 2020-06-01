@@ -11,7 +11,7 @@
 class ARuleOfTheCharacter;
 class USplineComponent;
 struct FSkillData;
-
+//¼¼ÄÜÊµÀý
 UCLASS()
 class STONEDEFENCE_API ARuleOfTheBullet : public AActor
 {
@@ -34,6 +34,9 @@ class STONEDEFENCE_API ARuleOfTheBullet : public AActor
 		class UProjectileMovementComponent* ProjectileMovement;
 
 public:
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
+		int32 SkillID;
+
 	// Sets default values for this actor's properties
 	ARuleOfTheBullet();
 
@@ -76,4 +79,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	const FSkillData *GetSkillData();
+
+	UFUNCTION(BlueprintCallable, Category = "Add Skill request")
+		void SubmissionSkillRequest();
 };

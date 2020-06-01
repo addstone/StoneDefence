@@ -186,6 +186,20 @@ FSkillData & ATowersDefenceGameState::GetSkillData(const FGuid &CharacterID, con
 	return SkillDataNULL;
 }
 
+const FSkillData * ATowersDefenceGameState::GetSkillData(const int32 &SkillID)
+{
+	const TArray<FSkillData*> &SkillArray = GetSkillDataFromTable();
+	for (const auto &Tmp : SkillArray)
+	{
+		if (SkillID == Tmp->ID)
+		{
+			return Tmp;
+		}
+	}
+
+	return nullptr;
+}
+
 int32 ATowersDefenceGameState::RemoveSkillData(const FGuid &SkillID)
 {
 	for (auto &Tmp : GetSaveData()->CharacterDatas)
@@ -196,21 +210,45 @@ int32 ATowersDefenceGameState::RemoveSkillData(const FGuid &SkillID)
 	return INDEX_NONE;
 }
 
-void ATowersDefenceGameState::InitSkill(FCharacterData &InCharacterData)
+void ATowersDefenceGameState::AddSkillDataTemplateToCharacterData(const FGuid &CharacterID, int32 SkillID)
 {
-	const TArray<FSkillData*> &InSkillData = GetSkillDataFromTable();
-	for (auto &Tmp : InCharacterData.CharacterSkillID)
+	if (const FSkillData *InData = GetSkillData(SkillID))
 	{
-		for (const FSkillData *NewSkill : InSkillData)
+		for (auto &Tmp : GetSaveData()->CharacterDatas)
 		{
-			if (Tmp == NewSkill->ID)
+			if (CharacterID == Tmp.Key)
 			{
-				InCharacterData.CharacterSkill.Add(*NewSkill);
-				InCharacterData.CharacterSkill[InCharacterData.CharacterSkill.Num() - 1].ResetCD();
+				Tmp.Value.CharacterSkill.Add(*InData);
+				Tmp.Value.CharacterSkill[Tmp.Value.CharacterSkill.Num() - 1].ResetCD();
 				break;
 			}
 		}
 	}
+}
+
+bool ATowersDefenceGameState::IsVerificationSkillTemplate(const FGuid &CharacterID, int32 SkillID)
+{
+	const FCharacterData &InData = GetCharacterData(CharacterID);
+		if (InData.IsValid())
+		{
+			return IsVerificationSkillTemplate(InData, SkillID);
+		}
+	
+
+	return false;
+}
+
+bool ATowersDefenceGameState::IsVerificationSkillTemplate(const FCharacterData &CharacterData, int32 SkillID)
+{
+	for (auto &InSkill : CharacterData.CharacterSkill)
+	{
+		if (InSkill.ID == SkillID)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 UGameSaveData * ATowersDefenceGameState::GetSaveData()

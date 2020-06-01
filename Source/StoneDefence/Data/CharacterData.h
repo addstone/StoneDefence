@@ -127,9 +127,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Characte Skill")
 		TArray<FSkillData> CharacterSkill;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Characte Skill")
-		TArray<int32> CharacterSkillID;
-
 	//动态技能 这个是别人添加到我们这边技能
 	UPROPERTY()
 		TMap<FGuid, FSkillData> AdditionalSkillData;
