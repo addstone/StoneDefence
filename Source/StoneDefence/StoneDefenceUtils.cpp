@@ -161,6 +161,23 @@ ARuleOfTheCharacter * StoneDefenceUtils::FindTargetRecently(const TArray<ARuleOf
 	return NULL;
 }
 
+void StoneDefenceUtils::Execution(UWorld *World, const FGuid &CharacterID, TFunction<void(ARuleOfTheCharacter *InCharacter)> Code)
+{
+	if (World)
+	{
+		TArray<ARuleOfTheCharacter *> Characters;
+		StoneDefenceUtils::GetAllActor(World, Characters);
+		for (ARuleOfTheCharacter *Tmp : Characters)
+		{
+			if (Tmp->GUID == CharacterID)
+			{
+				Code(Tmp);
+				break;
+			}
+		}
+	}
+}
+
 float Expression::GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner)
 {
 	if (Enemy && Owner)

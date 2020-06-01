@@ -75,6 +75,7 @@ namespace StoneDefenceUtils
 	//{
 	//	return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
 	//}
+	void Execution(UWorld *World, const FGuid &CharacterID, TFunction<void(ARuleOfTheCharacter *InCharacter)> Code);
 }
 
 namespace Expression

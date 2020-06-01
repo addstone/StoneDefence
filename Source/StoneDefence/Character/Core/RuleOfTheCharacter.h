@@ -60,6 +60,13 @@ protected:
 public:
 	void UpdateUI();
 public:	
+
+	UFUNCTION(/*Client*/)
+		void RemoveSkillSlot_Client(const FGuid &SlotID);
+
+	UFUNCTION(/*Client*/)
+		void AddSkillSlot_Client(const FGuid &SlotID);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

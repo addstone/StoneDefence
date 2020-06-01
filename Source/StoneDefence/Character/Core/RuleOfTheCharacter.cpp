@@ -85,6 +85,22 @@ void ARuleOfTheCharacter::UpdateUI()
 	//}
 }
 
+void ARuleOfTheCharacter::RemoveSkillSlot_Client(const FGuid &SlotID)
+{
+	if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
+	{
+		HealthUI->RemoveSkillSlot(SlotID);
+	}
+}
+
+void ARuleOfTheCharacter::AddSkillSlot_Client(const FGuid &SlotID)
+{
+	if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
+	{
+		HealthUI->AddSkillSlot(SlotID);
+	}
+}
+
 // Called every frame
 void ARuleOfTheCharacter::Tick(float DeltaTime)
 {

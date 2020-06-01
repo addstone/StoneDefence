@@ -28,9 +28,6 @@ struct FSkillData : public FDataCore
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
 		TSubclassOf<AActor> BulletClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
-		FText SkillIntroduce;
-
 	//Ìí¼Ó½ð±Ò
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
 		float Glod;

@@ -373,7 +373,7 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 				//通知客户端更新添加的UI
 				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->AddSkillSlot_Client(InOwner.Key, MySkillID);
+					MyPlayerController->AddSkillSlot_Server(InOwner.Key, MySkillID);
 				});
 			}
 		};
@@ -502,13 +502,17 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 				}
 				//通知客户端进行特效子弹播放
 				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->SpawnBullet_Client(Tmp.Key, SkillTmp.Value.BulletClass);
+					MyPlayerController->SpawnBullet_Server(Tmp.Key, SkillTmp.Value.BulletClass);
 				});
 			}
 
 			//清理
 			for (FGuid &RemoveID : RemoveSkill)
 			{
+				//通知客户端移除技能
+				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
+					MyPlayerController->RemoveSkillSlot_Server(Tmp.Key, RemoveID);
+				});
 				Tmp.Value.AdditionalSkillData.Remove(RemoveID);
 			}
 

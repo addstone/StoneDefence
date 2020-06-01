@@ -24,3 +24,13 @@ void FSkillData::Init()
 	//bBecomeEffective = false;
 	//SubmissionSkillRequestType = ESubmissionSkillRequestType::AUTO;
 }
+
+float FSkillData::GetCDPercent() const
+{
+	return CD == 0.f ? 0 : (CDTime / CD);
+}
+
+float FSkillData::GetDurationPercent() const
+{
+	return MaxSkillDuration == 0.f ? 0 : (SkillDuration / MaxSkillDuration);
+}

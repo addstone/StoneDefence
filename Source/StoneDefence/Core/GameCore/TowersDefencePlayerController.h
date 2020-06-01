@@ -52,11 +52,14 @@ public:
 	class AStoneDefenceGameMode *GetGameMode();
 	class ATowersDefenceGameState *GetGameState();
 
-	UFUNCTION()
-		void AddSkillSlot_Client(const FGuid &CharacterID, const FGuid &SlotID);
+	UFUNCTION(/*Server*/)
+		void RemoveSkillSlot_Server(const FGuid &CharacterID, const FGuid &SlotID);
 
-	UFUNCTION()
-		void SpawnBullet_Client(const FGuid &CharacterID,UClass *InClass);
+	UFUNCTION(/*Server*/)
+		void AddSkillSlot_Server(const FGuid &CharacterID, const FGuid &SlotID);
+
+	UFUNCTION(/*Server*/)
+		void SpawnBullet_Server(const FGuid &CharacterID,UClass *InClass);
 
 	UFUNCTION()
 		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);

@@ -7,6 +7,8 @@
 #include "TowersDefenceGameState.h"
 #include "TowersDefencePlayerState.h"
 #include "../../Global/UI_Data.h"
+#include "../../StoneDefenceUtils.h"
+#include "../../Character/Core/RuleOfTheCharacter.h"
 
 ATowersDefencePlayerController::ATowersDefencePlayerController()
 {
@@ -108,12 +110,23 @@ ATowersDefenceGameState * ATowersDefencePlayerController::GetGameState()
 	return GetWorld()->GetGameState<ATowersDefenceGameState>();
 }
 
-void ATowersDefencePlayerController::AddSkillSlot_Client(const FGuid &CharacterID, const FGuid & SlotID)
+void ATowersDefencePlayerController::RemoveSkillSlot_Server(const FGuid &CharacterID, const FGuid &SlotID)
 {
-	AddSkillDelegate.ExecuteIfBound(SlotID);
+	StoneDefenceUtils::Execution(GetWorld(), CharacterID, [&](ARuleOfTheCharacter *InCharacter)
+	{
+		InCharacter->RemoveSkillSlot_Client(SlotID);
+	});
 }
 
-void ATowersDefencePlayerController::SpawnBullet_Client(const FGuid &CharacterID, UClass *InClass)
+void ATowersDefencePlayerController::AddSkillSlot_Server(const FGuid &CharacterID, const FGuid & SlotID)
+{
+	StoneDefenceUtils::Execution(GetWorld(), CharacterID, [&](ARuleOfTheCharacter *InCharacter)
+	{
+		InCharacter->AddSkillSlot_Client(SlotID);
+	});
+}
+
+void ATowersDefencePlayerController::SpawnBullet_Server(const FGuid &CharacterID, UClass *InClass)
 {
 	SpawnBulletDelegate.ExecuteIfBound(CharacterID, InClass);
 }
