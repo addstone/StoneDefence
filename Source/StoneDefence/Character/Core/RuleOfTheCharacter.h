@@ -47,6 +47,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Death)
 		float DelayDeath;
 
+	//被动技能
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+		TArray<int32> SkillIDs;
+
 public:
 	// Sets default values for this character's properties
 	ARuleOfTheCharacter();
@@ -62,6 +66,13 @@ protected:
 		virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 public:
 	void UpdateUI();
+
+	//更新被动技能
+	void UpdateSkill(int32 SkillID);
+
+	UFUNCTION(/*Client*/)
+		void InitSkill();
+
 public:	
 
 	UFUNCTION(/*Client*/)

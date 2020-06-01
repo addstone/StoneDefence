@@ -126,11 +126,6 @@ void ATowersDefencePlayerController::AddSkillSlot_Server(const FGuid &CharacterI
 	});
 }
 
-void ATowersDefencePlayerController::SpawnBullet_Server(const FGuid &CharacterID, UClass *InClass)
-{
-	SpawnBulletDelegate.ExecuteIfBound(CharacterID, InClass);
-}
-
 void ATowersDefencePlayerController::SpawnBullet_Client(const FGuid &CharacterID, const int32 &SkillID)
 {
 	if (const FSkillData *InData = GetGameState()->GetSkillData(SkillID))

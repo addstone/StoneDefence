@@ -43,7 +43,7 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
-		CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController)
+	StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
 		{
 			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
 			{
@@ -276,8 +276,8 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 								CharacterDataInst.UpdateLevel();
 							}
 						}
-
-						InGameState->InitSkill(CharacterDataInst);
+						//初始化被动技能
+						RuleOfTheCharacter->InitSkill();
 						RuleOfTheCharacter->RegisterTeam();
 						InCharacter = RuleOfTheCharacter;
 					}
@@ -472,12 +472,12 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 								Tmp.Value.AttackSpeed -= SkillTmp.Value.AttackSpeed;
 								Tmp.Value.Glod -= SkillTmp.Value.Glod;
 							}
+							//通知客户端进行特效子弹播放
+							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
+								MyPlayerController->SpawnBullet_Client(Tmp.Key, SkillTmp.Value.ID);
+							});
 						}
 					}
-					//通知客户端进行特效子弹播放
-					StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
-						MyPlayerController->SpawnBullet_Server(Tmp.Key, SkillTmp.Value.BulletClass);
-					});
 				}
 
 				//清理

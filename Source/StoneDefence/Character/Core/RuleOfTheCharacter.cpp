@@ -17,6 +17,7 @@
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
 #include "../../StoneDefenceMacro.h"
+#include "../../Bullet/RuleOfTheBullet.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -88,6 +89,32 @@ void ARuleOfTheCharacter::UpdateUI()
 			}
 		}
 	//}
+}
+
+void ARuleOfTheCharacter::UpdateSkill(int32 SkillID)
+{
+	for (auto &Tmp : SkillIDs)
+	{
+		if (Tmp == SkillID)
+		{
+			if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(GetWorld(), this, Tmp, OpenFriePoint->GetComponentLocation(), OpenFriePoint->GetComponentRotation()))
+			{
+				Bullet->InitSkill();
+			}
+			break;
+		}
+	}
+}
+
+void ARuleOfTheCharacter::InitSkill()
+{
+	for (auto &Tmp : SkillIDs)
+	{
+		if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(GetWorld(), this, Tmp, OpenFriePoint->GetComponentLocation(), OpenFriePoint->GetComponentRotation()))
+		{
+			Bullet->InitSkill();
+		}
+	}
 }
 
 void ARuleOfTheCharacter::RemoveSkillSlot_Client(const FGuid &SlotID)

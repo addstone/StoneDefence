@@ -283,18 +283,18 @@ void ATowersDefenceGameState::AddSkill(const FGuid &CharacterGUID, int32 InSkill
 
 }
 
-void ATowersDefenceGameState::AddSkill(TPair<FGuid, FCharacterData> &Owner, const FSkillData &InSkill)
+void ATowersDefenceGameState::AddSkill(TPair<FGuid, FCharacterData> &InOwner, const FSkillData &InSkill)
 {
-	if (!IsVerificationSkill(Owner.Value, InSkill.ID))
+	if (!IsVerificationSkill(InOwner.Value, InSkill.ID))
 	{
 		FGuid MySkillID = FGuid::NewGuid();
 
-		Owner.Value.AdditionalSkillData.Add(MySkillID, InSkill).ResetDuration();
+		InOwner.Value.AdditionalSkillData.Add(MySkillID, InSkill).ResetDuration();
 
 		//通知客户端更新添加的UI
 		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
 		{
-			MyPlayerController->AddSkillSlot_Server(Owner.Key, MySkillID);
+			MyPlayerController->AddSkillSlot_Server(InOwner.Key, MySkillID);
 		});
 	}
 }

@@ -28,6 +28,8 @@ namespace StoneDefenceUtils
 
 	ARuleOfTheBullet *SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass);
 	ARuleOfTheBullet *SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot);
+	ARuleOfTheBullet *SpawnBullet(UWorld *World, ARuleOfTheCharacter *Onwer, const int32 SkillID, const FVector &Loc, const FRotator &Rot);
+
 
 	AStaticMeshActor* SpawnTowersDoll(UWorld *World, int32 ID);
 

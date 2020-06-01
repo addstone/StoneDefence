@@ -93,4 +93,9 @@ struct FSkillData : public FDataCore
 
 	//服务于主技能
 	void ResetCD();
+
+	friend bool operator==(const FSkillData& X, const FSkillData& Y)
+	{
+		return X.ID == Y.ID;
+	}
 };

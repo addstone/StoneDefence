@@ -58,9 +58,6 @@ public:
 	UFUNCTION(/*Server*/)
 		void AddSkillSlot_Server(const FGuid &CharacterID, const FGuid &SlotID);
 
-	UFUNCTION(/*Server*/)
-		void SpawnBullet_Server(const FGuid &CharacterID,UClass *InClass);
-
 	UFUNCTION(/*Client*/)
 		void SpawnBullet_Client(const FGuid &CharacterID, const int32 &SkillID);
 

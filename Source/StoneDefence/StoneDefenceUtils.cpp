@@ -65,6 +65,26 @@ ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid Character
 	return nullptr;
 }
 
+ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, ARuleOfTheCharacter *Onwer, const int32 SkillID, const FVector &Loc, const FRotator &Rot)
+{
+	ARuleOfTheBullet *NewBullet = nullptr;
+	if (World)
+	{
+		if (ATowersDefenceGameState *InGameState = World->GetGameState<ATowersDefenceGameState>())
+		{
+			if (const FSkillData *InData = InGameState->GetSkillData(SkillID))
+			{
+				if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(World, Onwer, InData->BulletClass, Loc, Rot))
+				{
+					NewBullet = Bullet;
+				}
+			}
+		}
+	}
+
+	return NewBullet;
+}
+
 ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot)
 {
 	if (World && NewPawn && InClass)
