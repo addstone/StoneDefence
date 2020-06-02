@@ -20,8 +20,19 @@ class STONEDEFENCE_API ATowersDefencePlayerState : public ARuleOfThePlayerState
 {
 	GENERATED_BODY()
 	
+	//玩家的技能
+	UPROPERTY()
+		UDataTable* PlayerSkillDataTable;
 public:
 	ATowersDefencePlayerState();
+
+	const TArray<FPlayerSkillData*> &GetPlayerSkillDataFromTable();
+	const FPlayerSkillData *GetPlayerSkillDataFromTable(const int32 &PlayerSkillID);
+	FPlayerSkillData *GetPlayerSkillData(const FGuid &PlayerSkillGUID);
+
+	bool IsVerificationSkill(const FGuid &SlotID);
+	void UsePlayerSkill(const FGuid &SlotID);
+	void AddPlayerSkill(const FGuid *Guid, int32 SkillID);
 
 	FPlayerData &GetPlayerData();
 	FBuildingTower &GetBuildingTower(const FGuid &ID);
@@ -48,4 +59,6 @@ private:
 
 	UPROPERTY()
 		FBuildingTower BuildingTowerNULL;
+
+	TArray<FPlayerSkillData*> CachePlayerSkilDatas;
 };

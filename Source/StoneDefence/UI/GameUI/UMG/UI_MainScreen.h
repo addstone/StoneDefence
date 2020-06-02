@@ -6,9 +6,6 @@
 #include "../../Core/UI_RuleOfTheWidget.h"
 #include "UI_MainScreen.generated.h"
 
-
-
-
 /**
  * 
  */
@@ -51,4 +48,6 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD);
+
+	void UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, bool bInCD);
 };

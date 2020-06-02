@@ -39,7 +39,7 @@ void UUI_PlayerSkillSystem::LayoutPlayerSkillSlot()
 					PanelSlot->SetVerticalAlignment(VAlign_Fill);
 				}
 
-				//SkillSlot->UpdateUI();
+				SkillSlot->UpdateUI();
 			}
 		}
 	}
@@ -47,25 +47,25 @@ void UUI_PlayerSkillSystem::LayoutPlayerSkillSlot()
 
 void UUI_PlayerSkillSystem::UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, bool bInCD)
 {
-	//for (UPanelSlot *PanelSlot : SkillList->GetSlots())
-	//{
-	//	if (UUI_SkillSlot *SkillSlot = Cast<UUI_SkillSlot>(PanelSlot->Content))
-	//	{
-	//		if (SkillSlot->GUID == PlayerSKillSlotGUID)
-	//		{
-	//			if (bInCD)
-	//			{
-	//				SkillSlot->DrawSlotCD(SkillSlot->GetPlayerSkillData()->GetCDPercent());
-	//			}
-	//			else
-	//			{
-	//				SkillSlot->DrawSlotCD(0.f);
-	//			}
+	for (UPanelSlot *PanelSlot : SkillList->GetSlots())
+	{
+		if (UUI_SkillSlot *SkillSlot = Cast<UUI_SkillSlot>(PanelSlot->Content))
+		{
+			if (SkillSlot->GUID == PlayerSKillSlotGUID)
+			{
+				if (bInCD)
+				{
+					SkillSlot->DrawSlotCD(SkillSlot->GetPlayerSkillData()->GetCDPercent());
+				}
+				else
+				{
+					SkillSlot->DrawSlotCD(0.f);
+				}
 
-	//			SkillSlot->UpdateSloInfo(SkillSlot->GetPlayerSkillData()->SkillNumber, SkillSlot->GetPlayerSkillData()->CDTime);
+				SkillSlot->UpdateSloInfo(SkillSlot->GetPlayerSkillData()->SkillNumber, SkillSlot->GetPlayerSkillData()->CDTime);
 
-	//			break;
-	//		}
-	//	}
-	//}
+				break;
+			}
+		}
+	}
 }

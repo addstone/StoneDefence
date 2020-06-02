@@ -36,8 +36,8 @@ void ARuleofTheHUD::UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bIn
 
 void ARuleofTheHUD::UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, bool bInCD)
 {
-	//if (MainScreen)
-	//{
-	//	MainScreen->UpdatePlayerSkillSlot(PlayerSKillSlotGUID, bInCD);
-	//}
+	if (MainScreen)
+	{
+		MainScreen->UpdatePlayerSkillSlot(PlayerSKillSlotGUID, bInCD);
+	}
 }

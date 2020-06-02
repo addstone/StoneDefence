@@ -29,15 +29,18 @@ void UUI_SkillSlot::NativeConstruct()
 
 void UUI_SkillSlot::OnClickedWidget()
 {
-
+	if (GetPlayerState()->IsVerificationSkill(GUID))
+	{
+		GetPlayerState()->UsePlayerSkill(GUID);
+	}
 }
 
 FPlayerSkillData * UUI_SkillSlot::GetPlayerSkillData()
 {
-	return nullptr;
+	return GetPlayerState()->GetPlayerSkillData(GUID);
 }
 
 void UUI_SkillSlot::UpdateUI()
 {
-
+	UpdateSlotUI(GetPlayerSkillData()->Icon.LoadSynchronous(), GetPlayerSkillData()->SkillNumber);
 }

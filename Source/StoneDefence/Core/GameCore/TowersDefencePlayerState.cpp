@@ -5,9 +5,15 @@
 #include "Kismet/GameplayStatics.h"
 #include "../../Data/Save/PlayerSaveData.h"
 #include "../../StoneDefenceMacro.h"
+#include "UObject/ConstructorHelpers.h"
+#include "TowersDefencePlayerController.h"
+#include "../../StoneDefenceUtils.h"
 
 ATowersDefencePlayerState::ATowersDefencePlayerState()
 {
+	static ConstructorHelpers::FObjectFinder<UDataTable> MyTable_PlayerSkill(TEXT("/Game/GameData/PlayerSkillData"));
+	PlayerSkillDataTable = MyTable_PlayerSkill.Object;
+
 	//物品栏的塔slot
 	for (int32 i = 0; i < 21; i++)
 	{
@@ -18,6 +24,75 @@ ATowersDefencePlayerState::ATowersDefencePlayerState()
 	{
 		GetSaveData()->PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
 	}
+}
+
+const TArray<FPlayerSkillData*> & ATowersDefencePlayerState::GetPlayerSkillDataFromTable()
+{
+	if (!CachePlayerSkilDatas.Num())
+	{
+		PlayerSkillDataTable->GetAllRows(TEXT("Player Skill Data"), CachePlayerSkilDatas);
+	}
+
+	return CachePlayerSkilDatas;
+}
+
+const FPlayerSkillData * ATowersDefencePlayerState::GetPlayerSkillDataFromTable(const int32 &PlayerSkillID)
+{
+	const TArray<FPlayerSkillData*> &InSkillDatas = GetPlayerSkillDataFromTable();
+	for (auto &Tmp : InSkillDatas)
+	{
+		if (Tmp->ID == PlayerSkillID)
+		{
+			return Tmp;
+		}
+	}
+
+	return NULL;
+}
+
+FPlayerSkillData * ATowersDefencePlayerState::GetPlayerSkillData(const FGuid &PlayerSkillGUID)
+{
+	if (GetSaveData()->PlayerSkillDatas.Contains(PlayerSkillGUID))
+	{
+		return &GetSaveData()->PlayerSkillDatas[PlayerSkillGUID];
+	}
+
+	return nullptr;
+}
+
+bool ATowersDefencePlayerState::IsVerificationSkill(const FGuid &SlotID)
+{
+	if (FPlayerSkillData *InData = GetPlayerSkillData(SlotID))
+	{
+		if (InData->IsValid() && InData->SkillNumber > 0 && InData->GetCDPercent() <= 0.f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void ATowersDefencePlayerState::UsePlayerSkill(const FGuid &SlotID)
+{
+	if (FPlayerSkillData *InData = GetPlayerSkillData(SlotID))
+	{
+		if (InData->IsValid())
+		{
+			InData->SkillNumber--;
+			InData->ResetCD();
+			//通知客户端更新添加的UI
+			StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+			{
+				MyPlayerController->SpawnPlayerSkill_Client(InData->ID);
+			});
+		}
+	}
+}
+
+void ATowersDefencePlayerState::AddPlayerSkill(const FGuid *Guid, int32 SkillID)
+{
+	GetSaveData()->AddPlayerSkill(GetWorld(), Guid, SkillID);
 }
 
 FPlayerData & ATowersDefencePlayerState::GetPlayerData()

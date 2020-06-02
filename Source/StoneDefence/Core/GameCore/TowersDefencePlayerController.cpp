@@ -155,12 +155,15 @@ void ATowersDefencePlayerController::UpdateInventory_Client(const FGuid &Invento
 
 void ATowersDefencePlayerController::UpdatePlayerSkill_Client(const FGuid &PlayerSlotGUID, bool bInCD)
 {
-
+	if (ARuleofTheHUD *NewHUD = GetHUD<ARuleofTheHUD>())
+	{
+		NewHUD->UpdatePlayerSkillSlot(PlayerSlotGUID, bInCD);
+	}
 }
 
 void ATowersDefencePlayerController::SpawnPlayerSkill_Client(const int32 &PlayerSKillID)
 {
-
+	//StoneDefenceUtils::SpawnPlayerBullet(GetWorld(), PlayerSKillID);
 }
 
 ATowers * ATowersDefencePlayerController::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)

@@ -603,39 +603,6 @@ void AStoneDefenceGameMode::UpdatePlayerSkill(float DeltaSeconds)
 						}
 					}
 				}
-
-
-
-
-				//if (Tmp.Value.CurrentConstrictionTowersCD > 0)
-				//{
-				//	Tmp.Value.CurrentConstrictionTowersCD -= DeltaSeconds;
-				//	Tmp.Value.bCallUpdateTowersInfo = true;
-
-				//	//通知客户端更新我们的装备CD
-				//	StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
-				//		{
-				//			MyPlayerController->UpdateInventory_Client(Tmp.Key, true);
-				//		});
-				//}
-				//else if (Tmp.Value.bCallUpdateTowersInfo)
-				//{
-				//	Tmp.Value.bCallUpdateTowersInfo = false;
-				//	//准备构建的塔
-				//	Tmp.Value.TowersPerpareBuildingNumber--;
-				//	Tmp.Value.TowersConstructionNumber++;
-
-				//	//通知客户端更新我们的装备CD
-				//	StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
-				//		{
-				//			MyPlayerController->UpdateInventory_Client(Tmp.Key, false);
-				//		});
-
-				//	if (Tmp.Value.TowersPerpareBuildingNumber > 0)
-				//	{
-				//		Tmp.Value.ResetCD();
-				//	}
-				//}
 			}
 		}
 		);
