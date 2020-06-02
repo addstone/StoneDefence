@@ -19,10 +19,54 @@
 #include "Components/SceneComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Bullet/RuleOfTheBullet.h"
+#include "Core/GameCore/TowersDefencePlayerState.h"
+#include "Bullet/PlayerSkillSlotActor.h"
+#include "Data/PlayerSkillData.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
 #endif
+
+void StoneDefenceUtils::CallUpdateAllClient(UWorld *World, TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement)
+{
+	if (World)
+	{
+		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		{
+			if (ATowersDefencePlayerController *MyPlayerController = Cast<ATowersDefencePlayerController>(It->Get()))
+			{
+				InImplement(MyPlayerController);
+			}
+		}
+	}
+}
+
+void StoneDefenceUtils::CallUpdateAllBaseClient(UWorld *World, TFunction<void(APlayerController *MyPlayerController)> InImplement)
+{
+	if (World)
+	{
+		for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+		{
+			InImplement(It->Get());
+		}
+	}
+}
+
+APlayerSkillSlotActor * StoneDefenceUtils::SpawnPlayerBullet(UWorld *World, int32 SkillID)
+{
+	if (ATowersDefencePlayerState *InPlayerState = World->GetFirstPlayerController()->GetPlayerState<ATowersDefencePlayerState>())
+	{
+		if (const FPlayerSkillData * SkillDataState = InPlayerState->GetPlayerSkillDataFromTable(SkillID))
+		{
+			if (APlayerSkillSlotActor *PlayerSKillSlot = World->SpawnActor<APlayerSkillSlotActor>(SkillDataState->BulletClass, FVector::ZeroVector, FRotator::ZeroRotator))
+			{
+				return PlayerSKillSlot;
+			}
+		}
+	}
+
+	return nullptr;
+}
 
 ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass)
 {
@@ -38,6 +82,26 @@ ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, FGuid Character
 	}
 
 	return nullptr;
+}
+
+ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, ARuleOfTheCharacter *Onwer, const int32 SkillID, const FVector &Loc, const FRotator &Rot)
+{
+	ARuleOfTheBullet *NewBullet = nullptr;
+	if (World)
+	{
+		if (ATowersDefenceGameState *InGameState = World->GetGameState<ATowersDefenceGameState>())
+		{
+			if (const FSkillData *InData = InGameState->GetSkillData(SkillID))
+			{
+				if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(World, Onwer, InData->BulletClass, Loc, Rot))
+				{
+					NewBullet = Bullet;
+				}
+			}
+		}
+	}
+
+	return NewBullet;
 }
 
 ARuleOfTheBullet * StoneDefenceUtils::SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot)
@@ -159,6 +223,23 @@ ARuleOfTheCharacter * StoneDefenceUtils::FindTargetRecently(const TArray<ARuleOf
 	}
 
 	return NULL;
+}
+
+void StoneDefenceUtils::Execution(UWorld *World, const FGuid &CharacterID, TFunction<void(ARuleOfTheCharacter *InCharacter)> Code)
+{
+	if (World)
+	{
+		TArray<ARuleOfTheCharacter *> Characters;
+		StoneDefenceUtils::GetAllActor(World, Characters);
+		for (ARuleOfTheCharacter *Tmp : Characters)
+		{
+			if (Tmp->GUID == CharacterID)
+			{
+				Code(Tmp);
+				break;
+			}
+		}
+	}
 }
 
 float Expression::GetDamage(IRuleCharacter *Enemy, IRuleCharacter *Owner)

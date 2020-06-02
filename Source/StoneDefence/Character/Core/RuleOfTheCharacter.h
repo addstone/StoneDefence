@@ -47,9 +47,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Death)
 		float DelayDeath;
 
+	//被动技能
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+		TArray<int32> SkillIDs;
+
 public:
 	// Sets default values for this character's properties
 	ARuleOfTheCharacter();
+
+	UFUNCTION(/*Server*/)
+		void ResetGUID();
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,7 +66,24 @@ protected:
 		virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 public:
 	void UpdateUI();
+
+	//更新被动技能
+	void UpdateSkill(int32 SkillID);
+
+	UFUNCTION(/*Client*/)
+		void InitSkill();
+
+	UFUNCTION(BlueprintCallable, Category = "Add Skill request")
+		void SubmissionSkillRequest(int32 SkillID);
+
 public:	
+
+	UFUNCTION(/*Client*/)
+		void RemoveSkillSlot_Client(const FGuid &SlotID);
+
+	UFUNCTION(/*Client*/)
+		void AddSkillSlot_Client(const FGuid &SlotID);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

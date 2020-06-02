@@ -42,11 +42,10 @@ void UAnimNotify_SpawnBullet::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 #endif
 	if (AActor *Character = Cast<AActor>(MeshComp->GetOuter()))
 	{
-		//if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(Character->GetWorld(), Cast<APawn>(Character), BulletClass, ComponentLocation, ComponentRotation))
-		//{
-		//	//Bullet->SubmissionSkillRequestType = ESubmissionSkillRequestType::MANUAL;
-		//	//Bullet->InitSkill();
-		//}
-		StoneDefenceUtils::SpawnBullet(Character->GetWorld(), Cast<APawn>(Character), BulletClass, ComponentLocation, ComponentRotation);
+		if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(Character->GetWorld(), Cast<APawn>(Character), BulletClass, ComponentLocation, ComponentRotation))
+		{
+			Bullet->SubmissionSkillRequestType = ESubmissionSkillRequestType::MANUAL;
+			Bullet->InitSkill();
+		}
 	}
 }

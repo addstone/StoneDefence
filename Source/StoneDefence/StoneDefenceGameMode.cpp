@@ -40,55 +40,24 @@ void AStoneDefenceGameMode::BeginPlay()
 void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	
+	//更新玩家的数据
+	UpdatePlayerData(DeltaSeconds);
 
-	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
-	{
-		CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController)
-		{
-			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
-			{
-				InPlayerState->GetPlayerData().GameGoldTime += DeltaSeconds;
+	//更新游戏场景的规则
+	UpdateGameData(DeltaSeconds);
 
-				if (InPlayerState->GetPlayerData().IsAllowIncrease())
-				{
-					InPlayerState->GetPlayerData().GameGoldTime = 0;
-					InPlayerState->GetPlayerData().GameGold++;
-				}
-			}
-		}
-		);
-
-
-
-		if (InGameState->GetGameData().GameCount <= 0.f)
-		{
-			InGameState->GetGameData().bGameOver = true;
-		}
-		else
-		{
-			InGameState->GetGameData().GameCount -= DeltaSeconds;
-		}
-		int32 TowersNum = 0;
-		TArray<ARuleOfTheCharacter*> InTowers;
-		StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), InTowers);
-		for (ARuleOfTheCharacter* Tower : InTowers)
-		{
-			if (Tower->IsActive())
-			{
-				TowersNum++;
-			}
-		}
-		if (TowersNum == 0)
-		{
-			InGameState->GetGameData().bGameOver = true;
-		}
-
-	}
-	//生成怪物
-	SpawnMonstersRule(DeltaSeconds);
+	//更新生成怪物
+	UpdateMonstersRule(DeltaSeconds);
 
 	//更新技能
 	UpdateSkill(DeltaSeconds);
+
+	//更新装备栏
+	UpdateInventory(DeltaSeconds);
+
+	//更新玩家的技能
+	UpdatePlayerSkill(DeltaSeconds);
 }
 
 AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
@@ -177,7 +146,7 @@ int32 GetMonsterLevel(UWorld *InWorld)
 	return ReturnLevel;
 }
 
-void AStoneDefenceGameMode::SpawnMonstersRule(float DeltaSeconds)
+void AStoneDefenceGameMode::UpdateMonstersRule(float DeltaSeconds)
 {
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
@@ -264,8 +233,7 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 				{
 					if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, Location, Rotator))
 					{
-						//RuleOfTheCharacter->GetUniqueID();
-						//RuleOfTheCharacter->GUID = FGuid::NewGuid();
+						RuleOfTheCharacter->ResetGUID();
 						FCharacterData &CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
 						CharacterDataInst.UpdateHealth();
 
@@ -277,8 +245,8 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 								CharacterDataInst.UpdateLevel();
 							}
 						}
-
-						InGameState->InitSkill(CharacterDataInst);
+						//初始化被动技能
+						RuleOfTheCharacter->InitSkill();
 						RuleOfTheCharacter->RegisterTeam();
 						InCharacter = RuleOfTheCharacter;
 					}
@@ -314,263 +282,384 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 
 
 		//获取范围 有效友军
-		auto GetTeam = [&](TArray<TPair<FGuid, FCharacterData>*> &TeamArray, TPair<FGuid, FCharacterData> &InOwner, float InRange, bool bReversed = false)
-		{
-			auto TeamIner = [&](TPair<FGuid, FCharacterData> &Target)
-			{
-				if (InRange != 0)
-				{
-					float Distance = (Target.Value.Location - InOwner.Value.Location).Size();
-					if (Distance <= InRange)
-					{
-						TeamArray.Add(&Target);
-					}
-				}
-				else
-				{
-					TeamArray.Add(&Target);
-				}
-			};
+		//auto GetTeam = [&](TArray<TPair<FGuid, FCharacterData>*> &TeamArray, TPair<FGuid, FCharacterData> &InOwner, float InRange, bool bReversed = false)
+		//{
+		//	auto TeamIner = [&](TPair<FGuid, FCharacterData> &Target)
+		//	{
+		//		if (InRange != 0)
+		//		{
+		//			float Distance = (Target.Value.Location - InOwner.Value.Location).Size();
+		//			if (Distance <= InRange)
+		//			{
+		//				TeamArray.Add(&Target);
+		//			}
+		//		}
+		//		else
+		//		{
+		//			TeamArray.Add(&Target);
+		//		}
+		//	};
 
-			for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
-			{
-				if (bReversed)
-				{
-					if (Tmp.Value.Team == InOwner.Value.Team)
-					{
-						TeamIner(Tmp);
-					}
-				}
-				else
-				{
-					if (Tmp.Value.Team != InOwner.Value.Team)
-					{
-						TeamIner(Tmp);
-					}
-				}
-			}
-		};
+		//	for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+		//	{
+		//		if (bReversed)
+		//		{
+		//			if (Tmp.Value.Team != InOwner.Value.Team)
+		//			{
+		//				TeamIner(Tmp);
+		//			}
+		//		}
+		//		else
+		//		{
+		//			if (Tmp.Value.Team == InOwner.Value.Team)
+		//			{
+		//				TeamIner(Tmp);
+		//			}
+		//		}
+		//	}
+		//};
 
-		auto IsVerificationSkill = [](const FCharacterData &CharacterSkill, int32 SkillID) -> bool
-		{
-			for (auto &InSkill : CharacterSkill.AdditionalSkillData)
-			{
-				if (InSkill.Value.ID == SkillID)
-				{
-					return true;
-				}
-			}
-			return false;
-		};
+		////多个角色添加同样技能
+		//auto AddSkills = [&](TArray<TPair<FGuid, FCharacterData>*> &RecentForces, FSkillData &InSkill)
+		//{
+		//	//for (auto &CharacterElement : RecentForces)
+		//	//{
+		//	//	InGameState->AddSkill(*CharacterElement, InSkill);
+		//	//}
+		//	for (auto &CharacterElement : RecentForces)
+		//	{
+		//		InGameState->AddSkill(*CharacterElement, InSkill);
+		//	}
+		//};
 
-		//添加技能
-		auto AddSkill = [&](TPair<FGuid, FCharacterData> &InOwner, FSkillData &InSkill)
-		{
-			if (!IsVerificationSkill(InOwner.Value, InSkill.ID))
-			{
-				FGuid MySkillID = FGuid::NewGuid();
-				InOwner.Value.AdditionalSkillData.Add(MySkillID, InSkill);
+		////寻找最近的那个数据目标
+		//auto FindRangeTargetRecently = [&](const TPair<FGuid, FCharacterData> &InOwner,bool bReversed = false) -> TPair<FGuid, FCharacterData>*
+		//{
+		//	float TargetDistance = 99999999;
+		//	FGuid Index;
 
-				//通知客户端更新添加的UI
-				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->AddSkillSlot_Client(InOwner.Key, MySkillID);
-				});
-			}
-		};
+		//	auto InitTargetRecently = [&](TPair<FGuid, FCharacterData> &Pair)
+		//	{
+		//		FVector Location = Pair.Value.Location;
+		//		FVector TmpVector = Location - InOwner.Value.Location;
+		//		float Distance = TmpVector.Size();
 
-		//多个角色添加同样技能
-		auto AddSkills = [&](TArray<TPair<FGuid, FCharacterData>*> &RecentForces, FSkillData &InSkill)
-		{
-			//for (auto &CharacterElement : RecentForces)
-			//{
-			//	InGameState->AddSkill(*CharacterElement, InSkill);
-			//}
-			for (auto &CharacterElement : RecentForces)
-			{
-				AddSkill(*CharacterElement, InSkill);
-			}
-		};
+		//		if (Distance < TargetDistance && Pair.Value.Health > 0)
+		//		{
+		//			Index = Pair.Key;
+		//			TargetDistance = Distance;
+		//		}
+		//	};
 
-		//寻找最近的那个数据目标
-		auto FindRangeTargetRecently = [&](const TPair<FGuid, FCharacterData> &InOwner,bool bReversed = false) -> TPair<FGuid, FCharacterData>*
-		{
-			float TargetDistance = 99999999;
-			FGuid Index;
+		//	for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+		//	{
+		//		if (InOwner.Key != Tmp.Key) //排除自己
+		//		{
+		//			if (bReversed)
+		//			{
+		//				//寻找敌人
+		//				if (InOwner.Value.Team != Tmp.Value.Team)
+		//				{
+		//					InitTargetRecently(Tmp);
+		//				}
+		//			}
+		//			else
+		//			{
+		//				//寻找友军
+		//				if (InOwner.Value.Team == Tmp.Value.Team)
+		//				{
+		//					InitTargetRecently(Tmp);
+		//				}		
+		//			}	
+		//		}
+		//	}
 
-			auto InitTargetRecently = [&](TPair<FGuid, FCharacterData> &Pair)
-			{
-				FVector Location = Pair.Value.Location;
-				FVector TmpVector = Location - InOwner.Value.Location;
-				float Distance = TmpVector.Size();
+		//	if (Index != FGuid())
+		//	{
+		//		for (auto &GameTmp : InGameState->GetSaveData()->CharacterDatas)
+		//		{
+		//			if (GameTmp.Key == Index)
+		//			{
+		//				return &GameTmp;
+		//			}
+		//		}
+		//	}
 
-				if (Distance < TargetDistance && Pair.Value.Health > 0)
-				{
-					Index = Pair.Key;
-					TargetDistance = Distance;
-				}
-			};
-
-			for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
-			{
-				if (InOwner.Key != Tmp.Key) //排除自己
-				{
-					if (bReversed)
-					{
-						//寻找敌人
-						if (InOwner.Value.Team != Tmp.Value.Team)
-						{
-							InitTargetRecently(Tmp);
-						}
-					}
-					else
-					{
-						//寻找友军
-						if (InOwner.Value.Team == Tmp.Value.Team)
-						{
-							InitTargetRecently(Tmp);
-						}		
-					}	
-				}
-			}
-
-			if (Index != FGuid())
-			{
-				for (auto &GameTmp : InGameState->GetSaveData()->CharacterDatas)
-				{
-					if (GameTmp.Key == Index)
-					{
-						return &GameTmp;
-					}
-				}
-			}
-
-			return nullptr;
-		};
+		//	return nullptr;
+		//};
 
 		//获取的模板
 		const TArray<FSkillData*> &SkillDataTemplate = InGameState->GetSkillDataFromTable();
 
 		for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
 		{
-			//计算和更新
-			TArray<FGuid> RemoveSkill;
-			for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
+			if (Tmp.Value.Health > 0.f)
 			{
-
-
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
+				//计算和更新
+				TArray<FGuid> RemoveSkill;
+				for (auto &SkillTmp : Tmp.Value.AdditionalSkillData)
 				{
-					RemoveSkill.Add(SkillTmp.Key);
-				}
+					SkillTmp.Value.SkillDuration -= DeltaSeconds;
 
-				//时间到了自然移除
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
-					SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
-				{
-					SkillTmp.Value.SkillDuration += DeltaSeconds;
-					if (SkillTmp.Value.SkillDuration >= SkillTmp.Value.MaxSkillDuration)
+					if (SkillTmp.Value.SkillType.SkillType == ESkillType::BURST)
 					{
 						RemoveSkill.Add(SkillTmp.Key);
 					}
+
+					//时间到了自然移除
+					if (SkillTmp.Value.SkillType.SkillType == ESkillType::SECTION ||
+						SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+					{
+
+						if (SkillTmp.Value.SkillDuration <= 0)
+						{
+							RemoveSkill.Add(SkillTmp.Key);
+						}
+					}
+
+					//迭代 进行持续更新技能
+					if (SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+					{
+						SkillTmp.Value.SkillDurationTime += DeltaSeconds;
+						if (SkillTmp.Value.SkillDurationTime >= 1.0f)
+						{
+							SkillTmp.Value.SkillDurationTime = 0.0f;
+
+
+							//通知客户端进行特效子弹播放
+							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
+								MyPlayerController->SpawnBullet_Client(Tmp.Key, SkillTmp.Value.ID);
+							});
+						}
+					}
 				}
 
-				//迭代 进行持续更新技能
-				if (SkillTmp.Value.SkillType.SkillType == ESkillType::ITERATION)
+				//清理
+				for (FGuid &RemoveID : RemoveSkill)
 				{
-					SkillTmp.Value.SkillDurationTime += DeltaSeconds;
-					if (SkillTmp.Value.SkillDurationTime >= 1.0f)
-					{
-						SkillTmp.Value.SkillDurationTime = 0.0f;
+					//通知客户端移除技能
+					StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController) {
+						MyPlayerController->RemoveSkillSlot_Server(Tmp.Key, RemoveID);
+					});
+					Tmp.Value.AdditionalSkillData.Remove(RemoveID);
+				}
 
-						if (SkillTmp.Value.SkillType.SkillEffectType == ESkillEffectType::ADD)
+				TArray<FSkillData> RemoveSkills;
+				//技能释放
+				for (auto &InSkill : Tmp.Value.CharacterSkill)
+				{
+					InSkill.CDTime += DeltaSeconds;
+
+					//触发
+					if (InSkill.CDTime >= InSkill.CD)
+					{
+						InSkill.CDTime = 0.f;
+						if (!InSkill.bBecomeEffective)
 						{
-							Tmp.Value.Health += SkillTmp.Value.Health;
-							Tmp.Value.PhysicalAttack += SkillTmp.Value.PhysicalAttack;
-							Tmp.Value.Armor += SkillTmp.Value.Armor;
-							Tmp.Value.AttackSpeed += SkillTmp.Value.AttackSpeed;
-							Tmp.Value.Glod += SkillTmp.Value.Glod;
+// 							if (InSkill.SkillType.SkillAttackType == ESkillAttackType::MULTIPLE)
+// 							{
+// 								TArray< TPair<FGuid, FCharacterData>*> Recent;
+// 								if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
+// 								{
+// 									GetTeam(Recent, Tmp, InSkill.AttackRange);
+// 								}
+// 								else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
+// 								{
+// 									GetTeam(Recent, Tmp, InSkill.AttackRange, true);
+// 								}
+// 								if (Recent.Num())
+// 								{
+// 									AddSkills(Recent, InSkill);
+// 								}
+// 							}
+// 							else if (InSkill.SkillType.SkillAttackType == ESkillAttackType::SINGLE)
+// 							{
+// 								TPair<FGuid, FCharacterData>* Recent = nullptr;
+// 								if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
+// 								{
+// 									Recent = FindRangeTargetRecently(Tmp);
+// 								}
+// 								else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
+// 								{
+// 									Recent = FindRangeTargetRecently(Tmp, true);
+// 								}
+// 								if (Recent)
+// 								{
+// 									InGameState->AddSkill(*Recent, InSkill);
+// 								}
+// 							}
+							InSkill.bBecomeEffective = true;
 						}
 						else
 						{
-							Tmp.Value.Health -= SkillTmp.Value.Health;
-							Tmp.Value.PhysicalAttack -= SkillTmp.Value.PhysicalAttack;
-							Tmp.Value.Armor -= SkillTmp.Value.Armor;
-							Tmp.Value.AttackSpeed -= SkillTmp.Value.AttackSpeed;
-							Tmp.Value.Glod -= SkillTmp.Value.Glod;
+							RemoveSkills.Add(InSkill);
 						}
 					}
 				}
-				//通知客户端进行特效子弹播放
-				CallUpdateAllClient([&](ATowersDefencePlayerController *MyPlayerController) {
-					MyPlayerController->SpawnBullet_Client(Tmp.Key, SkillTmp.Value.BulletClass);
-				});
-			}
-
-			//清理
-			for (FGuid &RemoveID : RemoveSkill)
-			{
-				Tmp.Value.AdditionalSkillData.Remove(RemoveID);
-			}
-
-			//技能释放
-			for (auto &InSkill : Tmp.Value.CharacterSkill)
-			{
-				InSkill.CDTime += DeltaSeconds;
-
-				//触发
-				if (InSkill.CDTime >= InSkill.CD)
+				for (auto &InSkill : RemoveSkills)
 				{
-					InSkill.CDTime = 0.f;
-
-					if (InSkill.SkillType.SkillAttackType == ESkillAttackType::MULTIPLE)
+					Tmp.Value.CharacterSkill.Remove(InSkill);
+					if (InSkill.SubmissionSkillRequestType == ESubmissionSkillRequestType::AUTO)
 					{
-						TArray< TPair<FGuid, FCharacterData>*> Recent;
-						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
-						{							
-							GetTeam(Recent, Tmp, InSkill.AttackRange);
-						}
-						else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
+						//Call客户端 进行特效子弹播放
+						StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
 						{
-							GetTeam(Recent, Tmp, InSkill.AttackRange, true);
-						}
-						if (Recent.Num())
-						{
-							AddSkills(Recent, InSkill);
-						}
+							MyPlayerController->SpawnBullet_Client(Tmp.Key, InSkill.ID);
+						});
 					}
-					else if (InSkill.SkillType.SkillAttackType == ESkillAttackType::SINGLE)
-					{
-						TPair<FGuid, FCharacterData>* Recent = nullptr;
-						if (InSkill.SkillType.TargetType == ESkillTargetType::FRIENDLY_FORCES)
-						{
-							Recent = FindRangeTargetRecently(Tmp);
-						}
-						else if (InSkill.SkillType.TargetType == ESkillTargetType::ENEMY)
-						{
-							Recent = FindRangeTargetRecently(Tmp, true);
-						}
-						if (Recent)
-						{
-							AddSkill(*Recent, InSkill);
-						}
-					}
-				}
+				}				
 			}
-
-
-
 			
 		}
 	}
 }
 
-void AStoneDefenceGameMode::CallUpdateAllClient(TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement)
+void AStoneDefenceGameMode::UpdatePlayerData(float DeltaSeconds)
 {
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
-		if (ATowersDefencePlayerController *MyPlayerController = Cast<ATowersDefencePlayerController>(It->Get()))
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
 		{
-			InImplement(MyPlayerController);
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				//游戏金币更新
+				InPlayerState->GetPlayerData().GameGoldTime += DeltaSeconds;
+				if (InPlayerState->GetPlayerData().IsAllowIncrease())
+				{
+					InPlayerState->GetPlayerData().GameGoldTime = 0.0f;
+					InPlayerState->GetPlayerData().GameGold++;
+				}
+
+
+			}
 		}
+		);
+	}
+}
+
+void AStoneDefenceGameMode::UpdateGameData(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		if (InGameState->GetGameData().GameCount <= 0.f)
+		{
+			InGameState->GetGameData().bGameOver = true;
+		}
+		else
+		{
+			InGameState->GetGameData().GameCount -= DeltaSeconds;
+		}
+
+		int32 TowersNum = 0;
+		TArray<ARuleOfTheCharacter*> InTowers;
+		StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), InTowers);
+		for (ARuleOfTheCharacter *Tower : InTowers)
+		{
+			if (Tower->IsActive())
+			{
+				TowersNum++;
+			}
+		}
+
+		if (TowersNum == 0)
+		{
+			InGameState->GetGameData().bGameOver = true;
+		}
+	}
+}
+
+void AStoneDefenceGameMode::UpdatePlayerSkill(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				for (auto &Tmp : InPlayerState->GetSaveData()->PlayerSkillDatas)
+				{
+					if (Tmp.Value.IsValid())
+					{
+						if (Tmp.Value.CDTime > 0.f)
+						{
+							Tmp.Value.CDTime -= DeltaSeconds;
+							Tmp.Value.bBecomeEffective = true;
+
+							//通知客户端更新我们的装备CD
+							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+							{
+								MyPlayerController->UpdatePlayerSkill_Client(Tmp.Key, true);
+							});
+						}
+						else if (Tmp.Value.bBecomeEffective)
+						{
+							Tmp.Value.bBecomeEffective = false;
+
+							//通知客户端更新我们的装备CD
+							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+							{
+								MyPlayerController->UpdatePlayerSkill_Client(Tmp.Key, false);
+							});
+						}
+					}
+				}
+			}
+		}
+		);
+	}
+}
+
+void AStoneDefenceGameMode::UpdateInventory(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				for (auto &Tmp : InPlayerState->GetSaveData()->BuildingTowers)
+				{
+					if (Tmp.Value.IsValid())
+					{
+						if (!Tmp.Value.bLockCD)
+						{
+							if (!Tmp.Value.bDragICO)
+							{
+								if (Tmp.Value.CurrentConstrictionTowersCD > 0)
+								{
+									Tmp.Value.CurrentConstrictionTowersCD -= DeltaSeconds;
+									Tmp.Value.bCallUpdateTowersInfo = true;
+
+									//通知客户端更新我们的装备CD
+									StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+									{
+										MyPlayerController->UpdateInventory_Client(Tmp.Key, true);
+									});
+								}
+								else if (Tmp.Value.bCallUpdateTowersInfo)
+								{
+									Tmp.Value.bCallUpdateTowersInfo = false;
+									//准备构建的塔
+									Tmp.Value.TowersPerpareBuildingNumber--;
+									Tmp.Value.TowersConstructionNumber++;
+
+									//通知客户端更新我们的装备CD
+									StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+									{
+										MyPlayerController->UpdateInventory_Client(Tmp.Key, false);
+									});
+
+									if (Tmp.Value.TowersPerpareBuildingNumber > 0)
+									{
+										Tmp.Value.ResetCD();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		);
 	}
 }

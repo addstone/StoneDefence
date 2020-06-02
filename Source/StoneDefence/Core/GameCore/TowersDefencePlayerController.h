@@ -39,6 +39,8 @@ public:
 
 	void SetInputModeGameAndUI();
 
+	void UpdateGlobalVar();
+
 	virtual void SetupInputComponent() override;
 	void MouseWheelUP();
 	void MouseWheelDown();
@@ -52,11 +54,23 @@ public:
 	class AStoneDefenceGameMode *GetGameMode();
 	class ATowersDefenceGameState *GetGameState();
 
-	UFUNCTION()
-		void AddSkillSlot_Client(const FGuid &CharacterID, const FGuid &SlotID);
+	UFUNCTION(/*Server*/)
+		void RemoveSkillSlot_Server(const FGuid &CharacterID, const FGuid &SlotID);
 
-	UFUNCTION()
-		void SpawnBullet_Client(const FGuid &CharacterID,UClass *InClass);
+	UFUNCTION(/*Server*/)
+		void AddSkillSlot_Server(const FGuid &CharacterID, const FGuid &SlotID);
+
+	UFUNCTION(/*Client*/)
+		void SpawnBullet_Client(const FGuid &CharacterID, const int32 &SkillID);
+
+	UFUNCTION(/*Client*/)
+		void UpdateInventory_Client(const FGuid &InventorySlotGUID, bool bInCD);
+
+	UFUNCTION(/*Client*/)
+		void UpdatePlayerSkill_Client(const FGuid &PlayerSlotGUID, bool bInCD);
+
+	UFUNCTION(/*Client*/)
+		void SpawnPlayerSkill_Client(const int32 &PlayerSKillID);
 
 	UFUNCTION()
 		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);

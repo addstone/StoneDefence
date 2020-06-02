@@ -21,4 +21,5 @@ class STONEDEFENCE_API UUI_RucksackSystem : public UUI_NativeOnDrop
 public:
 	virtual void NativeConstruct() override;
 	
+	void UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD);
 };

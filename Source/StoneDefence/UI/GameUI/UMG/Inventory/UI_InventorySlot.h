@@ -20,37 +20,10 @@ UCLASS()
 class STONEDEFENCE_API UUI_InventorySlot : public UUI_Slot
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(meta = (BindWidget))
-		UImage *TowersIcon;
-
-	UPROPERTY(meta = (BindWidget))
-		UImage *TowersCD;
 
 	//Towers Prepare Building Number
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock *TPBNumber;
-
-	//Towers Completion Of Construction Number
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock *TCOCNumber;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock *TowersCDValue;
-	
-	//Towers Inventory Slot Button
-	UPROPERTY(meta = (BindWidget))
-		UButton *TISButton;
-
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-		FName TowersMatCDName;
-
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-		FName TowersClearValueName;
-
-	//CD¶¯Ì¬²ÄÖÊ
-	UPROPERTY()
-		class UMaterialInstanceDynamic* CDMaterialDynamic;
 
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 		TSubclassOf<class UUI_ICODragDrog> ICODragDrogClass;
@@ -61,8 +34,8 @@ class STONEDEFENCE_API UUI_InventorySlot : public UUI_Slot
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	UFUNCTION()
-		void OnClickedWidget();
+
+	virtual void OnClickedWidget();
 
 	void UpdateUI();
 
@@ -72,10 +45,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Tip)
 		UWidget *GetTowerTip();
-private:
+
 	void UpdateTowersCD(float InDeltaTime);
-	void DrawTowersCD(float TowerCD);
-	void DisplayNumber(UTextBlock* TextNumberBlock, int32 TextNumber);
+
+
 	void UpdateTowersBuildingInfo();
 
 protected:

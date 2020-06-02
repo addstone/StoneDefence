@@ -28,6 +28,12 @@ struct FSkillData : public FDataCore
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
 		TSubclassOf<AActor> BulletClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Attribute")
+		FText SkillIntroduce;
+
+	UPROPERTY()
+		ESubmissionSkillRequestType SubmissionSkillRequestType;
+
 	//添加金币
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
 		float Glod;
@@ -72,4 +78,24 @@ struct FSkillData : public FDataCore
 
 	UPROPERTY()
 		float CDTime;
+
+	UPROPERTY()
+		bool bBecomeEffective;
+
+	//主技能
+	float GetCDPercent() const;
+
+	//动态技能
+	float GetDurationPercent() const;
+
+	//只服务于动态技能
+	void ResetDuration();
+
+	//服务于主技能
+	void ResetCD();
+
+	friend bool operator==(const FSkillData& X, const FSkillData& Y)
+	{
+		return X.ID == Y.ID;
+	}
 };

@@ -35,8 +35,9 @@ public:
 
 
 protected:
-	void SpawnMonstersRule(float DeltaSeconds);
+
 	void SpawnMainTowersRule();
+
 	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
 
 	template<class T>
@@ -47,5 +48,14 @@ protected:
 
 	void UpdateSkill(float DeltaSeconds);
 
-	void CallUpdateAllClient(TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement);
+	void UpdateMonstersRule(float DeltaSeconds);
+
+	void UpdatePlayerData(float DeltaSeconds);
+
+	void UpdateGameData(float DeltaSeconds);
+
+	void UpdatePlayerSkill(float DeltaSeconds);
+
+	void UpdateInventory(float DeltaSeconds);
+
 };

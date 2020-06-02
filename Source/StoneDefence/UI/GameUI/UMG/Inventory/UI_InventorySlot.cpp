@@ -17,27 +17,11 @@
 void UUI_InventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	TISButton->OnClicked.AddDynamic(this, &UUI_InventorySlot::OnClickedWidget);
-
-	if (TowersCD)
-	{
-		CDMaterialDynamic = TowersCD->GetDynamicMaterial();
-	}
 }
 
 void UUI_InventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (!GetBuildingTower().bLockCD)
-	{
-		if (!GetBuildingTower().bDragICO)
-		{
-			UpdateTowersCD(InDeltaTime);
-
-		}
-	}
 }
 
 void UUI_InventorySlot::OnClickedWidget()
@@ -45,34 +29,15 @@ void UUI_InventorySlot::OnClickedWidget()
 	if (GetBuildingTower().IsValid()) //客户端验证 降低网络带宽
 	{
 		//通知服务器对塔的数量进行增加
-		GetBuildingTower().TowersPerpareBuildingNumber++;
-		if (GetBuildingTower().CurrentConstrictionTowersCD <= 0)
-		{
-			GetBuildingTower().ResetCD();
-		}
+		GetPlayerState()->TowersPerpareBuildingNumber(GUID);
 	}
 }
 
 void UUI_InventorySlot::UpdateUI()
 {
-	if (GetBuildingTower().ICO)
-	{
-		TowersIcon->SetBrushFromTexture(GetBuildingTower().ICO);
-		TowersIcon->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-	else
-	{
-		TowersIcon->SetVisibility(ESlateVisibility::Hidden);
-	}
+	UpdateSlotUI(GetBuildingTower().ICO, GetBuildingTower().TowersConstructionNumber);
 
-	if (GetBuildingTower().TowersConstructionNumber > 0)
-	{
-		TCOCNumber->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
-	if (GetBuildingTower().TowersPerpareBuildingNumber > 0)
-	{
-		TPBNumber->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
+	UpdateTowersBuildingInfo();
 }
 
 FBuildingTower & UUI_InventorySlot::GetBuildingTower()
@@ -82,11 +47,8 @@ FBuildingTower & UUI_InventorySlot::GetBuildingTower()
 
 void UUI_InventorySlot::ClearSlot()
 {
-	TowersIcon->SetVisibility(ESlateVisibility::Hidden);
-	TowersCD->SetVisibility(ESlateVisibility::Hidden);
+	Super::ClearSlot();
 	TPBNumber->SetVisibility(ESlateVisibility::Hidden);
-	TowersCDValue->SetVisibility(ESlateVisibility::Hidden);
-	TCOCNumber->SetVisibility(ESlateVisibility::Hidden);
 }
 
 UWidget * UUI_InventorySlot::GetTowerTip()
@@ -112,7 +74,7 @@ void UUI_InventorySlot::UpdateTowersCD(float InDeltaTime)
 {
 	if (GetBuildingTower().CurrentConstrictionTowersCD > 0)
 	{
-		DrawTowersCD(GetBuildingTower().GetTowerConstructionTimePercentage());
+		DrawSlotCD(GetBuildingTower().GetTowerConstructionTimePercentage());
 		GetBuildingTower().CurrentConstrictionTowersCD -= InDeltaTime;
 		GetBuildingTower().bCallUpdateTowersInfo = true;
 		UpdateTowersBuildingInfo();
@@ -125,7 +87,7 @@ void UUI_InventorySlot::UpdateTowersCD(float InDeltaTime)
 		GetBuildingTower().TowersConstructionNumber++;
 
 		
-		DrawTowersCD(0.0f);
+		DrawSlotCD(0.0f);
 
 		if (GetBuildingTower().TowersPerpareBuildingNumber > 0)
 		{
@@ -135,41 +97,9 @@ void UUI_InventorySlot::UpdateTowersCD(float InDeltaTime)
 	}
 }
 
-void UUI_InventorySlot::DrawTowersCD(float TowerCD)
-{
-	if (CDMaterialDynamic)
-	{
-		if (TowerCD > 0.0f && TowerCD < 1.0f)
-		{
-			CDMaterialDynamic->SetScalarParameterValue(TowersClearValueName, true);
-			TowersCD->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		}
-		else
-		{
-			CDMaterialDynamic->SetScalarParameterValue(TowersClearValueName, false);
-			TowersCD->SetVisibility(ESlateVisibility::Hidden);
-		}
-		CDMaterialDynamic->SetScalarParameterValue(TowersMatCDName, TowerCD);
-	}
-}
-
-void UUI_InventorySlot::DisplayNumber(UTextBlock* TextNumberBlock, int32 TextNumber)
-{
-	if (TextNumber < 1 || !GetBuildingTower().IsValid())
-	{
-		TextNumberBlock->SetVisibility(ESlateVisibility::Hidden);
-	}
-	else
-	{
-		TextNumberBlock->SetText(FText::FromString(FString::Printf(TEXT("%02d"), TextNumber)));
-		TextNumberBlock->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-}
-
 void UUI_InventorySlot::UpdateTowersBuildingInfo()
 {
-	DisplayNumber(TowersCDValue, GetBuildingTower().CurrentConstrictionTowersCD);
-	DisplayNumber(TCOCNumber, GetBuildingTower().TowersConstructionNumber);
+	UpdateSloInfo(GetBuildingTower().TowersConstructionNumber, GetBuildingTower().CurrentConstrictionTowersCD);
 	DisplayNumber(TPBNumber, GetBuildingTower().TowersPerpareBuildingNumber);
 }
 
@@ -204,9 +134,10 @@ void UUI_InventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const 
 				StoneDefenceDragDropOperation->Payload = this;
 				OutOperation = StoneDefenceDragDropOperation;
 
-				GetBuildingTower().bDragICO = true;
+				//通知服务器 客户端要进行拖拽
+				GetPlayerState()->SetTowersDragICOState(GUID, true);
 
-				ClearSlot();
+				ClearSlot();//隐藏自己
 			}
 		}
 	}
@@ -224,7 +155,8 @@ bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 	{
 		if (UUI_InventorySlot* MyInventorySlot = Cast<UUI_InventorySlot>(StoneDefenceDragDropOperation->Payload))
 		{
-			MyInventorySlot->GetBuildingTower().bDragICO = false;
+			//服务器请求
+			GetPlayerState()->SetTowersDragICOState(MyInventorySlot->GUID, false);
 			GetPlayerState()->RequestInventorySlotSwap(GUID, MyInventorySlot->GUID);
 
 			UpdateUI();

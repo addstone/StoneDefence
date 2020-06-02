@@ -22,8 +22,14 @@ class ASceneCapture2D;
 
 namespace StoneDefenceUtils
 {
+	//¶à²¥¹¦ÄÜ
+	void CallUpdateAllClient(UWorld *World, TFunction<void(ATowersDefencePlayerController *MyPlayerController)> InImplement);
+	void CallUpdateAllBaseClient(UWorld *World, TFunction<void(APlayerController *MyPlayerController)> InImplement);
+	APlayerSkillSlotActor *SpawnPlayerBullet(UWorld *World, int32 SkillID);
 	ARuleOfTheBullet *SpawnBullet(UWorld *World, FGuid CharacterID, UClass *InClass);
 	ARuleOfTheBullet *SpawnBullet(UWorld *World, APawn *NewPawn, UClass *InClass, const FVector &Loc, const FRotator &Rot);
+	ARuleOfTheBullet *SpawnBullet(UWorld *World, ARuleOfTheCharacter *Onwer, const int32 SkillID, const FVector &Loc, const FRotator &Rot);
+
 
 	AStaticMeshActor* SpawnTowersDoll(UWorld *World, int32 ID);
 
@@ -75,6 +81,7 @@ namespace StoneDefenceUtils
 	//{
 	//	return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
 	//}
+	void Execution(UWorld *World, const FGuid &CharacterID, TFunction<void(ARuleOfTheCharacter *InCharacter)> Code);
 }
 
 namespace Expression

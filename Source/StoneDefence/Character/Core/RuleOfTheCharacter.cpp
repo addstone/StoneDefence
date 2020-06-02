@@ -17,6 +17,8 @@
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
 #include "../../StoneDefenceMacro.h"
+#include "../../Bullet/RuleOfTheBullet.h"
+#include "../Damage/RuleOfTheDamage.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -44,6 +46,11 @@ ARuleOfTheCharacter::ARuleOfTheCharacter()
 	TraceShowCharacterInformation->SetCollisionProfileName("Scanning");
 	TraceShowCharacterInformation->SetBoxExtent(FVector(38.f, 38.f, 100.f));
 
+}
+
+void ARuleOfTheCharacter::ResetGUID()
+{
+	GUID = FGuid::NewGuid();
 }
 
 // Called when the game starts or when spawned
@@ -85,6 +92,56 @@ void ARuleOfTheCharacter::UpdateUI()
 	//}
 }
 
+void ARuleOfTheCharacter::UpdateSkill(int32 SkillID)
+{
+	for (auto &Tmp : SkillIDs)
+	{
+		if (Tmp == SkillID)
+		{
+			if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(GetWorld(), this, Tmp, OpenFriePoint->GetComponentLocation(), OpenFriePoint->GetComponentRotation()))
+			{
+				Bullet->InitSkill();
+			}
+			break;
+		}
+	}
+}
+
+void ARuleOfTheCharacter::InitSkill()
+{
+	for (auto &Tmp : SkillIDs)
+	{
+		if (ARuleOfTheBullet *Bullet = StoneDefenceUtils::SpawnBullet(GetWorld(), this, Tmp, OpenFriePoint->GetComponentLocation(), OpenFriePoint->GetComponentRotation()))
+		{
+			Bullet->InitSkill();
+		}
+	}
+}
+
+void ARuleOfTheCharacter::SubmissionSkillRequest(int32 SkillID)
+{
+	if (!GetGameState()->IsVerificationSkill(GUID, SkillID))
+	{
+		GetGameState()->AddSkill(GUID, SkillID);
+	}
+}
+
+void ARuleOfTheCharacter::RemoveSkillSlot_Client(const FGuid &SlotID)
+{
+	if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
+	{
+		HealthUI->RemoveSkillSlot(SlotID);
+	}
+}
+
+void ARuleOfTheCharacter::AddSkillSlot_Client(const FGuid &SlotID)
+{
+	if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
+	{
+		HealthUI->AddSkillSlot(SlotID);
+	}
+}
+
 // Called every frame
 void ARuleOfTheCharacter::Tick(float DeltaTime)
 {
@@ -96,73 +153,146 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	auto DrawGameText = [&](ARuleOfTheCharacter* InOwner, const TCHAR* InText, float InDamageValue, FLinearColor InColor)
-	{
-		if (DrawTextClass)
+	float DamageValue = 0.f;
+
+	FCharacterData &InCharacterData = GetCharacterData();
+	
+		if (URuleOfTheDamage *DamageClass = DamageEvent.DamageTypeClass->GetDefaultObject<URuleOfTheDamage>())
 		{
-			if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, InOwner->GetActorLocation(), FRotator::ZeroRotator))
+			if (const FSkillData *SkillData = DamageClass->SkillData)
 			{
-				FString DamageText = FString::Printf(InText, InDamageValue);
-				MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().GetMaxHealth());
-			}
-		}
-	};
-
-	float DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
-
-	GetCharacterData().Health -= DamageValue;
-	if (!IsActive())
-	{
-		CharacterDeath();
-		//奖赏机制
-		if (GetPlayerState()->GetPlayerData().Team != GetTeamType())
-		{
-			GetPlayerState()->GetPlayerData().GameGold += GetCharacterData().Glod;
-		}
-
-		GetCharacterData().Health = 0.0f;
-		SetLifeSpan(10.f);
-
-		Widget->SetVisibility(false);
-
-		//谁杀死我 谁就得到我提供的最多经验
-		if (ARuleOfTheCharacter *CauserCharacter = Cast<ARuleOfTheCharacter>(DamageCauser))
-		{
-			if (CauserCharacter->IsActive())
-			{
-				if (CauserCharacter->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue))
+				auto DrawGameText = [&](ARuleOfTheCharacter* InOwner, const TCHAR* InText, float InDamageValue, FLinearColor InColor)
 				{
-
-				}
-
-				DrawGameText(CauserCharacter, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue, FLinearColor::Yellow);
-			}
-
-			//寻找范围内最近的敌人 升级
-			TArray<ARuleOfTheCharacter*> EnemyCharacters;
-			StoneDefenceUtils::FindRangeTargetRecently(this, 1000.f, EnemyCharacters);
-			for (ARuleOfTheCharacter* InEnemy : EnemyCharacters)
-			{
-				if (InEnemy != CauserCharacter)
-				{
-					if (InEnemy->IsActive())
+					if (DrawTextClass)
 					{
-						if (InEnemy->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue) * 0.3)
+						if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, InOwner->GetActorLocation(), FRotator::ZeroRotator))
 						{
-
+							FString DamageText = FString::Printf(InText, InDamageValue);
+							MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().GetMaxHealth());
 						}
-
-						DrawGameText(InEnemy, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue * 0.3, FLinearColor::Yellow);
+					}
+				};
+				if (SkillData->SkillType.SkillEffectType == ESkillEffectType::SUBTRACT) 
+				{
+					DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
+					if (DamageValue)
+					{
+						GetCharacterData().Health -= DamageValue;		
+						//绘制受伤字体
+						DrawGameText(this, TEXT("-%0.f"), DamageValue, FLinearColor::Red);
+					}
+					if (SkillData->AttackSpeed)
+					{
+						GetCharacterData().AttackSpeed -= SkillData->AttackSpeed;
+						//绘制受伤字体
+						DrawGameText(this, TEXT("-%0.f"), SkillData->AttackSpeed, FLinearColor::Black);
+					}
+					if (SkillData->PhysicalAttack)
+					{
+						GetCharacterData().PhysicalAttack -= SkillData->PhysicalAttack;
+						//绘制受伤字体
+						DrawGameText(this, TEXT("-%0.f"), SkillData->PhysicalAttack, FLinearColor::Black);
+					}
+					if (SkillData->Armor)
+					{
+						GetCharacterData().Armor -= SkillData->Armor;
+						//绘制受伤字体
+						DrawGameText(this, TEXT("-%0.f"), SkillData->Armor, FLinearColor::Black);
 					}
 				}
+				else if (SkillData->SkillType.SkillEffectType == ESkillEffectType::ADD)
+				{
+					if (SkillData->PhysicalAttack)
+					{
+						GetCharacterData().PhysicalAttack += SkillData->PhysicalAttack;
+						//绘制受伤字体
+						DrawGameText(this, TEXT("+%0.f"), SkillData->PhysicalAttack, FLinearColor::Blue);
+					}
+
+					if (SkillData->Armor)
+					{
+						GetCharacterData().Armor += SkillData->Armor;
+						//绘制受伤字体
+						DrawGameText(this, TEXT("+%0.f"), SkillData->Armor, FLinearColor::White);
+					}
+
+					if (SkillData->AttackSpeed)
+					{
+						GetCharacterData().AttackSpeed += SkillData->AttackSpeed;
+						//绘制受伤字体
+						DrawGameText(this, TEXT("+%0.f"), SkillData->AttackSpeed, FLinearColor::White);
+					}
+
+					if (SkillData->Health)
+					{
+						GetCharacterData().Health += SkillData->Health;
+						if (GetCharacterData().Health > GetCharacterData().MaxHealth)
+						{
+							GetCharacterData().Health = GetCharacterData().MaxHealth;
+						}
+
+						//绘制受伤字体
+						DrawGameText(this, TEXT("+%0.f"), SkillData->Health, FLinearColor::Green);
+					}
+				}
+
+				//死亡判定
+				if (!IsActive())
+				{
+					CharacterDeath();
+					//奖赏机制
+					if (GetPlayerState()->GetPlayerData().Team != GetTeamType())
+					{
+						GetPlayerState()->GetPlayerData().GameGold += GetCharacterData().Glod;
+					}
+
+					GetCharacterData().Health = 0.0f;
+					SetLifeSpan(10.f);
+
+					Widget->SetVisibility(false);
+
+					//谁杀死我 谁就得到我提供的最多经验
+					if (ARuleOfTheCharacter *CauserCharacter = Cast<ARuleOfTheCharacter>(DamageCauser))
+					{
+						if (CauserCharacter->IsActive())
+						{
+							if (CauserCharacter->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue))
+							{
+
+							}
+
+							DrawGameText(CauserCharacter, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue, FLinearColor::Yellow);
+						}
+
+						//寻找范围内最近的敌人 升级
+						TArray<ARuleOfTheCharacter*> EnemyCharacters;
+						StoneDefenceUtils::FindRangeTargetRecently(this, 1000.f, EnemyCharacters);
+						for (ARuleOfTheCharacter* InEnemy : EnemyCharacters)
+						{
+							if (InEnemy != CauserCharacter)
+							{
+								if (InEnemy->IsActive())
+								{
+									if (InEnemy->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue) * 0.3)
+									{
+
+									}
+
+									DrawGameText(InEnemy, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue * 0.3, FLinearColor::Yellow);
+								}
+							}
+						}
+					}
+
+					GetGameState()->RemoveCharacterData(GUID);
+				}
+				else
+				{
+					SubmissionSkillRequest(SkillData->ID);
+				}
+				
 			}
 		}
-
-		GetGameState()->RemoveCharacterData(GUID);
-	}
-
-	DrawGameText(this, TEXT("-%0.f"), DamageValue, FLinearColor::Red);
-
 	return DamageValue;
 }
 

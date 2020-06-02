@@ -157,3 +157,19 @@ Developed with Unreal Engine 4
 |第八节：服务器通知客户端更新技能|:heavy_check_mark:|
 |第九节：如何理解WidgetComponent层级问题|:heavy_check_mark:|
 |第十节：服务器关联客户端UI技能显示策略|:heavy_check_mark:|
+---
+# 十二章：服务器处理玩家技能和被动技能
+|||
+| --------   | -----  |
+|第一节：更新UI角色技能图标|:heavy_check_mark:|
+|第二节：解决角色技能系统流程bug|:heavy_check_mark:|
+|第三节：通过子弹向中心数据提交数据请求|:heavy_check_mark:|
+|第四节：服务器技能生成权限设计思路|:heavy_check_mark:|
+|第五节：服务器和客户都技能实例生成流程讲解|:heavy_check_mark:|
+|第六节：通过伤害类型CDO建立角色通信约定|:heavy_check_mark:|
+|第七节：将服务器计算提交转为客户端角色提交附加技能|:heavy_check_mark:|
+|第八节：将物品栏数据的更新移动到服务器|:heavy_check_mark:|
+|第九节：玩家技能装备栏制作|:heavy_check_mark:|
+|第十节：统一装备栏和玩家技能栏UI逻辑|:heavy_check_mark:|
+|第十一节：服务器更新玩家技能思路|:heavy_check_mark:|
+|第十二节：玩家核心技能系统搭建|:heavy_check_mark:|

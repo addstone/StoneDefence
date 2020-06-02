@@ -20,7 +20,27 @@ void FSkillData::Init()
 	CD = 60.f;
 	SkillDurationTime = 0.f;
 	CDTime = 0.0f;
-	//WalkSpeed = 0.0f;
-	//bBecomeEffective = false;
-	//SubmissionSkillRequestType = ESubmissionSkillRequestType::AUTO;
+	WalkSpeed = 0.0f;
+	bBecomeEffective = false;
+	SubmissionSkillRequestType = ESubmissionSkillRequestType::AUTO;
+}
+
+float FSkillData::GetCDPercent() const
+{
+	return CD == 0.f ? 0 : (CDTime / CD);
+}
+
+float FSkillData::GetDurationPercent() const
+{
+	return MaxSkillDuration == 0.f ? 0 : (SkillDuration / MaxSkillDuration);
+}
+
+void FSkillData::ResetDuration()
+{
+	SkillDuration = MaxSkillDuration;
+}
+
+void FSkillData::ResetCD()
+{
+	CDTime = CD;
 }

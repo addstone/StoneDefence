@@ -6,6 +6,13 @@
 #include "StoneDefenceType.generated.h"
 
 UENUM(BlueprintType)
+enum class ESubmissionSkillRequestType :uint8
+{
+	AUTO,			//生成权力交给服务器
+	MANUAL,			//生成权力交给客户都
+};
+
+UENUM(BlueprintType)
 enum class ESkillType :uint8
 {
 	BURST,		//一次造成的伤害
@@ -18,13 +25,6 @@ enum class ESkillTargetType :uint8
 {
 	FRIENDLY_FORCES = 0,
 	ENEMY,
-};
-
-UENUM(BlueprintType)
-enum class ESkillAttackType :uint8
-{
-	SINGLE,
-	MULTIPLE,
 };
 
 UENUM(BlueprintType)
@@ -43,7 +43,6 @@ struct FSkillType
 		:SkillType(ESkillType::SECTION)
 		, TargetType(ESkillTargetType::FRIENDLY_FORCES)
 		, SkillEffectType(ESkillEffectType::ADD)
-		, SkillAttackType(ESkillAttackType::MULTIPLE)
 	{
 
 	}
@@ -56,9 +55,6 @@ struct FSkillType
 
 	UPROPERTY(EditDefaultsOnly, Category = "Type")
 		ESkillEffectType SkillEffectType;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Type")
-		ESkillAttackType SkillAttackType;
 };
 
 UENUM()

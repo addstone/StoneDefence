@@ -56,9 +56,5 @@ struct FPlayerData
 	UPROPERTY(SaveGame)
 		TArray<int32> SkillIDs;
 
-	//玩家游戏中数据状态
-	UPROPERTY(SaveGame)
-		TArray<FPlayerSkillData> SkillData;
-
 	bool IsAllowIncrease();
 };

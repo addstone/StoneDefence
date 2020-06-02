@@ -8,10 +8,11 @@
 #include "RuleOfTheBullet.generated.h"
 
 
+
 class ARuleOfTheCharacter;
 class USplineComponent;
 struct FSkillData;
-
+//技能实例
 UCLASS()
 class STONEDEFENCE_API ARuleOfTheBullet : public AActor
 {
@@ -34,11 +35,22 @@ class STONEDEFENCE_API ARuleOfTheBullet : public AActor
 		class UProjectileMovementComponent* ProjectileMovement;
 
 public:
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
+		int32 SkillID;
+
 	// Sets default values for this actor's properties
 	ARuleOfTheBullet();
 
+	void InitSkill();
+
+	//void ResetIteration();
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
 		TEnumAsByte<EBulletType> BulletType;
+
+	UPROPERTY()
+		ESubmissionSkillRequestType SubmissionSkillRequestType;
 
 	//子弹的伤害特效(碰撞后产生的特效)
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
@@ -72,8 +84,14 @@ protected:
 
 	UFUNCTION()
 		void ChainAttack();
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	const FSkillData *GetSkillData();
+
+	UFUNCTION(BlueprintCallable, Category = "Add Skill request")
+		void SubmissionSkillRequest();
 };

@@ -5,12 +5,110 @@
 #include "Kismet/GameplayStatics.h"
 #include "../../Data/Save/PlayerSaveData.h"
 #include "../../StoneDefenceMacro.h"
+#include "UObject/ConstructorHelpers.h"
+#include "TowersDefencePlayerController.h"
+#include "../../StoneDefenceUtils.h"
 
 ATowersDefencePlayerState::ATowersDefencePlayerState()
 {
+	static ConstructorHelpers::FObjectFinder<UDataTable> MyTable_PlayerSkill(TEXT("/Game/GameData/PlayerSkillData"));
+	PlayerSkillDataTable = MyTable_PlayerSkill.Object;
+
+}
+
+void ATowersDefencePlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//物品栏的塔slot
 	for (int32 i = 0; i < 21; i++)
 	{
 		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
+	}
+
+	for (int32 i = 0; i < 10; i++)
+	{
+		GetSaveData()->PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
+	}
+}
+
+const TArray<FPlayerSkillData*> & ATowersDefencePlayerState::GetPlayerSkillDataFromTable()
+{
+	if (!CachePlayerSkilDatas.Num())
+	{
+		PlayerSkillDataTable->GetAllRows(TEXT("Player Skill Data"), CachePlayerSkilDatas);
+	}
+
+	return CachePlayerSkilDatas;
+}
+
+const FPlayerSkillData * ATowersDefencePlayerState::GetPlayerSkillDataFromTable(const int32 &PlayerSkillID)
+{
+	const TArray<FPlayerSkillData*> &InSkillDatas = GetPlayerSkillDataFromTable();
+	for (auto &Tmp : InSkillDatas)
+	{
+		if (Tmp->ID == PlayerSkillID)
+		{
+			return Tmp;
+		}
+	}
+
+	return NULL;
+}
+
+FPlayerSkillData * ATowersDefencePlayerState::GetPlayerSkillData(const FGuid &PlayerSkillGUID)
+{
+	if (GetSaveData()->PlayerSkillDatas.Contains(PlayerSkillGUID))
+	{
+		return &GetSaveData()->PlayerSkillDatas[PlayerSkillGUID];
+	}
+
+	return nullptr;
+}
+
+bool ATowersDefencePlayerState::IsVerificationSkill(const FGuid &SlotID)
+{
+	if (FPlayerSkillData *InData = GetPlayerSkillData(SlotID))
+	{
+		if (InData->IsValid() && InData->SkillNumber > 0 && InData->GetCDPercent() <= 0.f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void ATowersDefencePlayerState::UsePlayerSkill(const FGuid &SlotID)
+{
+	if (FPlayerSkillData *InData = GetPlayerSkillData(SlotID))
+	{
+		if (InData->IsValid())
+		{
+			InData->SkillNumber--;
+			InData->ResetCD();
+			//通知客户端更新添加的UI
+			StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+			{
+				MyPlayerController->SpawnPlayerSkill_Client(InData->ID);
+			});
+		}
+	}
+}
+
+void ATowersDefencePlayerState::AddPlayerSkill(const FGuid *Guid, int32 SkillID)
+{
+	//GetSaveData()->AddPlayerSkill(GetWorld(), Guid, SkillID);
+	if (const FPlayerSkillData *FSkill = GetPlayerSkillDataFromTable(SkillID))
+	{
+		GetSaveData()->PlayerSkillDatas[*Guid] = *FSkill;
+
+
+		//通知客户端更新添加的UI
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			MyPlayerController->UpdatePlayerSkill_Client(*Guid, false);
+		});
 	}
 }
 
@@ -75,4 +173,59 @@ UPlayerSaveData * ATowersDefencePlayerState::GetSaveData()
 		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 	}
 	return SaveData;
+}
+
+FPlayerSkillData * ATowersDefencePlayerState::GetSkillDatas(const FGuid &SkillGuid)
+{
+	if (GetSaveData()->PlayerSkillDatas.Contains(SkillGuid))
+	{
+		return &GetSaveData()->PlayerSkillDatas[SkillGuid];
+	}
+
+	SD_print(Error, "The current [%s] is invalid", *SkillGuid.ToString());
+	return nullptr;
+}
+
+const TArray<const FGuid*> ATowersDefencePlayerState::GetSkillDatasID()
+{
+	TArray<const FGuid*> SkillIDs;
+	for (const auto &Tmp : GetSaveData()->PlayerSkillDatas)
+	{
+		SkillIDs.Add(&Tmp.Key);
+	}
+
+	return SkillIDs;
+}
+
+void ATowersDefencePlayerState::TowersPerpareBuildingNumber(const FGuid &InventoryGUID)
+{
+	FBuildingTower &BT = GetBuildingTower(InventoryGUID);
+	if (BT.IsValid()) //服务器验证 防止作弊
+	{
+		if (BT.NeedGold <= GetPlayerData().GameGold)
+		{
+			BT.TowersPerpareBuildingNumber++;
+			GetPlayerData().GameGold -= BT.NeedGold;
+
+			if (BT.CurrentConstrictionTowersCD <= 0)
+			{
+				BT.ResetCD();
+			}
+		}
+	}
+}
+
+void ATowersDefencePlayerState::SetTowersDragICOState(const FGuid &InventoryGUID, bool bDragICO)
+{
+	FBuildingTower &BT = GetBuildingTower(InventoryGUID);
+	BT.bDragICO = bDragICO;
+}
+
+void ATowersDefencePlayerState::TowersConstructionNumber(const FGuid &InventoryGUID, int32 InValue /*= INDEX_NONE*/)
+{
+	FBuildingTower &BT = GetBuildingTower(InventoryGUID);
+	if (BT.IsValid()) //服务器验证 防止作弊
+	{
+		BT.TowersConstructionNumber += InValue;
+	}
 }

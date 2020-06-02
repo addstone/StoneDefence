@@ -73,10 +73,22 @@ public:
 	FSkillData &AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data);
 	FSkillData &GetSkillData(const FGuid &SkillID);
 	FSkillData &GetSkillData(const FGuid &CharacterID, const FGuid &SkillID);
+	const FSkillData *GetSkillData(const int32 &SkillID);
 	int32 RemoveSkillData(const FGuid &SkillID);
 
-	void InitSkill(FCharacterData &InCharacterData);
+	UFUNCTION(/*Server*/)
+		void AddSkillDataTemplateToCharacterData(const FGuid &CharacterID, int32 SkillID);
 
+	bool IsVerificationSkillTemplate(const FGuid &CharacterID, int32 SkillID);
+	bool IsVerificationSkillTemplate(const FCharacterData &CharacterData, int32 SkillID);
+	bool IsVerificationSkill(const FCharacterData &CharacterSkill, int32 SkillID);
+	bool IsVerificationSkill(const FGuid &CharacterID, int32 SkillID);
+
+	void AddSkill(const FGuid &CharacterGUID, int32 InSkillID);
+	void AddSkill(TPair<FGuid, FCharacterData> &Owner, const FSkillData &InSkill);
+
+	UFUNCTION(/*Server*/)
+		bool SetSubmissionDataType(FGuid CharacterID, int32 Skill, ESubmissionSkillRequestType Type);
 protected:
 	UGameSaveData *GetSaveData();
 	UGameSaveSlotList *GetGameSaveSlotList();
