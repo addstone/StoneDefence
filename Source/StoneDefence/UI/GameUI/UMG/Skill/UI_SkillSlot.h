@@ -18,31 +18,20 @@ UCLASS()
 class STONEDEFENCE_API UUI_SkillSlot : public UUI_Slot
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(meta = (BindWidget))
-		UImage *SkillIcon;
 
 	UPROPERTY(meta = (BindWidget))
-		UImage *SkillIconCD;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock *SkillNumber;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock *KeyValueNumber;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock *SkillCDValue;
-
-	UPROPERTY(meta = (BindWidget))
-		UButton *ClickButton;
-
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock *SlotNumber;
+		UTextBlock *Number;
 
 public:
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
-		void OnClickedWidget();
+	virtual void OnClickedWidget();
+
+	FPlayerSkillData *GetPlayerSkillData();
+
+	void UpdateUI();
+
+	FORCEINLINE int32 GetKeyNumber() const { return KeyNumber; }
+private:
+	int32 KeyNumber;
 };
