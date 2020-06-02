@@ -163,7 +163,7 @@ void ATowersDefencePlayerController::UpdatePlayerSkill_Client(const FGuid &Playe
 
 void ATowersDefencePlayerController::SpawnPlayerSkill_Client(const int32 &PlayerSKillID)
 {
-	//StoneDefenceUtils::SpawnPlayerBullet(GetWorld(), PlayerSKillID);
+	StoneDefenceUtils::SpawnPlayerBullet(GetWorld(), PlayerSKillID);
 }
 
 ATowers * ATowersDefencePlayerController::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)

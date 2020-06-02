@@ -17,8 +17,4 @@ struct FPlayerSkillData : public FSkillData
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Profit")
 		int32 SkillNumber;
-
-	//×÷ÎªICOÖ¸Õë
-	UPROPERTY(SaveGame)
-		class UTexture2D* ICO;
 };

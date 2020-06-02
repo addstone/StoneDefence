@@ -25,6 +25,7 @@ class STONEDEFENCE_API ATowersDefencePlayerState : public ARuleOfThePlayerState
 		UDataTable* PlayerSkillDataTable;
 public:
 	ATowersDefencePlayerState();
+	virtual void BeginPlay() override;
 
 	const TArray<FPlayerSkillData*> &GetPlayerSkillDataFromTable();
 	const FPlayerSkillData *GetPlayerSkillDataFromTable(const int32 &PlayerSkillID);

@@ -11,12 +11,12 @@ void UUI_PlayerSkillSystem::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	auto KeyMapping = GetDefault<UInputSettings>()->GetActionMappings().FindByPredicate(
-		[&](FInputActionKeyMapping &EntryUI)
-		{
-			return EntryUI.ActionName == "FreezeSkill";
-		}
-	);
+	//auto KeyMapping = GetDefault<UInputSettings>()->GetActionMappings().FindByPredicate(
+	//	[&](FInputActionKeyMapping &EntryUI)
+	//	{
+	//		return EntryUI.ActionName == "FreezeSkill";
+	//	}
+	//);
 
 	LayoutPlayerSkillSlot();
 }
@@ -39,6 +39,12 @@ void UUI_PlayerSkillSystem::LayoutPlayerSkillSlot()
 					PanelSlot->SetVerticalAlignment(VAlign_Fill);
 				}
 
+				//¼¼ÄÜ¸³Öµ
+				if (GetPlayerState()->GetPlayerData().SkillIDs.IsValidIndex(i))
+				{
+					int32 CurrentSkillID = GetPlayerState()->GetPlayerData().SkillIDs[i];
+					GetPlayerState()->AddPlayerSkill(PlayerSkillGUIDs[i], CurrentSkillID);
+				}
 				SkillSlot->UpdateUI();
 			}
 		}
