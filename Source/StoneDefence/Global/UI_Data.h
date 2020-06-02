@@ -9,6 +9,7 @@
 extern FGuid TowerICOGUID;
 extern AActor *TowerDoll;
 extern bool bLockGUID;
+extern int32 PlayerSkillNumber;
 
 extern ARuleOfTheCharacter *ClickedTargetTower;
 extern ARuleOfTheCharacter *ClickedTargetMonster;

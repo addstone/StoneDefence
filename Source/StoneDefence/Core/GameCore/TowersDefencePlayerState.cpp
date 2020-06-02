@@ -8,9 +8,15 @@
 
 ATowersDefencePlayerState::ATowersDefencePlayerState()
 {
+	//ÎïÆ·À¸µÄËþslot
 	for (int32 i = 0; i < 21; i++)
 	{
 		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
+	}
+
+	for (int32 i = 0; i < 10; i++)
+	{
+		GetSaveData()->PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
 	}
 }
 
@@ -75,6 +81,28 @@ UPlayerSaveData * ATowersDefencePlayerState::GetSaveData()
 		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 	}
 	return SaveData;
+}
+
+FPlayerSkillData * ATowersDefencePlayerState::GetSkillDatas(const FGuid &SkillGuid)
+{
+	if (GetSaveData()->PlayerSkillDatas.Contains(SkillGuid))
+	{
+		return &GetSaveData()->PlayerSkillDatas[SkillGuid];
+	}
+
+	SD_print(Error, "The current [%s] is invalid", *SkillGuid.ToString());
+	return nullptr;
+}
+
+const TArray<const FGuid*> ATowersDefencePlayerState::GetSkillDatasID()
+{
+	TArray<const FGuid*> SkillIDs;
+	for (const auto &Tmp : GetSaveData()->PlayerSkillDatas)
+	{
+		SkillIDs.Add(&Tmp.Key);
+	}
+
+	return SkillIDs;
 }
 
 void ATowersDefencePlayerState::TowersPerpareBuildingNumber(const FGuid &InventoryGUID)

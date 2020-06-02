@@ -30,6 +30,8 @@ public:
 	void RequestInventorySlotSwap(const FGuid &A, const FGuid &B);
 	FBuildingTower &GetBuildingDataNULL();
 	UPlayerSaveData *GetSaveData();
+	FPlayerSkillData *GetSkillDatas(const FGuid &SkillGuid);
+	const TArray<const FGuid*> GetSkillDatasID();
 
 	UFUNCTION(/*Server*/)
 		void TowersPerpareBuildingNumber(const FGuid &InventoryGUID);

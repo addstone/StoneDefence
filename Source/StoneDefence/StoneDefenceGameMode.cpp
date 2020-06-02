@@ -514,11 +514,6 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 	}
 }
 
-void AStoneDefenceGameMode::UpdateMonstersRule(float DeltaSeconds)
-{
-
-}
-
 void AStoneDefenceGameMode::UpdatePlayerData(float DeltaSeconds)
 {
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())

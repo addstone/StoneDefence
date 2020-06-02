@@ -35,7 +35,7 @@ public:
 	UPROPERTY(SaveGame)
 	TMap<FGuid, FPlayerSkillData> PlayerSkillDatas;
 
-	//virtual void InitSaveGame(UWorld *InWorld);
+	virtual void InitSaveGame(UWorld *InWorld);
 
-	//void AddPlayerSkill(UWorld *InWorld, const FGuid *Guid, int32 SkillID);
+	void AddPlayerSkill(UWorld *InWorld, const FGuid *Guid, int32 SkillID);
 };

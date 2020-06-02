@@ -6,6 +6,7 @@
 #include "../Core/UI_Slot.h"
 #include "UI_SkillSlot.generated.h"
 
+
 class UImage;
 class UTextBlock;
 class UButton;
@@ -35,6 +36,9 @@ class STONEDEFENCE_API UUI_SkillSlot : public UUI_Slot
 
 	UPROPERTY(meta = (BindWidget))
 		UButton *ClickButton;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock *SlotNumber;
 
 public:
 	virtual void NativeConstruct() override;

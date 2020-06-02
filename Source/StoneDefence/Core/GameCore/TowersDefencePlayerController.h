@@ -39,6 +39,8 @@ public:
 
 	void SetInputModeGameAndUI();
 
+	void UpdateGlobalVar();
+
 	virtual void SetupInputComponent() override;
 	void MouseWheelUP();
 	void MouseWheelDown();

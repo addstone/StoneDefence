@@ -45,6 +45,8 @@ void ATowersDefencePlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	SetInputModeGameAndUI();
+
+	UpdateGlobalVar();
 }
 
 void ATowersDefencePlayerController::SetInputModeGameAndUI()
@@ -54,6 +56,11 @@ void ATowersDefencePlayerController::SetInputModeGameAndUI()
 	InputMode.SetHideCursorDuringCapture(false);
 
 	SetInputMode(InputMode);
+}
+
+void ATowersDefencePlayerController::UpdateGlobalVar()
+{
+	//PlayerSkillNumber = 0;
 }
 
 void ATowersDefencePlayerController::SetupInputComponent()
