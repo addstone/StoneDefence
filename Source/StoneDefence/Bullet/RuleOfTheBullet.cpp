@@ -147,12 +147,12 @@ void ARuleOfTheBullet::InitSkill()
 	}
 }
 
-void ARuleOfTheBullet::ResetIteration()
-{
-	BulletType = EBulletType::BULLET_NONE;
-
-	InitSkill();
-}
+// void ARuleOfTheBullet::ResetIteration()
+// {
+// 	BulletType = EBulletType::BULLET_NONE;
+// 
+// 	InitSkill();
+// }
 
 // Called when the game starts or when spawned
 void ARuleOfTheBullet::BeginPlay()

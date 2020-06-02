@@ -118,6 +118,14 @@ void ARuleOfTheCharacter::InitSkill()
 	}
 }
 
+void ARuleOfTheCharacter::SubmissionSkillRequest(int32 SkillID)
+{
+	if (!GetGameState()->IsVerificationSkill(GUID, SkillID))
+	{
+		GetGameState()->AddSkill(GUID, SkillID);
+	}
+}
+
 void ARuleOfTheCharacter::RemoveSkillSlot_Client(const FGuid &SlotID)
 {
 	if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
@@ -278,7 +286,10 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 
 					GetGameState()->RemoveCharacterData(GUID);
 				}
-
+				else
+				{
+					SubmissionSkillRequest(SkillData->ID);
+				}
 				
 			}
 		}

@@ -73,6 +73,9 @@ public:
 	UFUNCTION(/*Client*/)
 		void InitSkill();
 
+	UFUNCTION(BlueprintCallable, Category = "Add Skill request")
+		void SubmissionSkillRequest(int32 SkillID);
+
 public:	
 
 	UFUNCTION(/*Client*/)

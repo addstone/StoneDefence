@@ -43,7 +43,7 @@ public:
 
 	void InitSkill();
 
-	void ResetIteration();
+	//void ResetIteration();
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
