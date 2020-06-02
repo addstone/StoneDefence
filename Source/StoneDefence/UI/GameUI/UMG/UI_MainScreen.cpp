@@ -11,6 +11,7 @@
 #include "Tip/UI_TowerTip.h"
 #include "Components/Image.h"
 #include "../../../Global/UI_Data.h"
+#include "UI_RucksackSystem.h"
 
 void UUI_MainScreen::NativeConstruct()
 {
@@ -69,4 +70,11 @@ void UUI_MainScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	}
 }
 
+void UUI_MainScreen::UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD)
+{
+	if (RucksackSystem)
+	{
+		RucksackSystem->UpdateInventorySlot(InventorySlotGUID, bInCD);
+	}
+}
 

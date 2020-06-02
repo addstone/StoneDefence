@@ -30,6 +30,15 @@ public:
 	void RequestInventorySlotSwap(const FGuid &A, const FGuid &B);
 	FBuildingTower &GetBuildingDataNULL();
 	UPlayerSaveData *GetSaveData();
+
+	UFUNCTION(/*Server*/)
+		void TowersPerpareBuildingNumber(const FGuid &InventoryGUID);
+
+	UFUNCTION(/*Server*/)
+		void SetTowersDragICOState(const FGuid &InventoryGUID, bool bDragICO);
+
+	UFUNCTION(/*Server*/)
+		void TowersConstructionNumber(const FGuid &InventoryGUID, int32 InValue = INDEX_NONE);
 protected:
 	UPROPERTY()
 		UPlayerSaveData *SaveData;

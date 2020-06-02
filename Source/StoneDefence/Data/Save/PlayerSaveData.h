@@ -31,9 +31,9 @@ public:
 	UPROPERTY(SaveGame)
 	TMap<FGuid, FBuildingTower> BuildingTowers;
 
-	////玩家游戏中数据的状态
-	//UPROPERTY(SaveGame)
-	//TMap<FGuid, FPlayerSkillData> PlayerSkillDatas;
+	//玩家游戏中数据的状态
+	UPROPERTY(SaveGame)
+	TMap<FGuid, FPlayerSkillData> PlayerSkillDatas;
 
 	//virtual void InitSaveGame(UWorld *InWorld);
 

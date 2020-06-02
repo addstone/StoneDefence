@@ -9,6 +9,7 @@
 #include "../../Global/UI_Data.h"
 #include "../../StoneDefenceUtils.h"
 #include "../../Character/Core/RuleOfTheCharacter.h"
+#include "../../UI/GameUI/Core/RuleofTheHUD.h"
 
 ATowersDefencePlayerController::ATowersDefencePlayerController()
 {
@@ -135,6 +136,24 @@ void ATowersDefencePlayerController::SpawnBullet_Client(const FGuid &CharacterID
 			InCharacter->UpdateSkill(SkillID);
 		});
 	}
+}
+
+void ATowersDefencePlayerController::UpdateInventory_Client(const FGuid &InventorySlotGUID, bool bInCD)
+{
+	if (ARuleofTheHUD *NewHUD = GetHUD<ARuleofTheHUD>())
+	{
+		NewHUD->UpdateInventorySlot(InventorySlotGUID, bInCD);
+	}
+}
+
+void ATowersDefencePlayerController::UpdatePlayerSkill_Client(const FGuid &PlayerSlotGUID, bool bInCD)
+{
+
+}
+
+void ATowersDefencePlayerController::SpawnPlayerSkill_Client(const int32 &PlayerSKillID)
+{
+
 }
 
 ATowers * ATowersDefencePlayerController::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Loction, const FRotator &Rotator)

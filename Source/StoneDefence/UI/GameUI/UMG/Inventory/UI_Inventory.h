@@ -27,7 +27,8 @@ class STONEDEFENCE_API UUI_Inventory : public UUI_Slot
 
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 		UMaterialInterface* DollMaterial;
-	
+public:
+	void UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD);
 protected:
 	virtual void NativeConstruct() override;
 	FBuildingTower &GetBuildingTower();

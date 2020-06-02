@@ -15,7 +15,7 @@ bool UUI_NativeOnDrop::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 	{
 		if (UUI_InventorySlot* MyInventorySlot = Cast<UUI_InventorySlot>(StoneDefenceDragDropOperation->Payload))
 		{
-			MyInventorySlot->GetBuildingTower().bDragICO = false;
+			GetPlayerState()->SetTowersDragICOState(MyInventorySlot->GUID, false);
 
 			MyInventorySlot->UpdateUI();
 			bDrop = true;

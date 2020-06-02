@@ -72,7 +72,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = Tip)
 		UWidget *GetTowerTip();
-private:
+
 	void UpdateTowersCD(float InDeltaTime);
 	void DrawTowersCD(float TowerCD);
 	void DisplayNumber(UTextBlock* TextNumberBlock, int32 TextNumber);

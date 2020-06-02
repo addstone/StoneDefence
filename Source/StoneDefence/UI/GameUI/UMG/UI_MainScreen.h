@@ -8,6 +8,7 @@
 
 
 
+
 /**
  * 
  */
@@ -49,5 +50,5 @@ public:
 	//Tick
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-
+	void UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD);
 };

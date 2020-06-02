@@ -28,10 +28,10 @@ void ARuleofTheHUD::BeginPlay()
 
 void ARuleofTheHUD::UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD)
 {
-	//if (MainScreen)
-	//{
-	//	MainScreen->UpdateInventorySlot(InventorySlotGUID, bInCD);
-	//}
+	if (MainScreen)
+	{
+		MainScreen->UpdateInventorySlot(InventorySlotGUID, bInCD);
+	}
 }
 
 void ARuleofTheHUD::UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, bool bInCD)

@@ -29,15 +29,6 @@ void UUI_InventorySlot::NativeConstruct()
 void UUI_InventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (!GetBuildingTower().bLockCD)
-	{
-		if (!GetBuildingTower().bDragICO)
-		{
-			UpdateTowersCD(InDeltaTime);
-
-		}
-	}
 }
 
 void UUI_InventorySlot::OnClickedWidget()
@@ -45,11 +36,7 @@ void UUI_InventorySlot::OnClickedWidget()
 	if (GetBuildingTower().IsValid()) //客户端验证 降低网络带宽
 	{
 		//通知服务器对塔的数量进行增加
-		GetBuildingTower().TowersPerpareBuildingNumber++;
-		if (GetBuildingTower().CurrentConstrictionTowersCD <= 0)
-		{
-			GetBuildingTower().ResetCD();
-		}
+		GetPlayerState()->TowersPerpareBuildingNumber(GUID);
 	}
 }
 
@@ -204,9 +191,10 @@ void UUI_InventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const 
 				StoneDefenceDragDropOperation->Payload = this;
 				OutOperation = StoneDefenceDragDropOperation;
 
-				GetBuildingTower().bDragICO = true;
+				//通知服务器 客户端要进行拖拽
+				GetPlayerState()->SetTowersDragICOState(GUID, true);
 
-				ClearSlot();
+				ClearSlot();//隐藏自己
 			}
 		}
 	}
@@ -224,7 +212,8 @@ bool UUI_InventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 	{
 		if (UUI_InventorySlot* MyInventorySlot = Cast<UUI_InventorySlot>(StoneDefenceDragDropOperation->Payload))
 		{
-			MyInventorySlot->GetBuildingTower().bDragICO = false;
+			//服务器请求
+			GetPlayerState()->SetTowersDragICOState(MyInventorySlot->GUID, false);
 			GetPlayerState()->RequestInventorySlotSwap(GUID, MyInventorySlot->GUID);
 
 			UpdateUI();

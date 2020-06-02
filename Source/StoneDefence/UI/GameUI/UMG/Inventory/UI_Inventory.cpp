@@ -11,6 +11,27 @@
 #include "../../../../StoneDefenceUtils.h"
 #include "../../../../Global/UI_Data.h"
 
+void UUI_Inventory::UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD)
+{
+	for (auto &Tmp : InventorySlotArray)
+	{
+		if (Tmp->GUID == InventorySlotGUID)
+		{
+			if (bInCD)
+			{
+				Tmp->DrawTowersCD(Tmp->GetBuildingTower().GetTowerConstructionTimePercentage());
+			}
+			else
+			{
+				Tmp->DrawTowersCD(0.f);
+			}
+
+			Tmp->UpdateTowersBuildingInfo();
+			break;
+		}
+	}
+}
+
 void UUI_Inventory::NativeConstruct()
 {
 	Super::NativeConstruct();

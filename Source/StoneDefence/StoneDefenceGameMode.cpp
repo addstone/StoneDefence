@@ -40,55 +40,24 @@ void AStoneDefenceGameMode::BeginPlay()
 void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	
+	//更新玩家的数据
+	UpdatePlayerData(DeltaSeconds);
 
-	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
-	{
-	StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
-		{
-			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
-			{
-				InPlayerState->GetPlayerData().GameGoldTime += DeltaSeconds;
+	//更新游戏场景的规则
+	UpdateGameData(DeltaSeconds);
 
-				if (InPlayerState->GetPlayerData().IsAllowIncrease())
-				{
-					InPlayerState->GetPlayerData().GameGoldTime = 0;
-					InPlayerState->GetPlayerData().GameGold++;
-				}
-			}
-		}
-		);
-
-
-
-		if (InGameState->GetGameData().GameCount <= 0.f)
-		{
-			InGameState->GetGameData().bGameOver = true;
-		}
-		else
-		{
-			InGameState->GetGameData().GameCount -= DeltaSeconds;
-		}
-		int32 TowersNum = 0;
-		TArray<ARuleOfTheCharacter*> InTowers;
-		StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), InTowers);
-		for (ARuleOfTheCharacter* Tower : InTowers)
-		{
-			if (Tower->IsActive())
-			{
-				TowersNum++;
-			}
-		}
-		if (TowersNum == 0)
-		{
-			InGameState->GetGameData().bGameOver = true;
-		}
-
-	}
-	//生成怪物
-	SpawnMonstersRule(DeltaSeconds);
+	//更新生成怪物
+	UpdateMonstersRule(DeltaSeconds);
 
 	//更新技能
 	UpdateSkill(DeltaSeconds);
+
+	//更新装备栏
+	UpdateInventory(DeltaSeconds);
+
+	//更新玩家的技能
+	UpdatePlayerSkill(DeltaSeconds);
 }
 
 AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
@@ -177,7 +146,7 @@ int32 GetMonsterLevel(UWorld *InWorld)
 	return ReturnLevel;
 }
 
-void AStoneDefenceGameMode::SpawnMonstersRule(float DeltaSeconds)
+void AStoneDefenceGameMode::UpdateMonstersRule(float DeltaSeconds)
 {
 	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 	{
@@ -542,5 +511,193 @@ void AStoneDefenceGameMode::UpdateSkill(float DeltaSeconds)
 			}
 			
 		}
+	}
+}
+
+void AStoneDefenceGameMode::UpdateMonstersRule(float DeltaSeconds)
+{
+
+}
+
+void AStoneDefenceGameMode::UpdatePlayerData(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				//游戏金币更新
+				InPlayerState->GetPlayerData().GameGoldTime += DeltaSeconds;
+				if (InPlayerState->GetPlayerData().IsAllowIncrease())
+				{
+					InPlayerState->GetPlayerData().GameGoldTime = 0.0f;
+					InPlayerState->GetPlayerData().GameGold++;
+				}
+
+
+			}
+		}
+		);
+	}
+}
+
+void AStoneDefenceGameMode::UpdateGameData(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		if (InGameState->GetGameData().GameCount <= 0.f)
+		{
+			InGameState->GetGameData().bGameOver = true;
+		}
+		else
+		{
+			InGameState->GetGameData().GameCount -= DeltaSeconds;
+		}
+
+		int32 TowersNum = 0;
+		TArray<ARuleOfTheCharacter*> InTowers;
+		StoneDefenceUtils::GetAllActor<ATowers>(GetWorld(), InTowers);
+		for (ARuleOfTheCharacter *Tower : InTowers)
+		{
+			if (Tower->IsActive())
+			{
+				TowersNum++;
+			}
+		}
+
+		if (TowersNum == 0)
+		{
+			InGameState->GetGameData().bGameOver = true;
+		}
+	}
+}
+
+void AStoneDefenceGameMode::UpdatePlayerSkill(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				for (auto &Tmp : InPlayerState->GetSaveData()->PlayerSkillDatas)
+				{
+					if (Tmp.Value.IsValid())
+					{
+						if (Tmp.Value.CDTime > 0.f)
+						{
+							Tmp.Value.CDTime -= DeltaSeconds;
+							Tmp.Value.bBecomeEffective = true;
+
+							//通知客户端更新我们的装备CD
+							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+							{
+								MyPlayerController->UpdatePlayerSkill_Client(Tmp.Key, true);
+							});
+						}
+						else if (Tmp.Value.bBecomeEffective)
+						{
+							Tmp.Value.bBecomeEffective = false;
+
+							//通知客户端更新我们的装备CD
+							StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+							{
+								MyPlayerController->UpdatePlayerSkill_Client(Tmp.Key, false);
+							});
+						}
+					}
+				}
+
+
+
+
+				//if (Tmp.Value.CurrentConstrictionTowersCD > 0)
+				//{
+				//	Tmp.Value.CurrentConstrictionTowersCD -= DeltaSeconds;
+				//	Tmp.Value.bCallUpdateTowersInfo = true;
+
+				//	//通知客户端更新我们的装备CD
+				//	StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+				//		{
+				//			MyPlayerController->UpdateInventory_Client(Tmp.Key, true);
+				//		});
+				//}
+				//else if (Tmp.Value.bCallUpdateTowersInfo)
+				//{
+				//	Tmp.Value.bCallUpdateTowersInfo = false;
+				//	//准备构建的塔
+				//	Tmp.Value.TowersPerpareBuildingNumber--;
+				//	Tmp.Value.TowersConstructionNumber++;
+
+				//	//通知客户端更新我们的装备CD
+				//	StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+				//		{
+				//			MyPlayerController->UpdateInventory_Client(Tmp.Key, false);
+				//		});
+
+				//	if (Tmp.Value.TowersPerpareBuildingNumber > 0)
+				//	{
+				//		Tmp.Value.ResetCD();
+				//	}
+				//}
+			}
+		}
+		);
+	}
+}
+
+void AStoneDefenceGameMode::UpdateInventory(float DeltaSeconds)
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				for (auto &Tmp : InPlayerState->GetSaveData()->BuildingTowers)
+				{
+					if (Tmp.Value.IsValid())
+					{
+						if (!Tmp.Value.bLockCD)
+						{
+							if (!Tmp.Value.bDragICO)
+							{
+								if (Tmp.Value.CurrentConstrictionTowersCD > 0)
+								{
+									Tmp.Value.CurrentConstrictionTowersCD -= DeltaSeconds;
+									Tmp.Value.bCallUpdateTowersInfo = true;
+
+									//通知客户端更新我们的装备CD
+									StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+									{
+										MyPlayerController->UpdateInventory_Client(Tmp.Key, true);
+									});
+								}
+								else if (Tmp.Value.bCallUpdateTowersInfo)
+								{
+									Tmp.Value.bCallUpdateTowersInfo = false;
+									//准备构建的塔
+									Tmp.Value.TowersPerpareBuildingNumber--;
+									Tmp.Value.TowersConstructionNumber++;
+
+									//通知客户端更新我们的装备CD
+									StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+									{
+										MyPlayerController->UpdateInventory_Client(Tmp.Key, false);
+									});
+
+									if (Tmp.Value.TowersPerpareBuildingNumber > 0)
+									{
+										Tmp.Value.ResetCD();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		);
 	}
 }

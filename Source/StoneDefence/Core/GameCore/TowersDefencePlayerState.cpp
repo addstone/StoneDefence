@@ -76,3 +76,36 @@ UPlayerSaveData * ATowersDefencePlayerState::GetSaveData()
 	}
 	return SaveData;
 }
+
+void ATowersDefencePlayerState::TowersPerpareBuildingNumber(const FGuid &InventoryGUID)
+{
+	FBuildingTower &BT = GetBuildingTower(InventoryGUID);
+	if (BT.IsValid()) //服务器验证 防止作弊
+	{
+		if (BT.NeedGold <= GetPlayerData().GameGold)
+		{
+			BT.TowersPerpareBuildingNumber++;
+			GetPlayerData().GameGold -= BT.NeedGold;
+
+			if (BT.CurrentConstrictionTowersCD <= 0)
+			{
+				BT.ResetCD();
+			}
+		}
+	}
+}
+
+void ATowersDefencePlayerState::SetTowersDragICOState(const FGuid &InventoryGUID, bool bDragICO)
+{
+	FBuildingTower &BT = GetBuildingTower(InventoryGUID);
+	BT.bDragICO = bDragICO;
+}
+
+void ATowersDefencePlayerState::TowersConstructionNumber(const FGuid &InventoryGUID, int32 InValue /*= INDEX_NONE*/)
+{
+	FBuildingTower &BT = GetBuildingTower(InventoryGUID);
+	if (BT.IsValid()) //服务器验证 防止作弊
+	{
+		BT.TowersConstructionNumber += InValue;
+	}
+}

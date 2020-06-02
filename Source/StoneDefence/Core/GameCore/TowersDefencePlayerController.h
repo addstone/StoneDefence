@@ -61,6 +61,15 @@ public:
 	UFUNCTION(/*Client*/)
 		void SpawnBullet_Client(const FGuid &CharacterID, const int32 &SkillID);
 
+	UFUNCTION(/*Client*/)
+		void UpdateInventory_Client(const FGuid &InventorySlotGUID, bool bInCD);
+
+	UFUNCTION(/*Client*/)
+		void UpdatePlayerSkill_Client(const FGuid &PlayerSlotGUID, bool bInCD);
+
+	UFUNCTION(/*Client*/)
+		void SpawnPlayerSkill_Client(const int32 &PlayerSKillID);
+
 	UFUNCTION()
 		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
 
