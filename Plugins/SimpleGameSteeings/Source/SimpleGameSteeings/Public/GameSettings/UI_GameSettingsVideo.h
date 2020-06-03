@@ -44,9 +44,6 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 		USlider* TextureQualitySlider;
 
 	UPROPERTY(meta = (BindWidget))
-		USlider* FOVSlider;
-
-	UPROPERTY(meta = (BindWidget))
 		USlider* PostProcessingSlider;
 
 	UPROPERTY(meta = (BindWidget))
@@ -71,9 +68,6 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 		UTextBlock* TextureQualityText;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* FOVText;
-
-	UPROPERTY(meta = (BindWidget))
 		UTextBlock* PostProcessingText;
 
 	UPROPERTY(meta = (BindWidget))
@@ -96,4 +90,27 @@ public:
 	virtual	void SaveSettings();
 
 	virtual	void LoadSettings();
+
+	UFUNCTION()
+		void FullScreenCheckClickedBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void WindowScreenCheckClickedBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void SupportPhysXCheckClickedBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void VSyncCheckClickedBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void EnableHDRDisplayOutput(bool ClickedWidget);
+
+	UFUNCTION()
+		void SetFrameRateLimit(float NewValue);
+protected:
+
+	virtual void ChangedValue(float InValue);
+
+	virtual void SelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 };

@@ -22,20 +22,20 @@ public:
 
 	UFUNCTION()
 		virtual	void LoadSettings() {}
-//protected:
-//
-//	void UpdateAttibeLevel(USlider *NewSlider, UTextBlock *NewBlock);
-//	void UpdateAttibe(USlider *NewSlider, UTextBlock *NewBlock);
-//
-//	UFUNCTION()
-//		virtual void ChangedValue(float InValue) {}
-//
-//	UFUNCTION()
-//		virtual void SelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType) {}
-//
-//	virtual void BindChangedValue(USlider *NewSlider);
-//	virtual void BindSelectionChanged(UComboBoxString *BoxString);
-//
+protected:
+
+	void UpdateAttibeLevel(USlider *NewSlider, UTextBlock *NewBlock);
+	void UpdateAttibe(USlider *NewSlider, UTextBlock *NewBlock);
+
+	UFUNCTION()
+		virtual void ChangedValue(float InValue) {}
+
+	UFUNCTION()
+		virtual void SelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType) {}
+
+	virtual void BindChangedValue(USlider *NewSlider);
+	virtual void BindSelectionChanged(UComboBoxString *BoxString);
+
 //	void SetSettingsVlaue(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InValue)> InFunc);
 //	void LoadSettingsVlaue(USlider* InSlider, UTextBlock *NewBlock, TFunction<float()> InFunc);
 //	void SetSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InLevel)> InFunc);

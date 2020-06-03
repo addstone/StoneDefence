@@ -13,5 +13,13 @@ UCLASS()
 class SIMPLEGAMESETTINGS_API USimpleGameUserSettings : public UGameUserSettings
 {
 	GENERATED_BODY()
-	
+
+	//是否支持物理破碎
+	UPROPERTY(config)
+		bool bSupportPhysX;
+
+public:
+	void SetCurrentLanguage(const FString &NewLanguage);
+
+	static USimpleGameUserSettings* GetSimpleGameUserSettings();
 };
