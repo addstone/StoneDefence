@@ -6,6 +6,11 @@
 #include "Blueprint/UserWidget.h"
 #include "UI_GameSettingsVideo.generated.h"
 
+class UCheckBox;
+class UComboBoxString;
+class USlider;
+class UTextBlock;
+class USpinBox;
 /**
  * 
  */
@@ -13,5 +18,78 @@ UCLASS()
 class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+	UPROPERTY(meta = (BindWidget))
+		UCheckBox* FullScreenCheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+		UCheckBox* WindowScreenCheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+		UCheckBox* SupportPhysXCheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+		UComboBoxString*  ResolutionBoxString;
+
+	UPROPERTY(meta = (BindWidget))
+		UComboBoxString*  LanguageString;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* AntiAliasingSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* ShadowQualitySlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* TextureQualitySlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* FOVSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* PostProcessingSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* EffectsSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* FoliageSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* OverallScalabilityLevelSliderSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		USlider* ViewDistanceSlider;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* AntiAliasingText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* ShadowQualityText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* TextureQualityText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* FOVText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* PostProcessingText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* EffectsText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* FoliageText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* ViewDistanceText;
+
+	UPROPERTY(meta = (BindWidget))
+		UTextBlock* OverallScalabilityLevelSliderText;
+
+public:
+	virtual void NativeConstruct()override;
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };
