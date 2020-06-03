@@ -6,6 +6,8 @@
 #include "Components/ComboBoxString.h"
 #include "Components/CheckBox.h"
 #include "Components/SpinBox.h"
+#include "Core/UI_SimpleGameSettingsCore.h"
+#include "SimpleGameSettingsMacro.h"
 
 
 void UUI_GameSettingsVideo::NativeConstruct()
@@ -26,7 +28,7 @@ void UUI_GameSettingsVideo::NativeConstruct()
 	BindChangedValue(EffectsSlider);
 	BindChangedValue(FoliageSlider);
 	BindChangedValue(ViewDistanceSlider);
-	BindChangedValue(OverallScalabilityLevelSliderSlider);
+	BindChangedValue(OverallScalabilityLevelSlider);
 
 	BindSelectionChanged(ResolutionBoxString);
 	BindSelectionChanged(LanguageString);
@@ -39,11 +41,139 @@ void UUI_GameSettingsVideo::NativeTick(const FGeometry& MyGeometry, float InDelt
 
 void UUI_GameSettingsVideo::SaveSettings()
 {
+	SetSettingsLevel(TextureQualitySlider, TextureQualityText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetTextureQuality(InLevel);
+	});
 
+	SetSettingsLevel(ShadowQualitySlider, ShadowQualityText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetShadowQuality(InLevel);
+	});
+
+	SetSettingsLevel(AntiAliasingSlider, AntiAliasingText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetAntiAliasingQuality(InLevel);
+	});
+
+	SetSettingsLevel(PostProcessingSlider, PostProcessingText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetPostProcessingQuality(InLevel);
+	});
+
+	SetSettingsLevel(EffectsSlider, EffectsText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetVisualEffectQuality(InLevel);
+	});
+
+	SetSettingsLevel(FoliageSlider, FoliageText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetFoliageQuality(InLevel);
+	});
+
+	SetSettingsLevel(ViewDistanceSlider, ViewDistanceText,
+		[](float InLevel)
+	{
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel);
+	});
+
+	SetSettingsLevel(OverallScalabilityLevelSlider, OverallScalabilityLevelText,
+		[](float InLevel)
+	{
+		if (InLevel != USimpleGameUserSettings::GetSimpleGameUserSettings()->GetOverallScalabilityLevel())
+		{
+			USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel);
+		}		
+	});
+	
 }
 
 void UUI_GameSettingsVideo::LoadSettings()
 {
+	LoadSettingsLevel(AntiAliasingSlider, AntiAliasingText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetAntiAliasingQuality();
+	});
+
+	LoadSettingsLevel(TextureQualitySlider, TextureQualityText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetTextureQuality();
+	});
+
+	LoadSettingsLevel(ShadowQualitySlider, ShadowQualityText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadowQuality();
+	});
+
+	LoadSettingsLevel(PostProcessingSlider, PostProcessingText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetPostProcessingQuality();
+	});
+
+	LoadSettingsLevel(EffectsSlider, EffectsText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetVisualEffectQuality();
+	});
+
+	LoadSettingsLevel(ViewDistanceSlider, ViewDistanceText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetViewDistanceQuality();
+	});
+
+	LoadSettingsLevel(FoliageSlider, FoliageText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetFoliageQuality();
+	});
+
+	LoadSettingsLevel(OverallScalabilityLevelSlider, OverallScalabilityLevelText,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadingQuality();
+	});
+
+	LoadBoxString(ResolutionBoxString,
+		[]()
+	{
+		FIntPoint ResolutionPoint = USimpleGameUserSettings::GetSimpleGameUserSettings()->GetScreenResolution();
+		return FString::Printf(TEXT("%ix%i"), ResolutionPoint.X, ResolutionPoint.Y);
+	});
+
+	LoadBoxString(LanguageString,
+		[]()
+	{
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetCurrentLanguageType();
+	});
+
+	EWindowMode::Type InModeType = USimpleGameUserSettings::GetSimpleGameUserSettings()->GetFullscreenMode();
+	switch (InModeType)
+	{
+	case EWindowMode::WindowedFullscreen:
+	case EWindowMode::Fullscreen:
+		FullScreenCheckBox->SetCheckedState(ECheckBoxState::Checked);
+		WindowScreenCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		break;
+	case EWindowMode::Windowed:
+		FullScreenCheckBox->SetCheckedState(ECheckBoxState::Unchecked);
+		WindowScreenCheckBox->SetCheckedState(ECheckBoxState::Checked);
+		break;
+	case EWindowMode::NumWindowModes:
+		break;
+	}
+
+
 
 }
 
@@ -90,7 +220,7 @@ void UUI_GameSettingsVideo::ChangedValue(float InValue)
 	UpdateAttibe(EffectsSlider, EffectsText);//特效
 	UpdateAttibe(FoliageSlider, FoliageText);//植被
 	UpdateAttibe(ViewDistanceSlider, ViewDistanceText);//视距
-	UpdateAttibe(OverallScalabilityLevelSliderSlider, OverallScalabilityLevelSliderText);
+	UpdateAttibe(OverallScalabilityLevelSlider, OverallScalabilityLevelText);
 }
 
 void UUI_GameSettingsVideo::SelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)

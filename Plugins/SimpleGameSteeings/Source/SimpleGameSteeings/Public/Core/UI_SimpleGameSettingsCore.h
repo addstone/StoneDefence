@@ -36,10 +36,7 @@ protected:
 	virtual void BindChangedValue(USlider *NewSlider);
 	virtual void BindSelectionChanged(UComboBoxString *BoxString);
 
-//	void SetSettingsVlaue(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InValue)> InFunc);
-//	void LoadSettingsVlaue(USlider* InSlider, UTextBlock *NewBlock, TFunction<float()> InFunc);
-//	void SetSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InLevel)> InFunc);
-//	void LoadSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<float()> InFunc);
-//
-//	void LoadBoxString(UComboBoxString* InBoxString, TFunction<FString()> InFunc);
+	void SetSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InLevel)> InFunc);
+	void LoadSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<float()> InFunc);
+	void LoadBoxString(UComboBoxString* InBoxString, TFunction<FString()> InFunc);
 };

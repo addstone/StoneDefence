@@ -9,6 +9,7 @@
 #include "GameSettings/UI_GameSetingsAudio.h"
 #include "GameSettings/UI_GameSettingsGameSetting.h"
 #include "GameSettings/UI_GameSettingsVideo.h"
+#include "Core/SimpleGameUserSettings.h"
 
 void UUI_GameSettingsSystem::NativeConstruct()
 {
@@ -51,15 +52,26 @@ void UUI_GameSettingsSystem::SaveSettings()
 	GameSettingsAudio->SaveSettings();
 	GameSettingsGameSetting->SaveSettings();
 
+	USimpleGameUserSettings::GetSimpleGameUserSettings()->ApplySettings(true);
+
+	GameSettingsVideo->LoadSettings();
+	GameSettingsAudio->LoadSettings();
+	GameSettingsGameSetting->LoadSettings();
 }
 
 void UUI_GameSettingsSystem::LoadSettings()
 {
+	USimpleGameUserSettings::GetSimpleGameUserSettings()->LoadSettings(true);
 
+	GameSettingsVideo->LoadSettings();
+	GameSettingsAudio->LoadSettings();
+	GameSettingsGameSetting->LoadSettings();
 }
 
 void UUI_GameSettingsSystem::RestoreDefaultSettings()
 {
+	USimpleGameUserSettings::GetSimpleGameUserSettings()->SetToDefaults();
+
 	GameSettingsVideo->LoadSettings();
 	GameSettingsAudio->LoadSettings();
 	GameSettingsGameSetting->LoadSettings();

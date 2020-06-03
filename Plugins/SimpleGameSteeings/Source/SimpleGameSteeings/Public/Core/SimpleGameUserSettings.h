@@ -22,4 +22,6 @@ public:
 	void SetCurrentLanguage(const FString &NewLanguage);
 
 	static USimpleGameUserSettings* GetSimpleGameUserSettings();
+
+	FString GetCurrentLanguageType();
 };

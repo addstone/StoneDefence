@@ -53,7 +53,7 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 		USlider* FoliageSlider;
 
 	UPROPERTY(meta = (BindWidget))
-		USlider* OverallScalabilityLevelSliderSlider;
+		USlider* OverallScalabilityLevelSlider;
 
 	UPROPERTY(meta = (BindWidget))
 		USlider* ViewDistanceSlider;
@@ -80,7 +80,7 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 		UTextBlock* ViewDistanceText;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* OverallScalabilityLevelSliderText;
+		UTextBlock* OverallScalabilityLevelText;
 
 public:
 	virtual void NativeConstruct()override;
