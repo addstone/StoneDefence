@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "SimpleGameSettingsType.h"
+#include "Core/UI_SimpleGameSettingsCore.h"
 #include "UI_GameSettingsSystem.generated.h"
+
 
 class UCheckBox;
 class UButton;
@@ -16,7 +18,7 @@ class UUI_GameSettingsGameSetting;
  * 
  */
 UCLASS()
-class SIMPLEGAMESETTINGS_API UUI_GameSettingsSystem : public UUserWidget
+class SIMPLEGAMESETTINGS_API UUI_GameSettingsSystem : public UUI_SimpleGameSettingsCore
 {
 	GENERATED_BODY()
 	
@@ -33,7 +35,7 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsSystem : public UUserWidget
 		UButton* SaveButton;
 
 	UPROPERTY(meta = (BindWidget))
-		UButton* ReturnMenuButton;
+		UButton* RestoreDefaultButton;
 
 	UPROPERTY(meta = (BindWidget))
 		UWidgetSwitcher* SettingsListWitcher;
@@ -42,7 +44,7 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsSystem : public UUserWidget
 		UUI_GameSettingsVideo* GameSettingsVideo;
 
 	UPROPERTY(meta = (BindWidget))
-		UUI_GameSetingsAudio* GameSetingsAudio;
+		UUI_GameSetingsAudio* GameSettingsAudio;
 
 	UPROPERTY(meta = (BindWidget))
 		UUI_GameSettingsGameSetting* GameSettingsGameSetting;
@@ -50,4 +52,23 @@ public:
 	virtual void NativeConstruct()override;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UFUNCTION()
+		void AudioSettingCheckBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void VideoSettingsCheckBox(bool ClickedWidget);
+
+	UFUNCTION()
+		void GameSettingsCheckBox(bool ClickedWidget);
+
+	virtual	void SaveSettings();
+	virtual	void LoadSettings();
+
+	UFUNCTION()
+		void RestoreDefaultSettings();
+
+private:
+
+	void SetSettingState(EGameSettingsType Type);
 };

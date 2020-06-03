@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Core/UI_SimpleGameSettingsCore.h"
 #include "UI_GameSettingsVideo.generated.h"
 
 class UCheckBox;
@@ -15,7 +15,7 @@ class USpinBox;
  * 
  */
 UCLASS()
-class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUserWidget
+class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettingsCore
 {
 	GENERATED_BODY()
 
@@ -92,4 +92,8 @@ public:
 	virtual void NativeConstruct()override;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	virtual	void SaveSettings();
+
+	virtual	void LoadSettings();
 };

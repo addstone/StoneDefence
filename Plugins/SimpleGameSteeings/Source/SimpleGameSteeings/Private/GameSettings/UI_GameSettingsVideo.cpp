@@ -12,3 +12,13 @@ void UUI_GameSettingsVideo::NativeTick(const FGeometry& MyGeometry, float InDelt
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
+
+void UUI_GameSettingsVideo::SaveSettings()
+{
+
+}
+
+void UUI_GameSettingsVideo::LoadSettings()
+{
+
+}
