@@ -13,8 +13,8 @@ void UUI_SimpleGameSettingsCore::UpdateAttibeLevel(USlider *NewSlider, UTextBloc
 
 void UUI_SimpleGameSettingsCore::UpdateAttibe(USlider *NewSlider, UTextBlock *NewBlock)
 {
-	float FloatNumber = NewSlider->GetValue() * 0.f;
-	FString StringFloatNumberText = FString::Printf(TEXT(/*"%.2f"*/"%02d"), FloatNumber);
+	float FloatNumber = NewSlider->GetValue() * 10.f;
+	FString StringFloatNumberText = FString::Printf(TEXT("%.2f"), FloatNumber);
 	NewBlock->SetText(FText::FromString(StringFloatNumberText));
 }
 
