@@ -17,9 +17,9 @@ void UUI_GameSettingsVideo::NativeConstruct()
 	FullScreenCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::FullScreenCheckClickedBox);
 	WindowScreenCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::WindowScreenCheckClickedBox);
 	SupportPhysXCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::SupportPhysXCheckClickedBox);
-	//VSyncCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::VSyncCheckClickedBox);
-	//HDRDisplayCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::EnableHDRDisplayOutput);
-	//FrameRateLimitSpinBox->OnValueChanged.AddDynamic(this, &UUI_GameSettingsVideo::SetFrameRateLimit);
+	VSyncCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::VSyncCheckClickedBox);
+	HDRDisplayCheckBox->OnCheckStateChanged.AddDynamic(this, &UUI_GameSettingsVideo::EnableHDRDisplayOutput);
+	FrameRateLimitSpinBox->OnValueChanged.AddDynamic(this, &UUI_GameSettingsVideo::SetFrameRateLimit);
 
 	BindChangedValue(AntiAliasingSlider);
 	BindChangedValue(ShadowQualitySlider);
@@ -28,7 +28,7 @@ void UUI_GameSettingsVideo::NativeConstruct()
 	BindChangedValue(EffectsSlider);
 	BindChangedValue(FoliageSlider);
 	BindChangedValue(ViewDistanceSlider);
-	BindChangedValue(OverallScalabilityLevelSlider);
+	BindChangedValue(ShadingSlider);
 
 	BindSelectionChanged(ResolutionBoxString);
 	BindSelectionChanged(LanguageString);
@@ -83,7 +83,7 @@ void UUI_GameSettingsVideo::SaveSettings()
 		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel);
 	});
 
-	SetSettingsLevel(OverallScalabilityLevelSlider, OverallScalabilityLevelText,
+	SetSettingsLevel(ShadingSlider, ShadingText,
 		[](float InLevel)
 	{
 		if (InLevel != USimpleGameUserSettings::GetSimpleGameUserSettings()->GetOverallScalabilityLevel())
@@ -138,7 +138,7 @@ void UUI_GameSettingsVideo::LoadSettings()
 		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetFoliageQuality();
 	});
 
-	LoadSettingsLevel(OverallScalabilityLevelSlider, OverallScalabilityLevelText,
+	LoadSettingsLevel(ShadingSlider, ShadingText,
 		[]()
 	{
 		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadingQuality();
@@ -198,29 +198,29 @@ void UUI_GameSettingsVideo::SupportPhysXCheckClickedBox(bool ClickedWidget)
 
 void UUI_GameSettingsVideo::VSyncCheckClickedBox(bool ClickedWidget)
 {
-
+	USimpleGameUserSettings::GetSimpleGameUserSettings()->SetVSyncEnabled(ClickedWidget);
 }
 
 void UUI_GameSettingsVideo::EnableHDRDisplayOutput(bool ClickedWidget)
 {
-
+	USimpleGameUserSettings::GetSimpleGameUserSettings()->EnableHDRDisplayOutput(ClickedWidget, DisplayNitsSpinBox->GetValue());
 }
 
 void UUI_GameSettingsVideo::SetFrameRateLimit(float NewValue)
 {
-
+	USimpleGameUserSettings::GetSimpleGameUserSettings()->SetFrameRateLimit(NewValue);
 }
 
 void UUI_GameSettingsVideo::ChangedValue(float InValue)
 {
-	UpdateAttibe(AntiAliasingSlider, AntiAliasingText);	//锯齿
-	UpdateAttibe(ShadowQualitySlider, ShadowQualityText);//阴影
-	UpdateAttibe(TextureQualitySlider, TextureQualityText);//贴图
-	UpdateAttibe(PostProcessingSlider, PostProcessingText);//后期
-	UpdateAttibe(EffectsSlider, EffectsText);//特效
-	UpdateAttibe(FoliageSlider, FoliageText);//植被
-	UpdateAttibe(ViewDistanceSlider, ViewDistanceText);//视距
-	UpdateAttibe(OverallScalabilityLevelSlider, OverallScalabilityLevelText);
+	UpdateAttibeLevel(AntiAliasingSlider, AntiAliasingText);	//锯齿
+	UpdateAttibeLevel(ShadowQualitySlider, ShadowQualityText);//阴影
+	UpdateAttibeLevel(TextureQualitySlider, TextureQualityText);//贴图
+	UpdateAttibeLevel(PostProcessingSlider, PostProcessingText);//后期
+	UpdateAttibeLevel(EffectsSlider, EffectsText);//特效
+	UpdateAttibeLevel(FoliageSlider, FoliageText);//植被
+	UpdateAttibeLevel(ViewDistanceSlider, ViewDistanceText);//视距
+	UpdateAttibeLevel(ShadingSlider, ShadingText);//Shading
 }
 
 void UUI_GameSettingsVideo::SelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)

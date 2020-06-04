@@ -38,7 +38,8 @@ public class SimpleGameSettings : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-                "UMG"
+                "UMG",
+                "InputCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

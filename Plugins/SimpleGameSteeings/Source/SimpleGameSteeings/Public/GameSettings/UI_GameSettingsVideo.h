@@ -19,6 +19,12 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 {
 	GENERATED_BODY()
 
+		UPROPERTY(meta = (BindWidget))
+		USpinBox *DisplayNitsSpinBox;
+
+	UPROPERTY(meta = (BindWidget))
+		USpinBox *FrameRateLimitSpinBox;
+
 	UPROPERTY(meta = (BindWidget))
 		UCheckBox* FullScreenCheckBox;
 
@@ -27,6 +33,12 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 
 	UPROPERTY(meta = (BindWidget))
 		UCheckBox* SupportPhysXCheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+		UCheckBox* VSyncCheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+		UCheckBox* HDRDisplayCheckBox;
 
 	UPROPERTY(meta = (BindWidget))
 		UComboBoxString*  ResolutionBoxString;
@@ -53,10 +65,10 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 		USlider* FoliageSlider;
 
 	UPROPERTY(meta = (BindWidget))
-		USlider* OverallScalabilityLevelSlider;
+		USlider* ViewDistanceSlider;
 
 	UPROPERTY(meta = (BindWidget))
-		USlider* ViewDistanceSlider;
+		USlider* ShadingSlider;
 
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* AntiAliasingText;
@@ -80,7 +92,7 @@ class SIMPLEGAMESETTINGS_API UUI_GameSettingsVideo : public UUI_SimpleGameSettin
 		UTextBlock* ViewDistanceText;
 
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* OverallScalabilityLevelText;
+		UTextBlock* ShadingText;
 
 public:
 	virtual void NativeConstruct()override;
