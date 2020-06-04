@@ -30,15 +30,31 @@ void UUI_SimpleGameSettingsCore::BindSelectionChanged(UComboBoxString *BoxString
 	BoxString->OnSelectionChanged.AddDynamic(this, &UUI_SimpleGameSettingsCore::SelectionChanged);
 }
 
+void UUI_SimpleGameSettingsCore::SetSettingsVlaue(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InValue)> InFunc)
+{
+	InFunc(InSlider->GetValue());
+
+	//更新显示值
+	UpdateAttibe(InSlider, NewBlock);
+}
+
+void UUI_SimpleGameSettingsCore::LoadSettingsVlaue(USlider* InSlider, UTextBlock *NewBlock, TFunction<float()> InFunc)
+{
+	InSlider->SetValue(InFunc());
+
+	//更新显示值
+	UpdateAttibe(InSlider, NewBlock);
+}
+
 void UUI_SimpleGameSettingsCore::SetSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<void(float InLevel)> InFunc)
 {
-	InFunc(InSlider->GetValue() * SCAL_ABILITY_QUALITY_LEVEL);
+	InFunc(InSlider->GetValue());
 	UpdateAttibeLevel(InSlider, NewBlock);
 }
 
 void UUI_SimpleGameSettingsCore::LoadSettingsLevel(USlider* InSlider, UTextBlock *NewBlock, TFunction<float()> InFunc)
 {
-	InSlider->SetValue(InFunc() / (float)SCAL_ABILITY_QUALITY_LEVEL);
+	InSlider->SetValue(InFunc());
 	UpdateAttibeLevel(InSlider, NewBlock);
 }
 

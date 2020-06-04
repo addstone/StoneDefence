@@ -32,6 +32,10 @@ void UUI_GameSettingsVideo::NativeConstruct()
 
 	BindSelectionChanged(ResolutionBoxString);
 	BindSelectionChanged(LanguageString);
+
+	//ÓïÑÔÉèÖÃ
+	LanguageString->SetSelectedOption(USimpleGameUserSettings::GetSimpleGameUserSettings()->GetCurrentLanguageType());
+
 }
 
 void UUI_GameSettingsVideo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -44,43 +48,43 @@ void UUI_GameSettingsVideo::SaveSettings()
 	SetSettingsLevel(TextureQualitySlider, TextureQualityText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetTextureQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetTextureQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(ShadowQualitySlider, ShadowQualityText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetShadowQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetShadowQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(AntiAliasingSlider, AntiAliasingText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetAntiAliasingQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetAntiAliasingQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(PostProcessingSlider, PostProcessingText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetPostProcessingQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetPostProcessingQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(EffectsSlider, EffectsText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetVisualEffectQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetVisualEffectQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(FoliageSlider, FoliageText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetFoliageQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetFoliageQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(ViewDistanceSlider, ViewDistanceText,
 		[](float InLevel)
 	{
-		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel);
+		USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 	});
 
 	SetSettingsLevel(ShadingSlider, ShadingText,
@@ -88,7 +92,7 @@ void UUI_GameSettingsVideo::SaveSettings()
 	{
 		if (InLevel != USimpleGameUserSettings::GetSimpleGameUserSettings()->GetOverallScalabilityLevel())
 		{
-			USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel);
+			USimpleGameUserSettings::GetSimpleGameUserSettings()->SetViewDistanceQuality(InLevel* SCAL_ABILITY_QUALITY_LEVEL);
 		}		
 	});
 	
@@ -99,49 +103,49 @@ void UUI_GameSettingsVideo::LoadSettings()
 	LoadSettingsLevel(AntiAliasingSlider, AntiAliasingText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetAntiAliasingQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetAntiAliasingQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(TextureQualitySlider, TextureQualityText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetTextureQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetTextureQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(ShadowQualitySlider, ShadowQualityText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadowQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadowQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(PostProcessingSlider, PostProcessingText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetPostProcessingQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetPostProcessingQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(EffectsSlider, EffectsText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetVisualEffectQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetVisualEffectQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(ViewDistanceSlider, ViewDistanceText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetViewDistanceQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetViewDistanceQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(FoliageSlider, FoliageText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetFoliageQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetFoliageQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadSettingsLevel(ShadingSlider, ShadingText,
 		[]()
 	{
-		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadingQuality();
+		return USimpleGameUserSettings::GetSimpleGameUserSettings()->GetShadingQuality() / (float)SCAL_ABILITY_QUALITY_LEVEL;
 	});
 
 	LoadBoxString(ResolutionBoxString,
