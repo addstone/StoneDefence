@@ -5,7 +5,7 @@
 #include "Core/SimpleGameExtraSettings.h"
 #include "Core/SimpleGameExtraSettings.h"
 #include "Core/SimpleGameUserSettings.h"
-#include "../../../../../../../../../Program Files/Epic Games/UE_4.24/Engine/Source/Runtime/Core/Public/Misc/FileHelper.h"
+#include "Misc/FileHelper.h"
 
 #define LOCTEXT_NAMESPACE "SimpleGameSettingsEditor"
 

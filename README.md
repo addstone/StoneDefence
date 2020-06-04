@@ -144,7 +144,7 @@ Developed with Unreal Engine 4
 |第六节：战斗流程测试场景搭建|:heavy_check_mark:|
 |第七节：战斗流程中塔旋转和阵营类型问题|:heavy_check_mark:|
 ---
-# 十一章：服务器与技能系统架构
+# 第十一章：服务器与技能系统架构
 |||
 | --------   | -----  |
 |第一节：技能数据结构设计|:heavy_check_mark:|
@@ -158,7 +158,7 @@ Developed with Unreal Engine 4
 |第九节：如何理解WidgetComponent层级问题|:heavy_check_mark:|
 |第十节：服务器关联客户端UI技能显示策略|:heavy_check_mark:|
 ---
-# 十二章：服务器处理玩家技能和被动技能
+# 第十二章：服务器处理玩家技能和被动技能
 |||
 | --------   | -----  |
 |第一节：更新UI角色技能图标|:heavy_check_mark:|
@@ -173,3 +173,19 @@ Developed with Unreal Engine 4
 |第十节：统一装备栏和玩家技能栏UI逻辑|:heavy_check_mark:|
 |第十一节：服务器更新玩家技能思路|:heavy_check_mark:|
 |第十二节：玩家核心技能系统搭建|:heavy_check_mark:|
+---
+# 第十三章：游戏设置
+|||
+| --------   | -----  |
+|第一节：GameSettings图形设计|:heavy_check_mark:|
+|第二节：实现各个GameSettings接口调用|:heavy_check_mark:|
+|第三节：GameUserSettings精讲解|:heavy_check_mark:|
+|第四节：完成GameSettings图形显示|:heavy_check_mark:|
+|第五节：如何将浮点保留后两位和后一位|:heavy_check_mark:|
+|第六节：游戏设置的读取和保存|:heavy_check_mark:|
+|第七节：GameSettings自定义设置键位|:heavy_check_mark:|
+|第八节：实现本地化多国语言策略|:heavy_check_mark:|
+|第九节：实现音频设置策略|:heavy_check_mark:|
+|第十节：实现背景音乐和UI音乐功能设置|:heavy_check_mark:|
+|第十一节：背景音乐和UI音乐和游戏音乐设置策略|:heavy_check_mark:|
+|第十二节：插件自动化匹配我们的GameUserSettings|:heavy_check_mark:|
