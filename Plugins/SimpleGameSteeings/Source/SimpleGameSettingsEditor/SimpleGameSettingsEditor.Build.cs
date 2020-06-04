@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class SimpleGameSettings : ModuleRules
+public class SimpleGameSettingsEditor : ModuleRules
 {
-	public SimpleGameSettings(ReadOnlyTargetRules Target) : base(Target)
+	public SimpleGameSettingsEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -38,8 +38,8 @@ public class SimpleGameSettings : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-                "UMG",
-                "InputCore"
+                "SimpleGameSettings",
+                "Settings"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

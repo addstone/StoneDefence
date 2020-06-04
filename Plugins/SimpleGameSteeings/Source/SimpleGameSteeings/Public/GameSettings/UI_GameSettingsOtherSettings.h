@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Core/UI_SimpleGameSettingsCore.h"
 #include "UI_GameSettingsOtherSettings.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SIMPLEGAMESETTINGS_API UUI_GameSettingsOtherSettings : public UUserWidget
+class SIMPLEGAMESETTINGS_API UUI_GameSettingsOtherSettings : public UUI_SimpleGameSettingsCore
 {
 	GENERATED_BODY()
 	
