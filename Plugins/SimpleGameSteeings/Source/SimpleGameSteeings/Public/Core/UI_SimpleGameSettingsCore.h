@@ -23,7 +23,6 @@ public:
 	UFUNCTION()
 		virtual	void LoadSettings() {}
 protected:
-
 	void UpdateAttibeLevel(USlider *NewSlider, UTextBlock *NewBlock);
 	void UpdateAttibe(USlider *NewSlider, UTextBlock *NewBlock);
 
