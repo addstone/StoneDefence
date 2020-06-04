@@ -14,11 +14,16 @@
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": false,
-	"Modules": [
-		{
-			"Name": "SimpleGameSettings",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	]
+  "Modules": [
+    {
+      "Name": "SimpleGameSettings",
+      "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "SimpleGameSettingsEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ]
 }
