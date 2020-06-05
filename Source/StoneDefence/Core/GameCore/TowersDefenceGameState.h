@@ -8,7 +8,9 @@
 #include "../../Data/Save/GameSaveData.h"
 #include "../../StoneDefenceType.h"
 #include "../../Data/BuildingTowerData.h"
+#include "Interface/SimpleArchivesInterface.h"
 #include "TowersDefenceGameState.generated.h"
+
 
 
 
@@ -26,7 +28,7 @@ struct FGameInstanceDatas;
  * 
  */
 UCLASS()
-class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
+class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState/*, public ISimpleArchivesInterface*/
 {
 	GENERATED_BODY()
 
@@ -46,11 +48,9 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 public:
 	ATowersDefenceGameState();
 
-	UFUNCTION(BlueprintCallable, Category = SaveData)
-		bool SaveGameData(int32 SaveNumber);
 
-	UFUNCTION(BlueprintCallable, Category = SaveData)
-		bool ReadGameData(int32 SaveNumber);
+	virtual bool SaveGameData(int32 SaveNumber);
+	virtual bool ReadGameData(int32 SaveNumber);
 protected:
 
 

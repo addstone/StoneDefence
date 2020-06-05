@@ -2,4 +2,85 @@
 
 
 #include "History/UI_ArchivesBar.h"
+#include "Components/Button.h"
+#include "Components/CheckBox.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Core/SimpleArchivesGlobalVariable.h"
 
+#define LOCTEXT_NAMESPACE "ArchivesBar"
+
+UUI_ArchivesBar::UUI_ArchivesBar(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
+	, SlotIndex(INDEX_NONE)
+{
+
+}
+
+void UUI_ArchivesBar::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	CheckBoxButton->OnCheckStateChanged.AddDynamic(this, &UUI_ArchivesBar::ClickedCheckBox);
+	DeleteMyDataButton->OnClicked.AddDynamic(this, &UUI_ArchivesBar::OnClickedWidgetDelete);
+}
+
+void UUI_ArchivesBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+
+}
+
+void UUI_ArchivesBar::Update()
+{
+
+}
+
+void UUI_ArchivesBar::ClickedCheckBox(bool ClickedWidget)
+{
+	if (CheckBoxButton->GetCheckedState() == ECheckBoxState::Checked)
+	{
+		SimpleSlotIndex = SlotIndex;
+	}
+	else
+	{
+		SimpleSlotIndex = INDEX_NONE;
+	}
+
+	ReverseProxy.ExecuteIfBound();
+}
+
+void UUI_ArchivesBar::OnClickedWidgetDelete()
+{
+
+}
+
+void UUI_ArchivesBar::SetGameThumbnail(UTexture2D *InImage)
+{
+
+}
+
+void UUI_ArchivesBar::SetSaveGameDate(const FText &InText)
+{
+
+}
+
+void UUI_ArchivesBar::SetChapterName(const FText &InText)
+{
+
+}
+
+void UUI_ArchivesBar::SetCheckBoxState(ECheckBoxState InState)
+{
+
+}
+
+void UUI_ArchivesBar::ClearSlotData()
+{
+
+}
+
+FSaveSlot * UUI_ArchivesBar::GetSaveSlot()
+{
+	return nullptr;
+}
+#undef LOCTEXT_NAMESPACE

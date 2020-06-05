@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Core/UI_ArchivesWidget.h"
 #include "SimpleArchivesType.h"
 #include "UI_ArchivesSystem.generated.h"
 
@@ -53,7 +53,7 @@ protected:
 
 	void CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar);
 
-	void ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData);
+	//void ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData);
 
 private:
 	void CallAllArchivesBar(TFunction<void(UUI_ArchivesBar* InArchivesBar)>);

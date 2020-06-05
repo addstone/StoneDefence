@@ -3,10 +3,9 @@
 
 #include "UI_ArchivesSystem.h"
 #include "Core/SimpleArchivesGlobalVariable.h"
-#include "Histroy/UI_ArchivesBar.h"
+#include "History/UI_ArchivesBar.h"
 #include "Components/ScrollBox.h"
 #include "Components/Button.h"
-#include "Data/SimpleArchivesList.h"
 
 void UUI_ArchivesSystem::InitArchivesSystem(EArchivesState ArchivesState)
 {
@@ -25,12 +24,19 @@ void UUI_ArchivesSystem::SaveGame()
 
 void UUI_ArchivesSystem::NativeConstruct()
 {
+	Super::NativeConstruct();
 
+	LoadGameButton->OnClicked.AddDynamic(this, &UUI_ArchivesSystem::LoadGame);
+	SaveGameButton->OnClicked.AddDynamic(this, &UUI_ArchivesSystem::SaveGame);
+
+	UpdateArchivesSlot();
 }
 
 void UUI_ArchivesSystem::NativeDestruct()
 {
+	Super::NativeDestruct();
 
+	SimpleSlotIndex = INDEX_NONE;
 }
 
 void UUI_ArchivesSystem::BindWindows(TFunction<void(FSimpleDelegate)>)
@@ -40,7 +46,15 @@ void UUI_ArchivesSystem::BindWindows(TFunction<void(FSimpleDelegate)>)
 
 bool UUI_ArchivesSystem::GetArchivesBarArray(TArray<UUI_ArchivesBar*> &InArchivesBars)
 {
+	for (UPanelSlot *PanelSlot : SaveSlotList->GetSlots())
+	{
+		if (UUI_ArchivesBar *ArchivesSlot = Cast<UUI_ArchivesBar>(PanelSlot->Content))
+		{
+			InArchivesBars.Add(ArchivesSlot);
+		}
+	}
 
+	return InArchivesBars.Num() > 0;
 }
 
 void UUI_ArchivesSystem::UpdateArchivesSlot()
@@ -55,6 +69,7 @@ void UUI_ArchivesSystem::UpdateArchivesSlot()
 				if (UUI_ArchivesBar *UIArchivesBar = CreateWidget<UUI_ArchivesBar>(GetWorld(), ArchivesBarClass))
 				{
 					SaveSlotList->AddChild(UIArchivesBar);
+					UIArchivesBar->SlotIndex = i;
 
 				}
 			}
@@ -67,10 +82,10 @@ void UUI_ArchivesSystem::CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar)
 
 }
 
-void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)
-{
-
-}
+//void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)
+//{
+//
+//}
 
 void UUI_ArchivesSystem::CallAllArchivesBar(TFunction<void(UUI_ArchivesBar* InArchivesBar)>)
 {

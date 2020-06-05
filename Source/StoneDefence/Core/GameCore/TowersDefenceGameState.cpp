@@ -25,6 +25,7 @@
 
 
 ATowersDefenceGameState::ATowersDefenceGameState()
+	/*:ISimpleArchivesInterface()*/
 {
 	PrimaryActorTick.bCanEverTick = true;
 	static ConstructorHelpers::FObjectFinder<UDataTable> MyTable_Towers(TEXT("/Game/GameData/TowersData"));
