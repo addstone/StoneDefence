@@ -14,12 +14,41 @@ void UUI_ArchivesSystem::InitArchivesSystem(EArchivesState ArchivesState)
 
 void UUI_ArchivesSystem::LoadGame()
 {
+	if (ISimpleArchivesInterface * MyArchives = GetCurrentArchivesInterface())
+	{
+		if (MyArchives->OpenLevel(SimpleSlotIndex))
+		{
 
+		}
+	}
 }
 
 void UUI_ArchivesSystem::SaveGame()
 {
+	if (SimpleSlotIndex != INDEX_NONE)
+	{
+		if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
+		{
+			ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
+			if (ArchInferface->SaveGameData(SimpleSlotIndex))
+			{
+				if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
+				{
+					CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
+					{
+						if (Tmp->SlotIndex == SimpleSlotIndex)
+						{
+							ResetArchivesBar(Tmp, InSlot);
+							Tmp->SetGameThumbnail(InSlot->GameThumbnail);
+							return true;
+						}
 
+						return false;
+					});
+				}
+			}
+		}
+	}
 }
 
 void UUI_ArchivesSystem::NativeConstruct()
@@ -64,23 +93,25 @@ void UUI_ArchivesSystem::UpdateArchivesSlot()
 		TArray<ISimpleArchivesInterface*> &MyArchives = SimpleArchivesGlobalVariable::GetSimpleArchivesArray();
 		if (MyArchives.Num())
 		{
-			for (int32 i = 0; i < MyArchives[0]->GetSaveSlotNumber(); i++)
+			if (FSaveSlotList *InSlotList = MyArchives[0]->GetSlotList())
 			{
-				if (UUI_ArchivesBar *UIArchivesBar = CreateWidget<UUI_ArchivesBar>(GetWorld(), ArchivesBarClass))
+				for (int32 i = 0; i < InSlotList->Slots.Num(); i++)
 				{
-					SaveSlotList->AddChild(UIArchivesBar);
-					UIArchivesBar->SlotIndex = i;
-					//反向代理
-					UIArchivesBar->ReverseProxy = FSimpleDelegate::CreateUObject(this, &UUI_ArchivesSystem::CallAllCkeckBox, UIArchivesBar);
+					if (UUI_ArchivesBar *UIArchivesBar = CreateWidget<UUI_ArchivesBar>(GetWorld(), ArchivesBarClass))
+					{
+						SaveSlotList->AddChild(UIArchivesBar);
+						UIArchivesBar->SlotIndex = i;
+						//反向代理
+						UIArchivesBar->ReverseProxy = FSimpleDelegate::CreateUObject(this, &UUI_ArchivesSystem::CallAllCkeckBox, UIArchivesBar);
 
-					UIArchivesBar->Update();
+						UIArchivesBar->Update();
 
-					////还原记录的数据
-					//if (InSlotList->Slots[i].bSave)
-					//{
-					//	ResetArchivesBar(UIArchivesBar, &InSlotList->Slots[i]);
-					//}
-
+						//还原记录的数据
+						if (InSlotList->Slots[i].bSave)
+						{
+							ResetArchivesBar(UIArchivesBar, &InSlotList->Slots[i]);
+						}
+					}
 				}
 			}
 		}
@@ -98,36 +129,29 @@ void UUI_ArchivesSystem::CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar)
 	});
 }
 
-void UUI_ArchivesSystem::Save(bool bCover)
+void UUI_ArchivesSystem::Save()
 {
 	if (SimpleSlotIndex != INDEX_NONE)
 	{
 		if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
 		{
 			ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
-			if (bCover)
+			if (ArchInferface->SaveGameData(SimpleSlotIndex))
 			{
-				if (ArchInferface->SaveGameData(SimpleSlotIndex))
+				if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
 				{
-					if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
+					CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
 					{
-						CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
+						if (Tmp->SlotIndex == SimpleSlotIndex)
 						{
-							if (Tmp->SlotIndex == SimpleSlotIndex)
-							{
-								ResetArchivesBar(Tmp, InSlot);
-								Tmp->SetGameThumbnail(InSlot->GameThumbnail);
-								return true;
-							}
+							ResetArchivesBar(Tmp, InSlot);
+							Tmp->SetGameThumbnail(InSlot->GameThumbnail);
+							return true;
+						}
 
-							return false;
-						});
-					}
+						return false;
+					});
 				}
-			}
-			else
-			{
-
 			}
 		}
 	}

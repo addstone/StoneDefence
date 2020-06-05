@@ -22,15 +22,15 @@ public:
 
 	virtual	bool ClearGameData(int32 SaveNumber) = 0;
 
-	//virtual bool IsSlotValid(int32 SaveNumber) const = 0;
+	virtual bool IsSlotValid(int32 SaveNumber) const = 0;
 
 	virtual bool ReadGameData(int32 SaveNumber) = 0;
 
 	virtual FSaveSlot *GetSaveSlot(int32 SaveNumber) = 0;
 
-	//virtual bool OpenLevel(int32 SaveNumber) = 0;
+	virtual bool OpenLevel(int32 SaveNumber) = 0;
 
-	//virtual FSaveSlotList *GetSlotList() = 0;
+	virtual FSaveSlotList *GetSlotList() = 0;
 
 	virtual class UWorld *GetSimpleWorld()const = 0;
 };

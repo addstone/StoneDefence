@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Interface/SimpleArchivesInterface.h"
+#include "../../StoneDefenceType.h"
 #include "TowersDefenceGameInstance.generated.h"
+
 
 
 class ARuleOfTheGameState;
@@ -28,6 +30,12 @@ public:
 
 	virtual bool ReadGameData(int32 SaveNumber);
 
+	virtual bool IsSlotValid(int32 SaveNumber) const;
+
+	virtual FSaveSlotList *GetSlotList();
+
+	virtual bool OpenLevel(int32 SaveNumber);
+
 	virtual class UWorld *GetSimpleWorld() const;
 
 	virtual FSaveSlot *GetSaveSlot(int32 SaveNumber);
@@ -37,4 +45,15 @@ public:
 	ARuleOfTheGameState *GetGameState() const;
 
 	class UWorld* GetSafeWorld() const;
+
+protected:
+	UFUNCTION(/*Server*/)
+		void OpenLevelOnServer(const FText &MapName);
+
+protected:
+	UPROPERTY()
+		int32 SaveSlotNumber;
+
+	//ÓÎÏ·´æ´¢×´Ì¬flag
+	EGameSaveType GameSaveType;
 };
