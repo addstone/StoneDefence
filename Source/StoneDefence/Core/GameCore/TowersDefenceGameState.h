@@ -8,7 +8,6 @@
 #include "../../Data/Save/GameSaveData.h"
 #include "../../StoneDefenceType.h"
 #include "../../Data/BuildingTowerData.h"
-#include "Interface/SimpleArchivesInterface.h"
 #include "TowersDefenceGameState.generated.h"
 
 
@@ -28,7 +27,7 @@ struct FGameInstanceDatas;
  * 
  */
 UCLASS()
-class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState/*, public ISimpleArchivesInterface*/
+class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 {
 	GENERATED_BODY()
 
@@ -48,9 +47,11 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState/*, p
 public:
 	ATowersDefenceGameState();
 
+	UFUNCTION(BlueprintCallable, Category = SaveData)
+		bool SaveGameData(int32 SaveNumber);
+	UFUNCTION(BlueprintCallable, Category = SaveData)
+		bool ReadGameData(int32 SaveNumber);
 
-	virtual bool SaveGameData(int32 SaveNumber);
-	virtual bool ReadGameData(int32 SaveNumber);
 protected:
 
 
@@ -91,15 +92,11 @@ public:
 		bool SetSubmissionDataType(FGuid CharacterID, int32 Skill, ESubmissionSkillRequestType Type);
 protected:
 	UGameSaveData *GetSaveData();
-	UGameSaveSlotList *GetGameSaveSlotList();
 
 
 private:
 	UPROPERTY()
 		UGameSaveData *SaveData;
-
-	UPROPERTY()
-		UGameSaveSlotList *SlotList;
 
 
 	TArray<FCharacterData*> CacheTowerDatas;

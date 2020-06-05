@@ -17,6 +17,9 @@ struct FSaveSlot
 
 	FSaveSlot();
 
+	UPROPERTY(SaveGame)
+		class UTexture2D *GameThumbnail;
+
 	//存储的内容和日期
 	UPROPERTY(SaveGame)
 		FText DateText;

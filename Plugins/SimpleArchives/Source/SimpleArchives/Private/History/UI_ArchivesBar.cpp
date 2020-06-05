@@ -32,7 +32,7 @@ void UUI_ArchivesBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UUI_ArchivesBar::Update()
 {
-
+	SaveNumberBlock->SetText(FText::Format(LOCTEXT("SaveNumberBlock", "Current data {0}"), SlotIndex));
 }
 
 void UUI_ArchivesBar::ClickedCheckBox(bool ClickedWidget)
@@ -71,7 +71,7 @@ void UUI_ArchivesBar::SetChapterName(const FText &InText)
 
 void UUI_ArchivesBar::SetCheckBoxState(ECheckBoxState InState)
 {
-
+	CheckBoxButton->SetCheckedState(InState);
 }
 
 void UUI_ArchivesBar::ClearSlotData()

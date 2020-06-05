@@ -70,6 +70,16 @@ void UUI_ArchivesSystem::UpdateArchivesSlot()
 				{
 					SaveSlotList->AddChild(UIArchivesBar);
 					UIArchivesBar->SlotIndex = i;
+					//反向代理
+					UIArchivesBar->ReverseProxy = FSimpleDelegate::CreateUObject(this, &UUI_ArchivesSystem::CallAllCkeckBox, UIArchivesBar);
+
+					UIArchivesBar->Update();
+
+					////还原记录的数据
+					//if (InSlotList->Slots[i].bSave)
+					//{
+					//	ResetArchivesBar(UIArchivesBar, &InSlotList->Slots[i]);
+					//}
 
 				}
 			}
@@ -79,7 +89,13 @@ void UUI_ArchivesSystem::UpdateArchivesSlot()
 
 void UUI_ArchivesSystem::CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar)
 {
-
+	CallAllArchivesBar([&](UUI_ArchivesBar *Tmp)
+	{
+		if (Tmp != OwnerArchivesBar)
+		{
+			Tmp->SetCheckBoxState(ECheckBoxState::Unchecked);
+		}
+	});
 }
 
 //void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)
@@ -87,12 +103,29 @@ void UUI_ArchivesSystem::CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar)
 //
 //}
 
-void UUI_ArchivesSystem::CallAllArchivesBar(TFunction<void(UUI_ArchivesBar* InArchivesBar)>)
+void UUI_ArchivesSystem::CallAllArchivesBar(TFunction<void(UUI_ArchivesBar* InArchivesBar)> InArchivesBarFunc)
 {
-
+	TArray<UUI_ArchivesBar*> InArchivesBars;
+	if (GetArchivesBarArray(InArchivesBars))
+	{
+		for (auto &Tmp : InArchivesBars)
+		{
+			InArchivesBarFunc(Tmp);
+		}
+	}
 }
 
-void UUI_ArchivesSystem::CallAllArchivesBarBreak(TFunction<bool(UUI_ArchivesBar* InArchivesBar)>)
+void UUI_ArchivesSystem::CallAllArchivesBarBreak(TFunction<bool(UUI_ArchivesBar* InArchivesBar)> InArchivesBarFunc)
 {
-
+	TArray<UUI_ArchivesBar*> InArchivesBars;
+	if (GetArchivesBarArray(InArchivesBars))
+	{
+		for (auto &Tmp : InArchivesBars)
+		{
+			if (InArchivesBarFunc(Tmp))
+			{
+				break;
+			}
+		}
+	}
 }

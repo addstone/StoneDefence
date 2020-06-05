@@ -25,7 +25,7 @@
 
 
 ATowersDefenceGameState::ATowersDefenceGameState()
-	/*:ISimpleArchivesInterface()*/
+
 {
 	PrimaryActorTick.bCanEverTick = true;
 	static ConstructorHelpers::FObjectFinder<UDataTable> MyTable_Towers(TEXT("/Game/GameData/TowersData"));
@@ -327,19 +327,6 @@ UGameSaveData * ATowersDefenceGameState::GetSaveData()
 		SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
 	}
 	return SaveData;
-}
-
-UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
-{
-	if (!SlotList)
-	{
-		SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("SaveSlot")), 0));
-		if (!SlotList)
-		{
-			SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UGameSaveSlotList::StaticClass()));
-		}
-	}
-	return SlotList;
 }
 
 
