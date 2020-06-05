@@ -11,12 +11,24 @@ ARuleOfTheGameState::ARuleOfTheGameState()
 
 void ARuleOfTheGameState::BeginPlay()
 {
+	Super::BeginPlay();
 
+	GetSaveSlotList().InitSlot();
 }
 
 FSaveSlotList & ARuleOfTheGameState::GetSaveSlotList()
 {
 	return GetGameSaveSlotList()->SlotList;
+}
+
+FSaveSlot * ARuleOfTheGameState::GetSaveSlot(int32 SaveNumber)
+{
+	if (GetSaveSlotList().Slots.Contains(SaveNumber))
+	{
+		return &GetSaveSlotList().Slots[SaveNumber];
+	}
+
+	return nullptr;
 }
 
 UGameSaveSlotList * ARuleOfTheGameState::GetGameSaveSlotList()

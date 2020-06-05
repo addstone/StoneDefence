@@ -26,7 +26,7 @@ public:
 
 	virtual bool ReadGameData(int32 SaveNumber) = 0;
 
-	//virtual FSaveSlot *GetSaveSlot(int32 SaveNumber) = 0;
+	virtual FSaveSlot *GetSaveSlot(int32 SaveNumber) = 0;
 
 	//virtual bool OpenLevel(int32 SaveNumber) = 0;
 

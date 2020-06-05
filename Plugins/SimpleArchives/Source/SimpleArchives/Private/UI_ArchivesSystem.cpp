@@ -98,6 +98,28 @@ void UUI_ArchivesSystem::CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar)
 	});
 }
 
+void UUI_ArchivesSystem::Save(bool bCover)
+{
+	if (SimpleSlotIndex != INDEX_NONE)
+	{
+		if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
+		{
+			ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
+			if (bCover)
+			{
+				if (ArchInferface->SaveGameData(SimpleSlotIndex))
+				{
+
+				}
+			}
+			else
+			{
+
+			}
+		}
+	}
+}
+
 //void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)
 //{
 //

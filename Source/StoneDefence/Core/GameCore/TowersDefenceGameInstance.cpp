@@ -33,9 +33,19 @@ bool UTowersDefenceGameInstance::ReadGameData(int32 SaveNumber)
 	return false;
 }
 
-class UWorld * UTowersDefenceGameInstance::GetSimpleWorld() const
+UWorld * UTowersDefenceGameInstance::GetSimpleWorld() const
 {
 	return GetWorld();
+}
+
+FSaveSlot * UTowersDefenceGameInstance::GetSaveSlot(int32 SaveNumber)
+{
+	if (ARuleOfTheGameState *InGameState = GetGameState())
+	{
+		return InGameState->GetSaveSlot(SaveNumber);
+	}
+
+	return nullptr;
 }
 
 void UTowersDefenceGameInstance::Init()
@@ -51,7 +61,7 @@ ARuleOfTheGameState * UTowersDefenceGameInstance::GetGameState() const
 	return GetSafeWorld() == nullptr ? nullptr : GetSafeWorld()->GetGameState<ARuleOfTheGameState>();
 }
 
-class UWorld* UTowersDefenceGameInstance::GetSafeWorld() const
+UWorld* UTowersDefenceGameInstance::GetSafeWorld() const
 {
 	if (!GetWorld())
 	{

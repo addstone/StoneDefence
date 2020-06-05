@@ -28,6 +28,8 @@ public:
 
 	virtual class UWorld *GetSimpleWorld() const;
 
+	virtual FSaveSlot *GetSaveSlot(int32 SaveNumber);
+
 	virtual void Init() override;
 
 	ARuleOfTheGameState *GetGameState() const;

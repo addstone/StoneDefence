@@ -33,7 +33,7 @@ public:
 
 	//virtual	bool ClearGameData(int32 SaveNumber);
 
-	//virtual FSaveSlot *GetSaveSlot(int32 SaveNumber);
+	virtual FSaveSlot *GetSaveSlot(int32 SaveNumber);
 protected:
 	UGameSaveSlotList *GetGameSaveSlotList();
 
