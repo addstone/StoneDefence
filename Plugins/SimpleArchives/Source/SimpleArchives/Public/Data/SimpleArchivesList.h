@@ -30,6 +30,8 @@ struct SIMPLEARCHIVES_API FSaveSlot
 	//ÊÇ·ñ´æµµ
 	UPROPERTY(SaveGame)
 		bool bSave;
+
+	void Init();
 };
 
 USTRUCT()

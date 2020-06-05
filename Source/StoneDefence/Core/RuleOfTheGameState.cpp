@@ -21,6 +21,21 @@ FSaveSlotList & ARuleOfTheGameState::GetSaveSlotList()
 	return GetGameSaveSlotList()->SlotList;
 }
 
+bool ARuleOfTheGameState::ClearGameData(int32 SaveNumber)
+{
+	if (FSaveSlot *InSlot = GetSaveSlot(SaveNumber))
+	{
+		//FString SlotName = FString::Printf(TEXT("SaveSlot_%i"), SaveNumber);
+		//if (UGameplayStatics::DeleteGameInSlot(SlotName, 0))
+		//{
+			InSlot->Init();
+			return true;
+		//}
+	}
+
+	return false;
+}
+
 FSaveSlot * ARuleOfTheGameState::GetSaveSlot(int32 SaveNumber)
 {
 	if (GetSaveSlotList().Slots.Contains(SaveNumber))

@@ -5,13 +5,16 @@
 #include "CoreMinimal.h"
 #include "Core/UI_ArchivesWidget.h"
 #include "SimpleArchivesType.h"
+#include "Data/SimpleArchivesList.h"
 #include "UI_ArchivesSystem.generated.h"
+
 
 
 class UButton;
 class UUI_ArchivesBar;
 class UScrollBox;
 class ISimpleArchivesInterface;
+
 /**
  * 
  */
@@ -53,7 +56,7 @@ protected:
 
 	void CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar);
 
-	//void ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData);
+	void ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData);
 
 	void Save(bool bCover);
 

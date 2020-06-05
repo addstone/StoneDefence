@@ -47,10 +47,9 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 public:
 	ATowersDefenceGameState();
 
-	UFUNCTION(BlueprintCallable, Category = SaveData)
-		bool SaveGameData(int32 SaveNumber);
-	UFUNCTION(BlueprintCallable, Category = SaveData)
-		bool ReadGameData(int32 SaveNumber);
+
+	bool SaveGameData(int32 SaveNumber);
+	bool ReadGameData(int32 SaveNumber);
 
 protected:
 

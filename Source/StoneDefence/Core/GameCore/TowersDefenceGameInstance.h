@@ -24,6 +24,8 @@ public:
 
 	virtual	bool SaveGameData(int32 SaveNumber);
 
+	virtual	bool ClearGameData(int32 SaveNumber);
+
 	virtual bool ReadGameData(int32 SaveNumber);
 
 	virtual class UWorld *GetSimpleWorld() const;

@@ -2,12 +2,16 @@
 
 #define LOCTEXT_NAMESPACE "SaveSlot"
 
-FSaveSlot::FSaveSlot() :
-	GameThumbnail(nullptr),
-	DateText(LOCTEXT("SaveSlot", "Save slot hello world")),
-	bSave(false)
+FSaveSlot::FSaveSlot()
 {
+	Init();
+}
 
+void FSaveSlot::Init()
+{
+	GameThumbnail = nullptr;
+	DateText = LOCTEXT("SaveSlot", "Save slot hello world");
+	bSave = false;
 }
 
 FSaveSlotList::FSaveSlotList()

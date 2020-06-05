@@ -56,17 +56,18 @@ void UUI_ArchivesBar::OnClickedWidgetDelete()
 
 void UUI_ArchivesBar::SetGameThumbnail(UTexture2D *InImage)
 {
-
+	GameThumbnail->SetColorAndOpacity(FLinearColor::White);
+	GameThumbnail->SetBrushFromTexture(InImage);
 }
 
 void UUI_ArchivesBar::SetSaveGameDate(const FText &InText)
 {
-
+	SaveGameDateBlock->SetText(InText);
 }
 
 void UUI_ArchivesBar::SetChapterName(const FText &InText)
 {
-
+	ChapterNameBlock->SetText(InText);
 }
 
 void UUI_ArchivesBar::SetCheckBoxState(ECheckBoxState InState)
@@ -76,7 +77,15 @@ void UUI_ArchivesBar::SetCheckBoxState(ECheckBoxState InState)
 
 void UUI_ArchivesBar::ClearSlotData()
 {
+	SetGameThumbnail(nullptr);
+	GameThumbnail->SetColorAndOpacity(FLinearColor::Black);
+	SetSaveGameDate(FText::GetEmpty());
+	SetChapterName(FText::GetEmpty());
 
+	if (ISimpleArchivesInterface *SimpleArchivesInterface = GetCurrentArchivesInterface())
+	{
+		SimpleArchivesInterface->ClearGameData(SlotIndex);
+	}
 }
 
 FSaveSlot * UUI_ArchivesBar::GetSaveSlot()

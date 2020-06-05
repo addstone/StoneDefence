@@ -109,7 +109,20 @@ void UUI_ArchivesSystem::Save(bool bCover)
 			{
 				if (ArchInferface->SaveGameData(SimpleSlotIndex))
 				{
+					if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
+					{
+						CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
+						{
+							if (Tmp->SlotIndex == SimpleSlotIndex)
+							{
+								ResetArchivesBar(Tmp, InSlot);
+								Tmp->SetGameThumbnail(InSlot->GameThumbnail);
+								return true;
+							}
 
+							return false;
+						});
+					}
 				}
 			}
 			else
@@ -120,10 +133,14 @@ void UUI_ArchivesSystem::Save(bool bCover)
 	}
 }
 
-//void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)
-//{
-//
-//}
+void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)
+{
+	if (InArchivesBar && InData)
+	{
+		InArchivesBar->SetSaveGameDate(InData->DateText);
+		InArchivesBar->SetChapterName(InData->ChapterName);
+	}
+}
 
 void UUI_ArchivesSystem::CallAllArchivesBar(TFunction<void(UUI_ArchivesBar* InArchivesBar)> InArchivesBarFunc)
 {

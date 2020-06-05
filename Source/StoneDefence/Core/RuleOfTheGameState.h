@@ -23,15 +23,15 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//UFUNCTION(BlueprintCallable, Category = SaveData)
-	//	virtual	bool SaveGameData(int32 SaveNumber) { return false; }
+	UFUNCTION(BlueprintCallable, Category = SaveData)
+		virtual	bool SaveGameData(int32 SaveNumber) { return false; }
 
-	//UFUNCTION(BlueprintCallable, Category = SaveData)
-	//	virtual	bool ReadGameData(int32 SaveNumber) { return false; }
+	UFUNCTION(BlueprintCallable, Category = SaveData)
+		virtual	bool ReadGameData(int32 SaveNumber) { return false; }
 
 	FSaveSlotList &GetSaveSlotList();
 
-	//virtual	bool ClearGameData(int32 SaveNumber);
+	virtual	bool ClearGameData(int32 SaveNumber);
 
 	virtual FSaveSlot *GetSaveSlot(int32 SaveNumber);
 protected:

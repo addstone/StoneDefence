@@ -6,6 +6,8 @@
 #include "SimpleScreenLoading.h"
 #include "../RuleOfTheGameState.h"
 
+#define LOCTEXT_NAMESPACE "TowerGameInstance"
+
 UTowersDefenceGameInstance::UTowersDefenceGameInstance()
 	:ISimpleArchivesInterface()
 {
@@ -25,6 +27,28 @@ int32 UTowersDefenceGameInstance::GetSaveSlotNumber() const
 
 bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 {
+	//ÓÎÏ·´æ´¢
+	if (ARuleOfTheGameState *InGameState = GetGameState())
+	{
+		
+		if (FSaveSlot *InSlot = InGameState->GetSaveSlot(SaveNumber))
+		{
+			InSlot->DateText = FText::FromString(FDateTime::Now().ToString());
+			InSlot->LevelName = LOCTEXT("LevelName", "TestMap");
+			InSlot->ChapterName = LOCTEXT("ChapterName", "Hello World~~");
+
+			InGameState->SaveGameData(SaveNumber);
+		}
+	}
+	return false;
+}
+
+bool UTowersDefenceGameInstance::ClearGameData(int32 SaveNumber)
+{
+	if (ARuleOfTheGameState *InGameState = GetGameState())
+	{
+		return InGameState->ClearGameData(SaveNumber);
+	}
 	return false;
 }
 
@@ -70,3 +94,4 @@ UWorld* UTowersDefenceGameInstance::GetSafeWorld() const
 
 	return GetWorld();
 }
+#undef LOCTEXT_NAMESPACE
