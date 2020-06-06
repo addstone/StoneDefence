@@ -2,4 +2,10 @@
 
 
 #include "RuleOfThePlayerState.h"
+#include "Kismet/GameplayStatics.h"
 
+bool ARuleOfThePlayerState::ClearPlayerData(int32 SaveNumber)
+{
+	FString SlotName = FString::Printf(TEXT("PlayerData_%i"), SaveNumber);
+	return UGameplayStatics::DeleteGameInSlot(SlotName, 0);
+}

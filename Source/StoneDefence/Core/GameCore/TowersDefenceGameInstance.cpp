@@ -6,11 +6,15 @@
 #include "SimpleScreenLoading.h"
 #include "../RuleOfTheGameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../StoneDefenceUtils.h"
+#include "../RuleOfThePlayerState.h"
 
 #define LOCTEXT_NAMESPACE "TowerGameInstance"
 
 UTowersDefenceGameInstance::UTowersDefenceGameInstance()
 	:ISimpleArchivesInterface()
+	, SaveSlotNumber(INDEX_NONE)
+	, GameSaveType(EGameSaveType::NONE)
 {
 
 }
@@ -28,6 +32,8 @@ int32 UTowersDefenceGameInstance::GetSaveSlotNumber() const
 
 bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 {
+	bool bSave = false;
+
 	//游戏存储
 	if (ARuleOfTheGameState *InGameState = GetGameState())
 	{
@@ -39,9 +45,21 @@ bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 			InSlot->ChapterName = LOCTEXT("ChapterName", "Hello World~~");
 
 			InGameState->SaveGameData(SaveNumber);
+
+			bSave = InGameState->SaveGameData(SaveNumber);
 		}
 	}
-	return false;
+
+	//玩家数据存储
+	StoneDefenceUtils::CallUpdateAllBaseClient(GetSafeWorld(), [&](APlayerController *InPlayerController)
+	{
+		if (ARuleOfThePlayerState *InState = InPlayerController->GetPlayerState<ARuleOfThePlayerState>())
+		{
+			bSave = InState->SaveGameData(SaveNumber);
+		}
+	});
+
+	return bSave;
 }
 
 bool UTowersDefenceGameInstance::ClearGameData(int32 SaveNumber)
@@ -56,6 +74,11 @@ bool UTowersDefenceGameInstance::ClearGameData(int32 SaveNumber)
 bool UTowersDefenceGameInstance::ReadGameData(int32 SaveNumber)
 {
 	return false;
+}
+
+void UTowersDefenceGameInstance::SetSaveNumber(int32 SaveNumber)
+{
+	SetCurrentSaveSlotNumber(SaveNumber);
 }
 
 bool UTowersDefenceGameInstance::IsSlotValid(int32 SaveNumber) const
@@ -134,6 +157,16 @@ UWorld* UTowersDefenceGameInstance::GetSafeWorld() const
 	}
 
 	return GetWorld();
+}
+
+int32 UTowersDefenceGameInstance::GetCurrentSaveSlotNumber() const
+{
+	return SaveSlotNumber;
+}
+
+void UTowersDefenceGameInstance::SetCurrentSaveSlotNumber(int32 InSaveSlotNumber)
+{
+	SaveSlotNumber = InSaveSlotNumber;
 }
 
 void UTowersDefenceGameInstance::OpenLevelOnServer(const FText &MapName)

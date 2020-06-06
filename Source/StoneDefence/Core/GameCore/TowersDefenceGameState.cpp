@@ -18,6 +18,7 @@
 #include "../../Items/SpawnPoint.h"
 #include "../../StoneDefenceUtils.h"
 #include "TowersDefencePlayerController.h"
+#include "TowersDefenceGameInstance.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -324,7 +325,14 @@ UGameSaveData * ATowersDefenceGameState::GetSaveData()
 {
 	if (!SaveData)
 	{
-		SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
+		if (UTowersDefenceGameInstance *InGameInstance = GetWorld()->GetGameInstance<UTowersDefenceGameInstance>())
+		{
+			SaveData = StoneDefenceUtils::GetSave<UGameSaveData>(
+				GetWorld(),
+				TEXT("SaveSlot_%i"),
+				InGameInstance->GetCurrentSaveSlotNumber(),
+				InGameInstance->GetGameType());
+		}
 	}
 	return SaveData;
 }

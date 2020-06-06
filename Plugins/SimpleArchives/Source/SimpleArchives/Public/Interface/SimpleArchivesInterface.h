@@ -18,7 +18,7 @@ public:
 
 	virtual	bool SaveGameData(int32 SaveNumber) = 0;
 
-	//virtual	void SetSaveNumber(int32 SaveNumber) = 0;
+	virtual	void SetSaveNumber(int32 SaveNumber) = 0;
 
 	virtual	bool ClearGameData(int32 SaveNumber) = 0;
 

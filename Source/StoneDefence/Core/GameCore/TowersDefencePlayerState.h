@@ -27,6 +27,10 @@ public:
 	ATowersDefencePlayerState();
 	virtual void BeginPlay() override;
 
+	virtual bool SaveGameData(int32 SaveNumber);
+
+	virtual bool ReadGameData(int32 SaveNumber);
+
 	const TArray<FPlayerSkillData*> &GetPlayerSkillDataFromTable();
 	const FPlayerSkillData *GetPlayerSkillDataFromTable(const int32 &PlayerSkillID);
 	FPlayerSkillData *GetPlayerSkillData(const FGuid &PlayerSkillGUID);

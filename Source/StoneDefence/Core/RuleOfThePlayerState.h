@@ -13,5 +13,9 @@ UCLASS()
 class STONEDEFENCE_API ARuleOfThePlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+public:
+	bool ClearPlayerData(int32 SaveNumber);
+
+	virtual bool ReadGameData(int32 SaveNumber) { return false; };
+	virtual bool SaveGameData(int32 SaveNumber) { return false; };
 };

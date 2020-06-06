@@ -3,6 +3,8 @@
 
 #include "RuleOfTheGameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "../StoneDefenceUtils.h"
+#include "../StoneDefenceType.h"
 
 ARuleOfTheGameState::ARuleOfTheGameState()
 {
@@ -50,11 +52,11 @@ UGameSaveSlotList * ARuleOfTheGameState::GetGameSaveSlotList()
 {
 	if (!SlotList)
 	{
-		SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("SaveSlot")), 0));
-		if (!SlotList)
-		{
-			SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UGameSaveSlotList::StaticClass()));
-		}
+		SlotList = StoneDefenceUtils::GetSave<UGameSaveSlotList>(
+			GetWorld(),
+			TEXT("SlotList"),
+			INDEX_NONE,
+			EGameSaveType::ARCHIVES);
 	}
 	return SlotList;
 }

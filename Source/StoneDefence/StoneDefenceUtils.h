@@ -74,13 +74,32 @@ namespace StoneDefenceUtils
 		return Array;
 	}
 
-	//ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
+	template<class T>
+	T* GetSave(UWorld *InWorld, const TCHAR *SaveName, int32 SaveIndex = INDEX_NONE, EGameSaveType InFlag = EGameSaveType::NONE)
+	{
+		FString SlotString;
+		if (SaveIndex != INDEX_NONE)
+		{
+			SlotString = FString::Printf(SaveName, SaveIndex);
+		}
+		else
+		{
+			SlotString = SaveName;
+			if (SlotString.Contains("%i"))
+			{
+				SlotString.RemoveFromEnd("_%i");
+				SlotString += TEXT("_0");
+			}
+		}
 
-	//template<class T>
-	//T *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator)
-	//{
-	//	return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
-	//}
+		T *InSlot = Cast<T>(UGameplayStatics::LoadGameFromSlot(SlotString, 0));
+		if (!InSlot)
+		{
+			InSlot = Cast<T>(UGameplayStatics::CreateSaveGameObject(UGameplayStatics::StaticClass()));
+		}
+		return InSlot;
+	}
+
 	void Execution(UWorld *World, const FGuid &CharacterID, TFunction<void(ARuleOfTheCharacter *InCharacter)> Code);
 }
 

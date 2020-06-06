@@ -30,6 +30,8 @@ public:
 
 	virtual bool ReadGameData(int32 SaveNumber);
 
+	virtual	void SetSaveNumber(int32 SaveNumber);
+
 	virtual bool IsSlotValid(int32 SaveNumber) const;
 
 	virtual FSaveSlotList *GetSlotList();
@@ -45,6 +47,13 @@ public:
 	ARuleOfTheGameState *GetGameState() const;
 
 	class UWorld* GetSafeWorld() const;
+
+	int32 GetCurrentSaveSlotNumber() const;
+
+	UFUNCTION(/*Server*/)
+		void SetCurrentSaveSlotNumber(int32 InSaveSlotNumber);
+
+	EGameSaveType GetGameType() { return GameSaveType; };
 
 protected:
 	UFUNCTION(/*Server*/)

@@ -8,6 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "TowersDefencePlayerController.h"
 #include "../../StoneDefenceUtils.h"
+#include "TowersDefenceGameInstance.h"
 
 ATowersDefencePlayerState::ATowersDefencePlayerState()
 {
@@ -30,6 +31,23 @@ void ATowersDefencePlayerState::BeginPlay()
 	{
 		GetSaveData()->PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
 	}
+}
+
+bool ATowersDefencePlayerState::SaveGameData(int32 SaveNumber)
+{
+	if (SaveData)
+	{
+		return UGameplayStatics::SaveGameToSlot(SaveData, FString::Printf(TEXT("PlayerData_%i"), SaveNumber), 0);
+	}
+
+	return false;
+}
+
+bool ATowersDefencePlayerState::ReadGameData(int32 SaveNumber)
+{
+	SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("PlayerData_%i"), SaveNumber), 0));
+
+	return SaveData != nullptr;
 }
 
 const TArray<FPlayerSkillData*> & ATowersDefencePlayerState::GetPlayerSkillDataFromTable()
@@ -170,7 +188,14 @@ UPlayerSaveData * ATowersDefencePlayerState::GetSaveData()
 {
 	if (!SaveData)
 	{
-		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
+		if (UTowersDefenceGameInstance *InGameInstance = GetWorld()->GetGameInstance<UTowersDefenceGameInstance>())
+		{
+			SaveData = StoneDefenceUtils::GetSave<UPlayerSaveData>(
+				GetWorld(),
+				TEXT("PlayerData_%i"),
+				InGameInstance->GetCurrentSaveSlotNumber(),
+				InGameInstance->GetGameType());
+		}
 	}
 	return SaveData;
 }
