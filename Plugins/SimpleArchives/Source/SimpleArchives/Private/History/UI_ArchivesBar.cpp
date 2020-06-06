@@ -57,7 +57,16 @@ void UUI_ArchivesBar::ClickedCheckBox(bool ClickedWidget)
 
 void UUI_ArchivesBar::OnClickedWidgetDelete()
 {
-
+	if (ISimpleArchivesInterface *SimpleArchivesInterface = GetCurrentArchivesInterface())
+	{
+		if (FSaveSlot *NewSlot = SimpleArchivesInterface->GetSaveSlot(SlotIndex))
+		{
+			if (NewSlot->bSave)
+			{
+				CallNewWindowsDelegate.ExecuteIfBound(FSimpleDelegate::CreateUObject(this, &UUI_ArchivesBar::ClearSlotData));
+			}
+		}
+	}
 }
 
 void UUI_ArchivesBar::SetGameThumbnail(UTexture2D *InImage)
