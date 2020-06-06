@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "../../Core/UI_RuleOfTheWidget.h"
+#include "UI_GameSettingsSystem.h"
 #include "UI_MainScreen.generated.h"
+
+
 
 /**
  * 
@@ -41,6 +44,24 @@ class STONEDEFENCE_API UUI_MainScreen : public UUI_RuleOfTheWidget
 	UPROPERTY(meta = (BindWidget))
 		class UImage* FireConcentrationPoint;
 
+	UPROPERTY(meta = (BindWidget))
+		class UVerticalBox *NewWindows;
+
+	UPROPERTY(meta = (BindWidget))
+		class UButton *SettingsButton;
+
+	UPROPERTY(meta = (BindWidget))
+		class USizeBox *BoxList;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class UUI_ArchivesSystem> ArchivesSystemClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class UUI_GameSettingsSystem> GameSettingsClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class UUI_SimplePopup> PopupClass;
+
 public:
 	virtual void NativeConstruct() override;
 
@@ -50,4 +71,16 @@ public:
 	void UpdateInventorySlot(const FGuid &InventorySlotGUID, bool bInCD);
 
 	void UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, bool bInCD);
+
+	UFUNCTION()
+		void Settings();
+
+	UFUNCTION()
+		void SaveGame();
+
+	UFUNCTION()
+		void SaveSettings();
+
+	UFUNCTION()
+		void ReturnGame();
 };

@@ -13,6 +13,7 @@
 
 
 
+
 //extern FCharacterData CharacterDataNULL;
 //extern FBuildingTower BuildingTowerNULL;
 class ARuleOfTheCharacter;
@@ -46,11 +47,10 @@ class STONEDEFENCE_API ATowersDefenceGameState : public ARuleOfTheGameState
 public:
 	ATowersDefenceGameState();
 
-	UFUNCTION(BlueprintCallable, Category = SaveData)
-		bool SaveGameData(int32 SaveNumber);
 
-	UFUNCTION(BlueprintCallable, Category = SaveData)
-		bool ReadGameData(int32 SaveNumber);
+	bool SaveGameData(int32 SaveNumber);
+	bool ReadGameData(int32 SaveNumber);
+
 protected:
 
 
@@ -91,15 +91,11 @@ public:
 		bool SetSubmissionDataType(FGuid CharacterID, int32 Skill, ESubmissionSkillRequestType Type);
 protected:
 	UGameSaveData *GetSaveData();
-	UGameSaveSlotList *GetGameSaveSlotList();
 
 
 private:
 	UPROPERTY()
 		UGameSaveData *SaveData;
-
-	UPROPERTY()
-		UGameSaveSlotList *SlotList;
 
 
 	TArray<FCharacterData*> CacheTowerDatas;

@@ -33,8 +33,8 @@ class STONEDEFENCE_API UUI_MainHall : public UUI_RuleOfTheWidget
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 		TSubclassOf<class UUI_TutoriaSystem> TutoriaSystemClass;
 
-	//UPROPERTY(EditDefaultsOnly, Category = UI)
-	//	TSubclassOf<class UUI_SimplePopup> PopupClass;
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+		TSubclassOf<class UUI_SimplePopup> PopupClass;
 public:
 	virtual void NativeConstruct() override;
 

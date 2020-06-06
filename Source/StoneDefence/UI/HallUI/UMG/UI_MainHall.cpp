@@ -9,47 +9,10 @@
 #include "UI_GameSettingsSystem.h"
 #include "UI_TutoriaSystem.h"
 #include "Components/SizeBox.h"
+#include "SimplePopupUtils.h"
+#include "../../../StoneDefenceUtils.h"
 
-template<class T, class UserObject>
-UserObject *CreateAssistWidget(T* ThisClass, UClass *AssistClass, USizeBox *WidgetArray)
-{
-	UserObject *UserObjectElement = nullptr;
-	//播放动画的判断
-
-	if (0)
-	{
-		//播放 淡入
-	}
-
-	if (WidgetArray->GetChildAt(0))
-	{
-		if (WidgetArray->GetChildAt(0)->IsA(AssistClass))
-		{
-			//关闭我们的board 淡出
-
-			return UserObjectElement;
-		}
-		else
-		{
-			WidgetArray->ClearChildren();
-		}
-	}
-
-	UserObjectElement = CreateWidget<UserObject>(ThisClass->GetWorld(), AssistClass);
-	if (UserObjectElement)
-	{
-		if (WidgetArray->AddChild(UserObjectElement))
-		{
-			//
-		}
-		else
-		{
-			UserObjectElement->RemoveFromParent();
-		}
-	}
-
-	return UserObjectElement;
-}
+#define  LOCTEXT_NAMESPACE "UUI_MainHall"
 
 void UUI_MainHall::NativeConstruct()//为什么这样写，直接在UI_HallMenuSystem里边用
 {
@@ -128,18 +91,33 @@ void UUI_MainHall::SecretTerritory()
 void UUI_MainHall::History()
 {
 	//绑定窗口
-	CreateAssistWidget<UUI_MainHall, UUI_ArchivesSystem>(this, ArchivesSystemClass, BoxList);
+	if (UUI_ArchivesSystem *ArchivesSystem = StoneDefenceUtils::CreateAssistWidget<UUI_MainHall, UUI_ArchivesSystem>(this, ArchivesSystemClass, BoxList))
+	{
+		ArchivesSystem->BindWindows(
+			[&](FSimpleDelegate Delegate)
+		{
+			SimplePopupUtils::CreatePopup(
+				GetWorld(),
+				PopupClass,
+				LOCTEXT("DeleteSaveSlot", "Are you sure you want to delete this archive ?"),
+				ESimplePopupType::TWO,
+				10.f,
+				Delegate);
+		});
+
+		ArchivesSystem->InitArchivesSystem(EArchivesState::LOAD);
+	}
 
 }
 
 void UUI_MainHall::GameSettings()
 {
-	CreateAssistWidget<UUI_MainHall, UUI_GameSettingsSystem>(this, GameSettingsClass, BoxList);
+	StoneDefenceUtils::CreateAssistWidget<UUI_MainHall, UUI_GameSettingsSystem>(this, GameSettingsClass, BoxList);
 }
 
 void UUI_MainHall::TutorialWebsite()
 {
-	CreateAssistWidget<UUI_MainHall, UUI_TutoriaSystem>(this, TutoriaSystemClass, BoxList);
+	StoneDefenceUtils::CreateAssistWidget<UUI_MainHall, UUI_TutoriaSystem>(this, TutoriaSystemClass, BoxList);
 }
 
 void UUI_MainHall::Browser()
@@ -156,3 +134,4 @@ void UUI_MainHall::QuitGame()
 {
 
 }
+#undef LOCTEXT_NAMESPACE

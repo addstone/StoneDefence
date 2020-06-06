@@ -10,13 +10,39 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Tip/UI_TowerTip.h"
 #include "Components/Image.h"
+#include "Components/SizeBox.h"
 #include "../../../Global/UI_Data.h"
 #include "UI_RucksackSystem.h"
 #include "UI_PlayerSkillSystem.h"
+#include "UI_GameMenuSystem.h"
+#include "Components/Button.h"
+#include "Components/VerticalBox.h"
+#include "../../../StoneDefenceUtils.h"
+#include "UI_ArchivesSystem.h"
+#include "SimplePopupType.h"
+#include "SimplePopupUtils.h"
 
 void UUI_MainScreen::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	SettingsButton->OnClicked.AddDynamic(this, &UUI_MainScreen::Settings);
+
+	{
+		FOnButtonClickedEvent Delegate;
+		Delegate.AddDynamic(this, &UUI_MainScreen::SaveGame);
+		GameMenuSystem->BindSaveGame(Delegate);
+	}
+	{
+		FOnButtonClickedEvent Delegate;
+		Delegate.AddDynamic(this, &UUI_MainScreen::SaveSettings);
+		GameMenuSystem->BindSaveSettings(Delegate);
+	}
+	{
+		FOnButtonClickedEvent Delegate;
+		Delegate.AddDynamic(this, &UUI_MainScreen::ReturnGame);
+		GameMenuSystem->BindReturnGame(Delegate);
+	}
 }
 
 void UUI_MainScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -87,3 +113,44 @@ void UUI_MainScreen::UpdatePlayerSkillSlot(const FGuid &PlayerSKillSlotGUID, boo
 	}
 }
 
+void UUI_MainScreen::Settings()
+{
+	if (GameMenuSystem->GetVisibility() == ESlateVisibility::Hidden)
+	{
+		NewWindows->SetVisibility(ESlateVisibility::Visible);
+		GameMenuSystem->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		NewWindows->SetVisibility(ESlateVisibility::Hidden);
+		GameMenuSystem->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UUI_MainScreen::SaveGame()
+{
+ 	if (UUI_ArchivesSystem *ArchivesSystem = StoneDefenceUtils::CreateAssistWidget<UUI_MainScreen, UUI_ArchivesSystem>(this, ArchivesSystemClass, BoxList))
+ 	{
+ 		ArchivesSystem->BindWindows(
+ 			[&](FSimpleDelegate InDelegate)
+ 		{
+ 			SimplePopupUtils::CreatePopup(
+ 				GetWorld(),
+ 				PopupClass,
+ 				NSLOCTEXT("UUI_MainScreen", "DeleteSaveSlot", "Are you sure you want to delete this archive ?"),
+ 				ESimplePopupType::TWO,
+ 				10.f,
+ 				InDelegate);
+ 		});
+ 	}
+}
+
+void UUI_MainScreen::SaveSettings()
+{
+	StoneDefenceUtils::CreateAssistWidget<UUI_MainScreen, UUI_GameSettingsSystem>(this, GameSettingsClass, BoxList);
+}
+
+void UUI_MainScreen::ReturnGame()
+{
+	Settings();
+}

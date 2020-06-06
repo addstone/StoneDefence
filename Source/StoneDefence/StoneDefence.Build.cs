@@ -28,7 +28,7 @@ public class StoneDefence : ModuleRules
             "SimpleDrawText",
             "RawMesh",
             "ImageWrapper",
-            //"SimplePopup",
+            "SimplePopup",
             "Landscape"
         });
 

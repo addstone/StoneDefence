@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Drop/UI_NativeOnDrop.h"
+#include "Components/Button.h"
 #include "UI_GameMenuSystem.generated.h"
 
 
@@ -34,11 +35,13 @@ public:
 	virtual void NativeConstruct()override;
 
 	UFUNCTION()
-	void BindSaveGame();
+		void BindSaveGame(FOnButtonClickedEvent ClickedEvent);
+
 	UFUNCTION()
-	void BindSaveSettings();
+		void BindSaveSettings(FOnButtonClickedEvent ClickedEvent);
+
 	UFUNCTION()
-	void BindReturnGame();
+		void BindReturnGame(FOnButtonClickedEvent ClickedEvent);
 
 private:
 	UFUNCTION()

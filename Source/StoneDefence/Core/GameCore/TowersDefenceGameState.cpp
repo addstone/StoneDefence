@@ -18,6 +18,7 @@
 #include "../../Items/SpawnPoint.h"
 #include "../../StoneDefenceUtils.h"
 #include "TowersDefencePlayerController.h"
+#include "TowersDefenceGameInstance.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -25,6 +26,7 @@
 
 
 ATowersDefenceGameState::ATowersDefenceGameState()
+
 {
 	PrimaryActorTick.bCanEverTick = true;
 	static ConstructorHelpers::FObjectFinder<UDataTable> MyTable_Towers(TEXT("/Game/GameData/TowersData"));
@@ -323,22 +325,16 @@ UGameSaveData * ATowersDefenceGameState::GetSaveData()
 {
 	if (!SaveData)
 	{
-		SaveData = Cast<UGameSaveData>(UGameplayStatics::CreateSaveGameObject(UGameSaveData::StaticClass()));
-	}
-	return SaveData;
-}
-
-UGameSaveSlotList * ATowersDefenceGameState::GetGameSaveSlotList()
-{
-	if (!SlotList)
-	{
-		SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("SaveSlot")), 0));
-		if (!SlotList)
+		if (UTowersDefenceGameInstance *InGameInstance = GetWorld()->GetGameInstance<UTowersDefenceGameInstance>())
 		{
-			SlotList = Cast<UGameSaveSlotList>(UGameplayStatics::CreateSaveGameObject(UGameSaveSlotList::StaticClass()));
+			SaveData = StoneDefenceUtils::GetSave<UGameSaveData>(
+				GetWorld(),
+				TEXT("SaveSlot_%i"),
+				InGameInstance->GetCurrentSaveSlotNumber(),
+				InGameInstance->GetGameType());
 		}
 	}
-	return SlotList;
+	return SaveData;
 }
 
 

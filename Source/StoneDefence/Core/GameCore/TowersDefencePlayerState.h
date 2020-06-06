@@ -10,7 +10,7 @@
 #include "TowersDefencePlayerState.generated.h"
 
 
-
+struct FCharacterData;
 
 /**
  * 
@@ -26,6 +26,10 @@ class STONEDEFENCE_API ATowersDefencePlayerState : public ARuleOfThePlayerState
 public:
 	ATowersDefencePlayerState();
 	virtual void BeginPlay() override;
+
+	virtual bool SaveGameData(int32 SaveNumber);
+
+	virtual bool ReadGameData(int32 SaveNumber);
 
 	const TArray<FPlayerSkillData*> &GetPlayerSkillDataFromTable();
 	const FPlayerSkillData *GetPlayerSkillDataFromTable(const int32 &PlayerSkillID);

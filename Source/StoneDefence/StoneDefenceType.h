@@ -5,6 +5,13 @@
 #include "CoreMinimal.h"
 #include "StoneDefenceType.generated.h"
 
+
+enum EGameSaveType
+{
+	NONE = 0b0000,
+	ARCHIVES = 0b0001,
+};
+
 UENUM(BlueprintType)
 enum class ESubmissionSkillRequestType :uint8
 {

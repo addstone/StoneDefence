@@ -7,6 +7,7 @@
 #include "../../StoneDefenceUtils.h"
 #include "../../Core/GameCore/TowersDefencePlayerController.h"
 #include "../../Core/GameCore/TowersDefenceGameState.h"
+#include "../CharacterData.h"
 
 void UPlayerSaveData::InitSaveGame(UWorld *InWorld)
 {
@@ -29,6 +30,7 @@ void UPlayerSaveData::InitSaveGame(UWorld *InWorld)
 			BuildingTowers.Add(FGuid::NewGuid(), BuildingTower);
 		}
 
+
 		//技能赋值 发生在服务器
 		for (int32 i = 0; i < 10; i++)
 		{
@@ -42,6 +44,7 @@ void UPlayerSaveData::InitSaveGame(UWorld *InWorld)
 				PlayerSkillDatas.Add(ID, FPlayerSkillData());
 			}
 		}
+		
 	}
 }
 

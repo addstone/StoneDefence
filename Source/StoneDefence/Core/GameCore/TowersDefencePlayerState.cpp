@@ -8,6 +8,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "TowersDefencePlayerController.h"
 #include "../../StoneDefenceUtils.h"
+#include "TowersDefenceGameInstance.h"
+#include "../../Data/CharacterData.h"
 
 ATowersDefencePlayerState::ATowersDefencePlayerState()
 {
@@ -19,17 +21,23 @@ ATowersDefencePlayerState::ATowersDefencePlayerState()
 void ATowersDefencePlayerState::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
-	//物品栏的塔slot
-	for (int32 i = 0; i < 21; i++)
+bool ATowersDefencePlayerState::SaveGameData(int32 SaveNumber)
+{
+	if (SaveData)
 	{
-		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
+		return UGameplayStatics::SaveGameToSlot(SaveData, FString::Printf(TEXT("PlayerData_%i"), SaveNumber), 0);
 	}
 
-	for (int32 i = 0; i < 10; i++)
-	{
-		GetSaveData()->PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
-	}
+	return false;
+}
+
+bool ATowersDefencePlayerState::ReadGameData(int32 SaveNumber)
+{
+	SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("PlayerData_%i"), SaveNumber), 0));
+
+	return SaveData != nullptr;
 }
 
 const TArray<FPlayerSkillData*> & ATowersDefencePlayerState::GetPlayerSkillDataFromTable()
@@ -98,18 +106,7 @@ void ATowersDefencePlayerState::UsePlayerSkill(const FGuid &SlotID)
 
 void ATowersDefencePlayerState::AddPlayerSkill(const FGuid *Guid, int32 SkillID)
 {
-	//GetSaveData()->AddPlayerSkill(GetWorld(), Guid, SkillID);
-	if (const FPlayerSkillData *FSkill = GetPlayerSkillDataFromTable(SkillID))
-	{
-		GetSaveData()->PlayerSkillDatas[*Guid] = *FSkill;
-
-
-		//通知客户端更新添加的UI
-		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
-		{
-			MyPlayerController->UpdatePlayerSkill_Client(*Guid, false);
-		});
-	}
+	GetSaveData()->AddPlayerSkill(GetWorld(), Guid, SkillID);
 }
 
 FPlayerData & ATowersDefencePlayerState::GetPlayerData()
@@ -170,7 +167,14 @@ UPlayerSaveData * ATowersDefencePlayerState::GetSaveData()
 {
 	if (!SaveData)
 	{
-		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
+		if (UTowersDefenceGameInstance *InGameInstance = GetWorld()->GetGameInstance<UTowersDefenceGameInstance>())
+		{
+			SaveData = StoneDefenceUtils::GetSave<UPlayerSaveData>(
+				GetWorld(),
+				TEXT("PlayerData_%i"),
+				InGameInstance->GetCurrentSaveSlotNumber(),
+				InGameInstance->GetGameType());
+		}
 	}
 	return SaveData;
 }
