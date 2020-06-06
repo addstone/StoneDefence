@@ -77,31 +77,48 @@ namespace StoneDefenceUtils
 	template<class T>
 	T* GetSave(UWorld *InWorld, const TCHAR *SaveName, int32 SaveIndex = INDEX_NONE, EGameSaveType InFlag = EGameSaveType::NONE)
 	{
-		FString SlotString;
-		if (SaveIndex != INDEX_NONE)
-		{
-			SlotString = FString::Printf(SaveName, SaveIndex);
-		}
-		else
-		{
-			SlotString = SaveName;
-			if (SlotString.Contains("%i"))
-			{
-				SlotString.RemoveFromEnd("_%i");
-				SlotString += TEXT("_0");
-			}
-		}
+		T *InSlot = nullptr;
 
-		T *InSlot = Cast<T>(UGameplayStatics::LoadGameFromSlot(SlotString, 0));
-		if (!InSlot)
+		auto InitSlot = [&]()
 		{
 			InSlot = Cast<T>(UGameplayStatics::CreateSaveGameObject(T::StaticClass()));
 			if (InSlot)
 			{
 				InSlot->InitSaveGame(InWorld);
-			}		
-		}
+			}
+		};
 
+		if (InFlag & EGameSaveType::ARCHIVES)
+		{
+			FString SlotString;
+			if (SaveIndex != INDEX_NONE)
+			{
+				SlotString = FString::Printf(SaveName, SaveIndex);
+			}
+			else
+			{
+				SlotString = SaveName;
+				if (SlotString.Contains("%i"))
+				{
+					SlotString.RemoveFromEnd("_%i");
+					SlotString += TEXT("_0");
+				}
+			}
+
+			InSlot = Cast<T>(UGameplayStatics::LoadGameFromSlot(SlotString, 0));
+			if (!InSlot)
+			{
+				InitSlot();
+			}
+			//else
+			//{
+			//	InSlot->InitSaveGameFromArchives(InWorld);
+			//}
+		}
+		else
+		{
+			InitSlot();
+		}
 
 		return InSlot;
 	}

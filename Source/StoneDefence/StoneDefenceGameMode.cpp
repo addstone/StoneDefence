@@ -41,18 +41,12 @@ void AStoneDefenceGameMode::BeginPlay()
 			if (InGameInstance->GetCurrentSaveSlotNumber() == INDEX_NONE &&
 				InGameInstance->GetGameType() == EGameSaveType::NONE)
 			{
-				if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
-				{
-					InGameState->GetGameData().AssignedMonsterAmount();
-					SpawnMainTowersRule();
-				}
-
-				
+				InitData();
 			}
 			else //通过存档读取的数据
 			{
 				//从存档中读取数据
-				//InitDataFormArchives();
+				InitDataFormArchives();
 
 				//清除存档痕迹
 				InGameInstance->ClearSaveMark();
@@ -62,19 +56,13 @@ void AStoneDefenceGameMode::BeginPlay()
 				{
 					if (Tmp.Value.Team == ETeam::RED)
 					{
-						SpawnTower(Tmp.Value.ID, 1, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
+						SpawnTower(Tmp.Value.ID, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
 					}
 					else
 					{
-						SpawnMonster(Tmp.Value.ID, 1, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
+						SpawnMonster(Tmp.Value.ID, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
 					}
 				}
-
-				//初始化UI
-				StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
-				{
-					
-				});
 			}
 		}
 	}
@@ -104,16 +92,25 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 	UpdatePlayerSkill(DeltaSeconds);
 }
 
-AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid)
+ATowers * AStoneDefenceGameMode::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
 {
-	return SpawnCharacter<AMonsters>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AIMonsterCharacterData, Location, Rotator, InCharacterGuid);
+	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AITowerCharacterData, Location, Rotator);
 }
 
-ATowers * AStoneDefenceGameMode::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid)
+ATowers * AStoneDefenceGameMode::SpawnTower(int32 CharacterID, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid /*= FGuid()*/)
 {
-	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AITowerCharacterData, Location, Rotator, InCharacterGuid);
+	return SpawnCharacter<ATowers>(CharacterID, 1, GetGameState<ATowersDefenceGameState>()->AITowerCharacterData, Location, Rotator, InCharacterGuid);
 }
 
+AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
+{
+	return SpawnCharacter<AMonsters>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AIMonsterCharacterData, Location, Rotator);
+}
+
+AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid /*= FGuid()*/)
+{
+	return SpawnCharacter<AMonsters>(CharacterID, 1, GetGameState<ATowersDefenceGameState>()->AIMonsterCharacterData, Location, Rotator, InCharacterGuid);
+}
 int32 GetMonsterLevel(UWorld *InWorld)
 {
 	struct FDifficultyDetermination
@@ -239,6 +236,37 @@ void AStoneDefenceGameMode::SpawnMainTowersRule()
 		{
 			SpawnTower(0, 1, TargetPoint->GetActorLocation(), TargetPoint->GetActorRotation());
 		}
+	}
+}
+
+void AStoneDefenceGameMode::InitDataFormArchives()
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		//初始化游戏数据
+		InGameState->GetSaveData();
+
+		//初始化存储的列表
+		InGameState->GetGameSaveSlotList();
+
+		//初始化玩家数据表
+		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+		{
+			if (ATowersDefencePlayerState *InPlayerState = MyPlayerController->GetPlayerState<ATowersDefencePlayerState>())
+			{
+				InPlayerState->GetSaveData();//初始化玩家数据表
+			}
+		});
+	}
+}
+
+void AStoneDefenceGameMode::InitData()
+{
+	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+	{
+		InGameState->GetGameData().AssignedMonsterAmount();
+		//生成主塔
+		SpawnMainTowersRule();
 	}
 }
 

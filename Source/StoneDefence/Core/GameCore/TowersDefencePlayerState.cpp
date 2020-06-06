@@ -106,18 +106,7 @@ void ATowersDefencePlayerState::UsePlayerSkill(const FGuid &SlotID)
 
 void ATowersDefencePlayerState::AddPlayerSkill(const FGuid *Guid, int32 SkillID)
 {
-	//GetSaveData()->AddPlayerSkill(GetWorld(), Guid, SkillID);
-	if (const FPlayerSkillData *FSkill = GetPlayerSkillDataFromTable(SkillID))
-	{
-		GetSaveData()->PlayerSkillDatas[*Guid] = *FSkill;
-
-
-		//通知客户端更新添加的UI
-		StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
-		{
-			MyPlayerController->UpdatePlayerSkill_Client(*Guid, false);
-		});
-	}
+	GetSaveData()->AddPlayerSkill(GetWorld(), Guid, SkillID);
 }
 
 FPlayerData & ATowersDefencePlayerState::GetPlayerData()

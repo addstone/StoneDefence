@@ -189,3 +189,18 @@ Developed with Unreal Engine 4
 |第十节：实现背景音乐和UI音乐功能设置|:heavy_check_mark:|
 |第十一节：背景音乐和UI音乐和游戏音乐设置策略|:heavy_check_mark:|
 |第十二节：插件自动化匹配我们的GameUserSettings|:heavy_check_mark:|
+---
+# 第十四章：游戏的数据存储设计
+|||
+| --------   | -----  |
+|第一节：游戏存储自动注册功能接口|:heavy_check_mark:|
+|第二节：游戏存储实例创建思路|:heavy_check_mark:|
+|第三节：游戏存储的反向代理|:heavy_check_mark:|
+|第四节：设计游戏的存储结构|:heavy_check_mark:|
+|第五节：游戏存储后的客户端显示效果|:heavy_check_mark:|
+|第六节：客户端发送请求到服务端打开地图|:heavy_check_mark:|
+|第七节：如何做游戏数据还原功能|:heavy_check_mark:|
+|第八节：统一GameIntance调用接口|:heavy_check_mark:|
+|第九节：测试游戏数据存储和还原|:heavy_check_mark:|
+|第十节：游戏存储流程测试|:heavy_check_mark:|
+|第十一节：解决流程测试中的BUG|:heavy_check_mark:|
