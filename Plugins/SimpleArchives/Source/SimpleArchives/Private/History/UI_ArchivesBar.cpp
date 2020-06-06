@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Core/SimpleArchivesGlobalVariable.h"
+#include "Data/SimpleArchivesList.h"
 
 #define LOCTEXT_NAMESPACE "ArchivesBar"
 
@@ -27,7 +28,12 @@ void UUI_ArchivesBar::NativeConstruct()
 
 void UUI_ArchivesBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
+	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if (FSaveSlot *InSlot = GetSaveSlot())
+	{
+		SetGameThumbnail(InSlot->GameThumbnail.GameThumbnail);
+	}
 }
 
 void UUI_ArchivesBar::Update()
@@ -56,8 +62,11 @@ void UUI_ArchivesBar::OnClickedWidgetDelete()
 
 void UUI_ArchivesBar::SetGameThumbnail(UTexture2D *InImage)
 {
-	GameThumbnail->SetColorAndOpacity(FLinearColor::White);
-	GameThumbnail->SetBrushFromTexture(InImage);
+	if (GameThumbnail->Brush.GetResourceObject() != InImage)
+	{
+		GameThumbnail->SetColorAndOpacity(FLinearColor::White);
+		GameThumbnail->SetBrushFromTexture(InImage);
+	}
 }
 
 void UUI_ArchivesBar::SetSaveGameDate(const FText &InText)
@@ -90,6 +99,10 @@ void UUI_ArchivesBar::ClearSlotData()
 
 FSaveSlot * UUI_ArchivesBar::GetSaveSlot()
 {
+	if (ISimpleArchivesInterface *SimpleArchivesInterface = GetCurrentArchivesInterface())
+	{
+		return SimpleArchivesInterface->GetSaveSlot(SlotIndex);
+	}
 	return nullptr;
 }
 #undef LOCTEXT_NAMESPACE

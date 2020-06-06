@@ -6,6 +6,25 @@
 #include "SimpleArchivesList.generated.h"
 
 USTRUCT()
+struct SIMPLEARCHIVES_API FGameArchivesThumbnail
+{
+	GENERATED_USTRUCT_BODY()
+
+		FGameArchivesThumbnail();
+
+	UPROPERTY(Transient)
+		UTexture2D* GameThumbnail;
+
+	UPROPERTY(SaveGame)
+		FString ScrPath;
+
+	void InitResources();
+	void ReleaseResources();
+protected:
+	void LoadTexture2D(const FString& ImagePath);
+};
+
+USTRUCT()
 struct SIMPLEARCHIVES_API FSaveSlot
 {
 	GENERATED_USTRUCT_BODY()
@@ -13,7 +32,7 @@ struct SIMPLEARCHIVES_API FSaveSlot
 	FSaveSlot();
 
 	UPROPERTY(SaveGame)
-		class UTexture2D *GameThumbnail;
+		FGameArchivesThumbnail GameThumbnail;
 
 	//存储的内容和日期
 	UPROPERTY(SaveGame)
