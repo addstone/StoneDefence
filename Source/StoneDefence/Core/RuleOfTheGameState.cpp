@@ -25,12 +25,12 @@ bool ARuleOfTheGameState::ClearGameData(int32 SaveNumber)
 {
 	if (FSaveSlot *InSlot = GetSaveSlot(SaveNumber))
 	{
-		//FString SlotName = FString::Printf(TEXT("SaveSlot_%i"), SaveNumber);
-		//if (UGameplayStatics::DeleteGameInSlot(SlotName, 0))
-		//{
+		FString SlotName = FString::Printf(TEXT("SaveSlot_%i"), SaveNumber);
+		if (UGameplayStatics::DeleteGameInSlot(SlotName, 0))
+		{
 			InSlot->Init();
 			return true;
-		//}
+		}
 	}
 
 	return false;

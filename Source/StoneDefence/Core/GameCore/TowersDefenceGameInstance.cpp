@@ -69,11 +69,21 @@ bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 
 bool UTowersDefenceGameInstance::ClearGameData(int32 SaveNumber)
 {
+	bool bSave = false;
 	if (ARuleOfTheGameState *InGameState = GetGameState())
 	{
-		return InGameState->ClearGameData(SaveNumber);
+		bSave = InGameState->ClearGameData(SaveNumber);
 	}
-	return false;
+
+	StoneDefenceUtils::CallUpdateAllBaseClient(GetSafeWorld(), [&](APlayerController *InPlayerController)
+	{
+		if (ARuleOfThePlayerState *InState = InPlayerController->GetPlayerState<ARuleOfThePlayerState>())
+		{
+			bSave = InState->ClearPlayerData(SaveNumber);
+		}
+	});
+
+	return bSave;
 }
 
 bool UTowersDefenceGameInstance::ReadGameData(int32 SaveNumber)
