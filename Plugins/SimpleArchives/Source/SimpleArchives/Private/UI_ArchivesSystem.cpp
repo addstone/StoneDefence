@@ -25,37 +25,29 @@ void UUI_ArchivesSystem::LoadGame()
 
 void UUI_ArchivesSystem::SaveGame()
 {
-	if (ISimpleArchivesInterface * MyArchives = GetCurrentArchivesInterface())
+	if (SimpleSlotIndex != INDEX_NONE)
 	{
-		if (MyArchives->SaveGameData(SimpleSlotIndex))
+		if (ISimpleArchivesInterface * ArchInterface = GetCurrentArchivesInterface())
 		{
+			if (ArchInterface->SaveGameData(SimpleSlotIndex))
+			{
+				if (FSaveSlot *InSlot = ArchInterface->GetSaveSlot(SimpleSlotIndex))
+				{
+					CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
+					{
+						if (Tmp->SlotIndex == SimpleSlotIndex)
+						{
+							ResetArchivesBar(Tmp, InSlot);
+							Tmp->SetGameThumbnail(InSlot->GameThumbnail);
+							return true;
+						}
 
+						return false;
+					});
+				}
+			}
 		}
 	}
-	//if (SimpleSlotIndex != INDEX_NONE)
-	//{
-	//	if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
-	//	{
-	//		ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
-	//		if (ArchInferface->SaveGameData(SimpleSlotIndex))
-	//		{
-	//			if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
-	//			{
-	//				CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
-	//				{
-	//					if (Tmp->SlotIndex == SimpleSlotIndex)
-	//					{
-	//						ResetArchivesBar(Tmp, InSlot);
-	//						Tmp->SetGameThumbnail(InSlot->GameThumbnail);
-	//						return true;
-	//					}
-
-	//					return false;
-	//				});
-	//			}
-	//		}
-	//	}
-	//}
 }
 
 void UUI_ArchivesSystem::NativeConstruct()
@@ -75,9 +67,16 @@ void UUI_ArchivesSystem::NativeDestruct()
 	SimpleSlotIndex = INDEX_NONE;
 }
 
-void UUI_ArchivesSystem::BindWindows(TFunction<void(FSimpleDelegate)>)
+void UUI_ArchivesSystem::BindWindows(TFunction<void(FSimpleDelegate)> NewWindows)
 {
-
+	TArray<UUI_ArchivesBar*> InArchivesBars;
+	if (GetArchivesBarArray(InArchivesBars))
+	{
+		for (auto &Tmp : InArchivesBars)
+		{
+			Tmp->CallNewWindowsDelegate = FSimpleArchivesSlotDelegate::CreateLambda(NewWindows);
+		}
+	}
 }
 
 bool UUI_ArchivesSystem::GetArchivesBarArray(TArray<UUI_ArchivesBar*> &InArchivesBars)
@@ -133,34 +132,6 @@ void UUI_ArchivesSystem::CallAllCkeckBox(UUI_ArchivesBar* OwnerArchivesBar)
 			Tmp->SetCheckBoxState(ECheckBoxState::Unchecked);
 		}
 	});
-}
-
-void UUI_ArchivesSystem::Save()
-{
-	if (SimpleSlotIndex != INDEX_NONE)
-	{
-		if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
-		{
-			ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
-			if (ArchInferface->SaveGameData(SimpleSlotIndex))
-			{
-				if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
-				{
-					CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
-					{
-						if (Tmp->SlotIndex == SimpleSlotIndex)
-						{
-							ResetArchivesBar(Tmp, InSlot);
-							Tmp->SetGameThumbnail(InSlot->GameThumbnail);
-							return true;
-						}
-
-						return false;
-					});
-				}
-			}
-		}
-	}
 }
 
 void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData)

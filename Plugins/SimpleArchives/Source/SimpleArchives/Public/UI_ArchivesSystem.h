@@ -58,8 +58,6 @@ protected:
 
 	void ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const FSaveSlot *InData);
 
-	void Save();
-
 private:
 	void CallAllArchivesBar(TFunction<void(UUI_ArchivesBar* InArchivesBar)>);
 	void CallAllArchivesBarBreak(TFunction<bool(UUI_ArchivesBar* InArchivesBar)>);

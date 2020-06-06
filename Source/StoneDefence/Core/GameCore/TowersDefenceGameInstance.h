@@ -50,6 +50,8 @@ public:
 
 	int32 GetCurrentSaveSlotNumber() const;
 
+	void ClearSaveMark();
+
 	UFUNCTION(/*Server*/)
 		void SetCurrentSaveSlotNumber(int32 InSaveSlotNumber);
 

@@ -106,6 +106,48 @@ namespace StoneDefenceUtils
 		return InSlot;
 	}
 
+	//面板Widget 切换
+	template<class T, class UserObject>
+	UserObject *CreateAssistWidget(T* ThisClass, UClass *AssistClass, USizeBox *WidgetArray)
+	{
+		UserObject *UserObjectElement = nullptr;
+		//播放动画的判断
+
+		if (0)
+		{
+			//播放 淡入
+		}
+
+		if (WidgetArray->GetChildAt(0))
+		{
+			if (WidgetArray->GetChildAt(0)->IsA(AssistClass))
+			{
+				//关闭我们的board 淡出
+
+				return UserObjectElement;
+			}
+			else
+			{
+				WidgetArray->ClearChildren();
+			}
+		}
+
+		UserObjectElement = CreateWidget<UserObject>(ThisClass->GetWorld(), AssistClass);
+		if (UserObjectElement)
+		{
+			if (WidgetArray->AddChild(UserObjectElement))
+			{
+				//
+			}
+			else
+			{
+				UserObjectElement->RemoveFromParent();
+			}
+		}
+
+		return UserObjectElement;
+	}
+
 	void Execution(UWorld *World, const FGuid &CharacterID, TFunction<void(ARuleOfTheCharacter *InCharacter)> Code);
 }
 

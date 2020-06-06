@@ -164,6 +164,12 @@ int32 UTowersDefenceGameInstance::GetCurrentSaveSlotNumber() const
 	return SaveSlotNumber;
 }
 
+void UTowersDefenceGameInstance::ClearSaveMark()
+{
+	SaveSlotNumber = INDEX_NONE;
+	GameSaveType = EGameSaveType::NONE;
+}
+
 void UTowersDefenceGameInstance::SetCurrentSaveSlotNumber(int32 InSaveSlotNumber)
 {
 	SaveSlotNumber = InSaveSlotNumber;

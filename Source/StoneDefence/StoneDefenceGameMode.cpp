@@ -14,6 +14,7 @@
 #include "Character/CharacterCore/Monsters.h"
 #include "Engine/DataTable.h"
 #include "Bullet/RuleOfTheBullet.h"
+#include "Core/GameCore/TowersDefenceGameInstance.h"
 
 
 AStoneDefenceGameMode::AStoneDefenceGameMode()
@@ -28,12 +29,48 @@ AStoneDefenceGameMode::AStoneDefenceGameMode()
 void AStoneDefenceGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
-	{
-		InGameState->GetGameData().AssignedMonsterAmount();
-	}
 
-	SpawnMainTowersRule();
+
+
+
+
+	if (UTowersDefenceGameInstance *InGameInstance = GetWorld()->GetGameInstance<UTowersDefenceGameInstance>())
+	{
+		if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+		{
+			if (InGameInstance->GetCurrentSaveSlotNumber() == INDEX_NONE &&
+				InGameInstance->GetGameType() == EGameSaveType::NONE)
+			{
+				if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
+				{
+					InGameState->GetGameData().AssignedMonsterAmount();
+				}
+
+				SpawnMainTowersRule();
+			}
+			else //通过存档读取的数据
+			{
+				//从存档中读取数据
+				InitDataFormArchives();
+
+				//清除存档痕迹
+				InGameInstance->ClearSaveMark();
+
+				//还原我们场景中的角色
+				for (auto &Tmp : InGameState->GetSaveData()->CharacterDatas)
+				{
+					if (Tmp.Value.Team == ETeam::RED)
+					{
+						SpawnTowers(Tmp.Value.ID, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
+					}
+					else
+					{
+						SpawnMonster(Tmp.Value.ID, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
+					}
+				}
+			}
+		}
+	}
 }
 
 
