@@ -48,8 +48,9 @@ FBuildingTower &UUI_Inventory::GetBuildingTower()
 }
 void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 {
-	if (InventorySlotClass)
+	if (InventorySlotClass && GetPlayerState())
 	{
+		const TArray<const FGuid*> ID = GetPlayerState()->GetBuildingTowersID();
 		for (int32 MyRow = 0; MyRow < RowNumber; MyRow++)
 		{
 			//ÅÅÐòÎïÆ·À¸
@@ -65,29 +66,12 @@ void UUI_Inventory::LayoutInventroySlot(int32 ColumNumber, int32 RowNumber)
 						GridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 					}
 					InventorySlotArray.Add(SlotWidget);
+
+					SlotWidget->GUID = *ID[MyRow * ColumNumber + MyColum];
+					SlotWidget->UpdateUI();
 				}
 			}
 		}
-
-		const TArray<const FGuid*> ID = GetPlayerState()->GetBuildingTowersID();
-		for (int32 i = 0; i < ColumNumber * RowNumber; i++)
-		{
-			InventorySlotArray[i]->GUID = *ID[i];
-		}
-
-		
-		const TArray<FCharacterData*> &Datas = GetGameState()->GetTowerDataFromTable();
-		
-			for (int32 i = 0; i < Datas.Num(); i++)
-			{
-				InventorySlotArray[i]->GetBuildingTower().TowerID = Datas[i]->ID;
-				InventorySlotArray[i]->GetBuildingTower().NeedGold = Datas[i]->Glod;
-				InventorySlotArray[i]->GetBuildingTower().MaxConstructionTowersCD = Datas[i]->GetCD();
-				InventorySlotArray[i]->GetBuildingTower().ICO = Datas[i]->Icon.LoadSynchronous();
-
-				InventorySlotArray[i]->UpdateUI();
-			}
-		
 	}
 }
 

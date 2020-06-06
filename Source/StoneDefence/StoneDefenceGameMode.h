@@ -27,10 +27,10 @@ public:
 	virtual void Tick(float DeltaSeconds);
 
 	UFUNCTION(BlueprintCallable, Category = Sapwn)
-		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
+		AMonsters *SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid = FGuid());
 
 	UFUNCTION(BlueprintCallable, Category = Sapwn)
-		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator);
+		ATowers *SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid = FGuid());
 
 
 
@@ -38,13 +38,14 @@ protected:
 
 	void SpawnMainTowersRule();
 
-	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator);
+	ARuleOfTheCharacter *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid = FGuid());
 
 	template<class T>
-	T *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable *InCharacterData, const FVector &Location, const FRotator &Rotator)
+	T *SpawnCharacter(int32 CharacterID, int32 CharacterLevel, UDataTable* InCharacterData, const FVector &Loction, const FRotator &Rotator, const FGuid &InCharacterGuid = FGuid())
 	{
-		return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator));
+		return Cast<T>(SpawnCharacter(CharacterID, CharacterLevel, InCharacterData, Location, Rotator, InCharacterGuid));
 	}
+
 
 	void UpdateSkill(float DeltaSeconds);
 

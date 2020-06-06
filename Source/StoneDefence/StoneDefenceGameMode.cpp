@@ -44,14 +44,15 @@ void AStoneDefenceGameMode::BeginPlay()
 				if (ATowersDefenceGameState *InGameState = GetGameState<ATowersDefenceGameState>())
 				{
 					InGameState->GetGameData().AssignedMonsterAmount();
+					SpawnMainTowersRule();
 				}
 
-				SpawnMainTowersRule();
+				
 			}
 			else //通过存档读取的数据
 			{
 				//从存档中读取数据
-				InitDataFormArchives();
+				//InitDataFormArchives();
 
 				//清除存档痕迹
 				InGameInstance->ClearSaveMark();
@@ -61,13 +62,19 @@ void AStoneDefenceGameMode::BeginPlay()
 				{
 					if (Tmp.Value.Team == ETeam::RED)
 					{
-						SpawnTowers(Tmp.Value.ID, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
+						SpawnTower(Tmp.Value.ID, 1, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
 					}
 					else
 					{
-						SpawnMonster(Tmp.Value.ID, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
+						SpawnMonster(Tmp.Value.ID, 1, Tmp.Value.Location, Tmp.Value.Rotator, Tmp.Key);
 					}
 				}
+
+				//初始化UI
+				StoneDefenceUtils::CallUpdateAllClient(GetWorld(), [&](ATowersDefencePlayerController *MyPlayerController)
+				{
+					
+				});
 			}
 		}
 	}
@@ -97,14 +104,14 @@ void AStoneDefenceGameMode::Tick(float DeltaSeconds)
 	UpdatePlayerSkill(DeltaSeconds);
 }
 
-AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
+AMonsters * AStoneDefenceGameMode::SpawnMonster(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid)
 {
-	return SpawnCharacter<AMonsters>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AIMonsterCharacterData, Location, Rotator);
+	return SpawnCharacter<AMonsters>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AIMonsterCharacterData, Location, Rotator, InCharacterGuid);
 }
 
-ATowers * AStoneDefenceGameMode::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator)
+ATowers * AStoneDefenceGameMode::SpawnTower(int32 CharacterID, int32 CharacterLevel, const FVector &Location, const FRotator &Rotator, const FGuid &InCharacterGuid)
 {
-	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AITowerCharacterData, Location, Rotator);
+	return SpawnCharacter<ATowers>(CharacterID, CharacterLevel, GetGameState<ATowersDefenceGameState>()->AITowerCharacterData, Location, Rotator, InCharacterGuid);
 }
 
 int32 GetMonsterLevel(UWorld *InWorld)
@@ -240,7 +247,8 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 	int32 CharacterLevel,
 	UDataTable *InCharacterData,
 	const FVector &Location,
-	const FRotator &Rotator)
+	const FRotator &Rotator,
+	const FGuid &InCharacterGuid)
 {
 	ARuleOfTheCharacter * InCharacter = nullptr;
 
@@ -270,21 +278,29 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 				{
 					if (ARuleOfTheCharacter *RuleOfTheCharacter = GetWorld()->SpawnActor<ARuleOfTheCharacter>(NewClass, Location, Rotator))
 					{
-						RuleOfTheCharacter->ResetGUID();
-						FCharacterData &CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
-						CharacterDataInst.UpdateHealth();
-
-
-						if (CharacterLevel > 1)
+						if (InCharacterGuid == FGuid())//新出来的对象
 						{
-							for (int32 i = 0; i < CharacterLevel; i++)
+							RuleOfTheCharacter->ResetGUID();
+							FCharacterData &CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
+							CharacterDataInst.UpdateHealth();
+
+
+							if (CharacterLevel > 1)
 							{
-								CharacterDataInst.UpdateLevel();
+								for (int32 i = 0; i < CharacterLevel; i++)
+								{
+									CharacterDataInst.UpdateLevel();
+								}
 							}
+							//初始化被动技能
+							RuleOfTheCharacter->InitSkill();
+							//注册相应的队伍
+							RuleOfTheCharacter->RegisterTeam();
 						}
-						//初始化被动技能
-						RuleOfTheCharacter->InitSkill();
-						RuleOfTheCharacter->RegisterTeam();
+						else//还原的对象
+						{
+							RuleOfTheCharacter->GUID = InCharacterGuid;
+						}
 						InCharacter = RuleOfTheCharacter;
 					}
 				}

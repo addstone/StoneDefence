@@ -9,6 +9,7 @@
 #include "TowersDefencePlayerController.h"
 #include "../../StoneDefenceUtils.h"
 #include "TowersDefenceGameInstance.h"
+#include "../../Data/CharacterData.h"
 
 ATowersDefencePlayerState::ATowersDefencePlayerState()
 {

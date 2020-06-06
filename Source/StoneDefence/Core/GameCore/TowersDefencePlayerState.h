@@ -10,7 +10,7 @@
 #include "TowersDefencePlayerState.generated.h"
 
 
-
+struct FCharacterData;
 
 /**
  * 

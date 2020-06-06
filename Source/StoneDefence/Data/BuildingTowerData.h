@@ -12,7 +12,7 @@ struct FBuildingTower
 {
 	GENERATED_BODY()
 
-		UPROPERTY(SaveGame)
+	UPROPERTY(SaveGame)
 		int32 TowerID;
 
 	//需要的消费金币
