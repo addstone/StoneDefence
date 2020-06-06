@@ -95,8 +95,14 @@ namespace StoneDefenceUtils
 		T *InSlot = Cast<T>(UGameplayStatics::LoadGameFromSlot(SlotString, 0));
 		if (!InSlot)
 		{
-			InSlot = Cast<T>(UGameplayStatics::CreateSaveGameObject(UGameplayStatics::StaticClass()));
+			InSlot = Cast<T>(UGameplayStatics::CreateSaveGameObject(T::StaticClass()));
+			if (InSlot)
+			{
+				InSlot->InitSaveGame(InWorld);
+			}		
 		}
+
+
 		return InSlot;
 	}
 

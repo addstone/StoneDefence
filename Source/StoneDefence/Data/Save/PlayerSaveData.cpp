@@ -10,38 +10,49 @@
 
 void UPlayerSaveData::InitSaveGame(UWorld *InWorld)
 {
-	if (ATowersDefenceGameState *InGameState = InWorld->GetGameState<ATowersDefenceGameState>())
+	//if (ATowersDefenceGameState *InGameState = InWorld->GetGameState<ATowersDefenceGameState>())
+	//{
+	//	const TArray<FCharacterData*> &Datas = InGameState->GetTowerDataFromTable();
+
+	//	//物品栏的塔slot 
+	//	for (int32 i = 0; i < 21; i++)
+	//	{
+	//		FBuildingTower BuildingTower;
+	//		if (Datas.IsValidIndex(i))
+	//		{
+	//			BuildingTower.TowerID = Datas[i]->ID;
+	//			BuildingTower.NeedGold = Datas[i]->Glod;
+	//			BuildingTower.MaxConstructionTowersCD = Datas[i]->CD;
+	//			BuildingTower.ICO = Datas[i]->Icon.LoadSynchronous();
+	//		}
+
+	//		BuildingTowers.Add(FGuid::NewGuid(), BuildingTower);
+	//	}
+
+	//	//技能赋值 发生在服务器
+	//	for (int32 i = 0; i < 10; i++)
+	//	{
+	//		FGuid ID = FGuid::NewGuid();
+	//		if (PlayerData.SkillIDs.IsValidIndex(i))
+	//		{
+	//			AddPlayerSkill(InWorld, &ID, PlayerData.SkillIDs[i]);
+	//		}
+	//		else
+	//		{
+	//			PlayerSkillDatas.Add(ID, FPlayerSkillData());
+	//		}
+	//	}
+	//}
+
+	//物品栏的塔slot
+	for (int32 i = 0; i < 21; i++)
 	{
-		const TArray<FCharacterData*> &Datas = InGameState->GetTowerDataFromTable();
+		BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
+	}
 
-		//物品栏的塔slot 
-		for (int32 i = 0; i < 21; i++)
-		{
-			FBuildingTower BuildingTower;
-			if (Datas.IsValidIndex(i))
-			{
-				BuildingTower.TowerID = Datas[i]->ID;
-				BuildingTower.NeedGold = Datas[i]->Glod;
-				BuildingTower.MaxConstructionTowersCD = Datas[i]->CD;
-				BuildingTower.ICO = Datas[i]->Icon.LoadSynchronous();
-			}
-
-			BuildingTowers.Add(FGuid::NewGuid(), BuildingTower);
-		}
-
-		//技能赋值 发生在服务器
-		for (int32 i = 0; i < 10; i++)
-		{
-			FGuid ID = FGuid::NewGuid();
-			if (PlayerData.SkillIDs.IsValidIndex(i))
-			{
-				AddPlayerSkill(InWorld, &ID, PlayerData.SkillIDs[i]);
-			}
-			else
-			{
-				PlayerSkillDatas.Add(ID, FPlayerSkillData());
-			}
-		}
+	for (int32 i = 0; i < 10; i++)
+	{
+		PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
 	}
 }
 

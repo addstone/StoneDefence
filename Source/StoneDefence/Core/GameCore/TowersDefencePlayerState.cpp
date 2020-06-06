@@ -20,17 +20,6 @@ ATowersDefencePlayerState::ATowersDefencePlayerState()
 void ATowersDefencePlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//ÎïÆ·À¸µÄËþslot
-	for (int32 i = 0; i < 21; i++)
-	{
-		GetSaveData()->BuildingTowers.Add(FGuid::NewGuid(), FBuildingTower());
-	}
-
-	for (int32 i = 0; i < 10; i++)
-	{
-		GetSaveData()->PlayerSkillDatas.Add(FGuid::NewGuid(), FPlayerSkillData());
-	}
 }
 
 bool ATowersDefencePlayerState::SaveGameData(int32 SaveNumber)

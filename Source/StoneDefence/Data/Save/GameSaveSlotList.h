@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/SaveGame.h"
+#include "../Core/SaveGameCore.h"
 #include "Data/SimpleArchivesList.h"
 #include "GameSaveSlotList.generated.h"
+
 
 
 /**
@@ -15,11 +16,15 @@
 
 
 UCLASS()
-class STONEDEFENCE_API UGameSaveSlotList : public USaveGame
+class STONEDEFENCE_API UGameSaveSlotList : public USaveGameCore
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(SaveGame)
 		FSaveSlotList SlotList;
+
+	virtual void InitSaveGame(UWorld *InWorld);
+
+	virtual void InitSaveGameFromArchives(UWorld *InWorld);
 };

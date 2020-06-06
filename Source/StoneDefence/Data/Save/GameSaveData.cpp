@@ -3,4 +3,7 @@
 
 #include "GameSaveData.h"
 
+void UGameSaveData::InitSaveGame(UWorld *InWorld)
+{
 
+}

@@ -14,8 +14,6 @@ ARuleOfTheGameState::ARuleOfTheGameState()
 void ARuleOfTheGameState::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GetSaveSlotList().InitSlot();
 }
 
 FSaveSlotList & ARuleOfTheGameState::GetSaveSlotList()

@@ -25,30 +25,37 @@ void UUI_ArchivesSystem::LoadGame()
 
 void UUI_ArchivesSystem::SaveGame()
 {
-	if (SimpleSlotIndex != INDEX_NONE)
+	if (ISimpleArchivesInterface * MyArchives = GetCurrentArchivesInterface())
 	{
-		if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
+		if (MyArchives->SaveGameData(SimpleSlotIndex))
 		{
-			ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
-			if (ArchInferface->SaveGameData(SimpleSlotIndex))
-			{
-				if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
-				{
-					CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
-					{
-						if (Tmp->SlotIndex == SimpleSlotIndex)
-						{
-							ResetArchivesBar(Tmp, InSlot);
-							Tmp->SetGameThumbnail(InSlot->GameThumbnail);
-							return true;
-						}
 
-						return false;
-					});
-				}
-			}
 		}
 	}
+	//if (SimpleSlotIndex != INDEX_NONE)
+	//{
+	//	if (SimpleArchivesGlobalVariable::GetSimpleArchivesArray().Num() > 0)
+	//	{
+	//		ISimpleArchivesInterface *ArchInferface = SimpleArchivesGlobalVariable::GetSimpleArchivesArray()[0];
+	//		if (ArchInferface->SaveGameData(SimpleSlotIndex))
+	//		{
+	//			if (FSaveSlot *InSlot = ArchInferface->GetSaveSlot(SimpleSlotIndex))
+	//			{
+	//				CallAllArchivesBarBreak([&](UUI_ArchivesBar *Tmp)
+	//				{
+	//					if (Tmp->SlotIndex == SimpleSlotIndex)
+	//					{
+	//						ResetArchivesBar(Tmp, InSlot);
+	//						Tmp->SetGameThumbnail(InSlot->GameThumbnail);
+	//						return true;
+	//					}
+
+	//					return false;
+	//				});
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void UUI_ArchivesSystem::NativeConstruct()
@@ -90,10 +97,9 @@ void UUI_ArchivesSystem::UpdateArchivesSlot()
 {
 	if (ArchivesBarClass)
 	{
-		TArray<ISimpleArchivesInterface*> &MyArchives = SimpleArchivesGlobalVariable::GetSimpleArchivesArray();
-		if (MyArchives.Num())
+		if (ISimpleArchivesInterface * MyArchives = GetCurrentArchivesInterface())
 		{
-			if (FSaveSlotList *InSlotList = MyArchives[0]->GetSlotList())
+			if (FSaveSlotList *InSlotList = MyArchives->GetSlotList())
 			{
 				for (int32 i = 0; i < InSlotList->Slots.Num(); i++)
 				{
