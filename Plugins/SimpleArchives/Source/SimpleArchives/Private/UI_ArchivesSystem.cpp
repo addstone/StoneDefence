@@ -9,7 +9,15 @@
 
 void UUI_ArchivesSystem::InitArchivesSystem(EArchivesState ArchivesState)
 {
-
+	switch (ArchivesState)
+	{
+	case EArchivesState::LOAD:
+		SaveGameButton->SetIsEnabled(false);
+		break;
+	case EArchivesState::SAVE:
+		LoadGameButton->SetIsEnabled(false);
+		break;
+	}
 }
 
 void UUI_ArchivesSystem::LoadGame()
@@ -137,6 +145,7 @@ void UUI_ArchivesSystem::ResetArchivesBar(UUI_ArchivesBar* InArchivesBar, const 
 {
 	if (InArchivesBar && InData)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, InData->DateText.ToString());
 		InArchivesBar->SetSaveGameDate(InData->DateText);
 		InArchivesBar->SetChapterName(InData->ChapterName);
 	}

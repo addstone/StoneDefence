@@ -72,6 +72,10 @@ bool UTowersDefenceGameInstance::ClearGameData(int32 SaveNumber)
 	bool bSave = false;
 	if (ARuleOfTheGameState *InGameState = GetGameState())
 	{
+		if (FSaveSlot *InSlot = InGameState->GetSaveSlot(SaveNumber))
+		{
+
+		}
 		bSave = InGameState->ClearGameData(SaveNumber);
 	}
 
