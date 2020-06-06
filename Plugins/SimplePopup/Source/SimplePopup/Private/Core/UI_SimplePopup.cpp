@@ -126,5 +126,4 @@ void UUI_SimplePopup::Sure()
 	SimpleSureDelegate.ExecuteIfBound();
 	RemoveFromParent();
 }
-
 #undef LOCTEXT_NAMESPACE
