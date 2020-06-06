@@ -38,7 +38,6 @@ void UUI_ArchivesSystem::SaveGame()
 						if (Tmp->SlotIndex == SimpleSlotIndex)
 						{
 							ResetArchivesBar(Tmp, InSlot);
-							Tmp->SetGameThumbnail(InSlot->GameThumbnail);
 							return true;
 						}
 

@@ -15,7 +15,7 @@ FSaveSlot::FSaveSlot()
 
 void FSaveSlot::Init()
 {
-	GameThumbnail = nullptr;
+	GameThumbnail.ReleaseResources();
 	DateText = LOCTEXT("SaveSlot", "Save slot hello world");
 	bSave = false;
 }

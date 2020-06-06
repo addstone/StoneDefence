@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../../StoneDefenceUtils.h"
 #include "../RuleOfThePlayerState.h"
+#include "../../StoneDefenceMacro.h"
 
 #define LOCTEXT_NAMESPACE "TowerGameInstance"
 
@@ -44,7 +45,11 @@ bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 			InSlot->LevelName = LOCTEXT("LevelName", "TestMap");
 			InSlot->ChapterName = LOCTEXT("ChapterName", "Hello World~~");
 
-			InGameState->SaveGameData(SaveNumber);
+			InSlot->GameThumbnail.ReleaseResources();
+			InSlot->GameThumbnail.ScrPath = GAMETHUMBNAIL_SCREENSHOT(
+				400, 200,
+				InSlot->GameThumbnail.GameThumbnail,
+				GetWorld())->GetFilename();
 
 			bSave = InGameState->SaveGameData(SaveNumber);
 		}

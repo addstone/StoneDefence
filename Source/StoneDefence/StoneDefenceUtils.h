@@ -110,10 +110,10 @@ namespace StoneDefenceUtils
 			{
 				InitSlot();
 			}
-			//else
-			//{
-			//	InSlot->InitSaveGameFromArchives(InWorld);
-			//}
+			else
+			{
+				InSlot->InitSaveGameFromArchives(InWorld);
+			}
 		}
 		else
 		{
@@ -177,4 +177,33 @@ namespace MeshUtils
 {
 	UStaticMesh *ParticleSystemCompnentToStaticMesh(UParticleSystemComponent *NewParticleSystemComponent);
 	UStaticMesh *SkeletalMeshComponentToStaticMesh(USkeletalMeshComponent *SkeletalMeshComponent);
+}
+
+namespace RenderingUtils
+{
+	struct FScreenShot
+	{
+		FScreenShot(
+			int32 InWidth,
+			int32 InHeight,
+			UTexture2D *&InTexture,/*зЂвт&**/
+			UObject *InOuter,
+			int32 InImageQuality = 80,
+			bool bInShowUI = false,
+			bool bAddFilenameSuffix = true);
+
+		FString &GetFilename() { return Filename; }
+	protected:
+		void OnScreenshotCapturedInternal(int32 SrcWidth, int32 SrcHeight, const TArray<FColor>& OrigBitmap);
+	private:
+		UTexture2D *&Texture;
+		FDelegateHandle ScreenShotDelegateHandle;
+		int32 ScaledWidth;
+		int32 ScaledHeight;
+		int32 ImageQuality;
+		UObject *Outer;
+		FString Filename;
+	};
+
+	//ASceneCapture2D *SpawnSceneCapture2D(UWorld *World, UClass *SceneCaptureClass, FMapSize &MapSize, float Life = 0.f);
 }
