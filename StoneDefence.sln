@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.25807.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{623D644B-0CA2-4B10-9607-DF125944BF47}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{7BFD699E-92D9-4377-B598-279517D55D70}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{19D9B5DF-294F-4256-BF07-C4BB42814F01}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{A91B5640-541E-4A22-B3A9-E1B9C4CCCA74}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE4", "Intermediate\ProjectFiles\UE4.vcxproj", "{28CB4C1C-6648-4AF2-911D-F24FB808634E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StoneDefence", "Intermediate\ProjectFiles\StoneDefence.vcxproj", "{9EA0008C-4A0B-43F8-8ABE-B8521FDC2C7C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{50757516-649B-43E8-9550-9616CA190787}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{75977D62-F604-400A-9B14-B6F3B3FE95F1}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\..\Program Files\Epic Games\UE_4.24\Engine\Extras\VisualStudioDebugging\UE4.natvis = ..\..\..\..\Program Files\Epic Games\UE_4.24\Engine\Extras\VisualStudioDebugging\UE4.natvis
 	EndProjectSection
@@ -99,10 +99,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{28CB4C1C-6648-4AF2-911D-F24FB808634E} = {623D644B-0CA2-4B10-9607-DF125944BF47}
-		{9EA0008C-4A0B-43F8-8ABE-B8521FDC2C7C} = {19D9B5DF-294F-4256-BF07-C4BB42814F01}
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {8725729E-CE4F-43D0-A0DA-98CDEFBA22BF}
+		{28CB4C1C-6648-4AF2-911D-F24FB808634E} = {7BFD699E-92D9-4377-B598-279517D55D70}
+		{9EA0008C-4A0B-43F8-8ABE-B8521FDC2C7C} = {A91B5640-541E-4A22-B3A9-E1B9C4CCCA74}
 	EndGlobalSection
 EndGlobal
