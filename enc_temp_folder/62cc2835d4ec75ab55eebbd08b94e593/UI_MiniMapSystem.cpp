@@ -102,7 +102,7 @@ void UUI_MiniMapSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 							float MiniSizeX = MyGeometry.GetLocalSize().X;
 							float MiniSizeY = MyGeometry.GetLocalSize().Y;
 
-							MiniMapPos.Y = MiniSizeX - (MiniSizeX / MapSize.BigMapRealSize.X)*Tmp.Value.Location.X;
+							MiniMapPos.Y = (MiniSizeX / MapSize.BigMapRealSize.X)*Tmp.Value.Location.X;
 							MiniMapPos.X = (MiniSizeY / MapSize.BigMapRealSize.Y)*Tmp.Value.Location.Y;
 
 							PanelSlot->SetPosition(MiniMapPos);
