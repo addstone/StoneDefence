@@ -28,6 +28,7 @@
 #include "Landscape.h"
 #include "Misc/FileHelper.h"
 #include "IImageWrapperModule.h"
+#include "Engine/SceneCapture2D.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -531,37 +532,41 @@ void RenderingUtils::FScreenShot::OnScreenshotCapturedInternal(
 	delete this;
 }
 
-//ASceneCapture2D * RenderingUtils::SpawnSceneCapture2D(UWorld *World, UClass *SceneCaptureClass, FMapSize &MapSize, float Life)
-//{
-//	if (SceneCaptureClass)
-//	{
-//		for (TActorIterator<ALandscape> It(World, ALandscape::StaticClass()); It; ++It)
-//		{
-//			if (ALandscape* BigMap = *It)
-//			{
-//				//都是正方形
-//				FVector BigMapSize = BigMap->GetActorScale3D();
-//				MapSize.BigMapRealSize = FVector2D(BigMapSize.X * 7, BigMapSize.Y * 7);
-//
-//				FVector CenterPoint = FVector(MapSize.BigMapRealSize.X / 2);
-//
-//				if (ASceneCapture2D *NewCarma = World->SpawnActor<ASceneCapture2D>(SceneCaptureClass, CenterPoint, FRotator(-90.f, 0.f, 0.f)))
-//				{
-//					if (Life != 0.f)
-//					{
-//						NewCarma->SetLifeSpan(Life);
-//					}
-//
-//					return NewCarma;
-//				}
-//
-//				break;
-//			}
-//		}
-//	}
-//
-//	return nullptr;
-//}
+ASceneCapture2D * RenderingUtils::SpawnSceneCapture2D(
+	UWorld *World, 
+	UClass *SceneCaptureClass, 
+	FMapSize &MapSize, 
+	float Life)
+{
+	if (SceneCaptureClass)
+	{
+		for (TActorIterator<ALandscape> It(World, ALandscape::StaticClass()); It; ++It)
+		{
+			if (ALandscape* BigMap = *It)
+			{
+				//都是正方形
+				FVector BigMapSize = BigMap->GetActorScale3D();
+				MapSize.BigMapRealSize = FVector2D(BigMapSize.X * 7, BigMapSize.Y * 7);
+
+				FVector CenterPoint = FVector(MapSize.BigMapRealSize.X / 2);
+
+				if (ASceneCapture2D *NewCarma = World->SpawnActor<ASceneCapture2D>(SceneCaptureClass, CenterPoint, FRotator(-90.f, 0.f, 0.f)))
+				{
+					if (Life != 0.f)
+					{
+						NewCarma->SetLifeSpan(Life);
+					}
+
+					return NewCarma;
+				}
+
+				break;
+			}
+		}
+	}
+
+	return nullptr;
+}
 #if PLATFORM_WINDOWS
 #pragma optimize("",on) 
 #endif

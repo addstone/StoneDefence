@@ -205,5 +205,5 @@ namespace RenderingUtils
 		FString Filename;
 	};
 
-	//ASceneCapture2D *SpawnSceneCapture2D(UWorld *World, UClass *SceneCaptureClass, FMapSize &MapSize, float Life = 0.f);
+	ASceneCapture2D *SpawnSceneCapture2D(UWorld *World, UClass *SceneCaptureClass, FMapSize &MapSize, float Life = 0.f);
 }

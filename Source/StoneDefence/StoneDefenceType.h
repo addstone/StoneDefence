@@ -7,6 +7,13 @@
 
 DECLARE_DELEGATE_OneParam(FSimpleOneInt32Delegate, int32)
 
+UENUM(BlueprintType)
+enum class EMiniMapType :uint8
+{
+	REAL_MAP,
+	GRAPHICAL_MAP,
+};
+
 enum EGameSaveType
 {
 	NONE = 0b0000,
@@ -103,4 +110,9 @@ enum class ECharacterType :uint8
 {
 	TOWER,
 	MONSTER,
+};
+
+struct FMapSize
+{
+	FVector2D BigMapRealSize;
 };
