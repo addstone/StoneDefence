@@ -59,9 +59,9 @@ bool ATowersDefenceGameState::ReadGameData(int32 SaveNumber)
 	return SaveData != NULL;
 }
 
-FCharacterData & ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
+FCharacterData * ATowersDefenceGameState::AddCharacterData(const FGuid &ID, const FCharacterData &Data)
 {
-	return GetSaveData()->CharacterDatas.Add(ID, Data);
+	return &GetSaveData()->CharacterDatas.Add(ID, Data);
 }
 
 bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &ID)
@@ -69,29 +69,29 @@ bool ATowersDefenceGameState::RemoveCharacterData(const FGuid &ID)
 	return GetSaveData()->CharacterDatas.Remove(ID);
 }
 
-FCharacterData & ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
+FCharacterData * ATowersDefenceGameState::GetCharacterData(const FGuid &ID)
 {
 	if (GetSaveData()->CharacterDatas.Contains(ID))
 	{
-		return GetSaveData()->CharacterDatas[ID];
+		return &GetSaveData()->CharacterDatas[ID];
 	}
 	
-	SD_print(Error, "The current [%i] is invalid", *ID.ToString());
-	return CharacterDataNULL;
+	//SD_print(Error, "The current [%i] is invalid", *ID.ToString());
+	return nullptr;
 }
 
-const FCharacterData & ATowersDefenceGameState::GetCharacterDataByID(int32 ID, ECharacterType Type /*= ECharacterType::TOWER*/)
+const FCharacterData * ATowersDefenceGameState::GetCharacterDataByID(int32 ID, ECharacterType Type /*= ECharacterType::TOWER*/)
 {
-	auto GetMyCharacterData = [&](const TArray< FCharacterData*> &Datas, int32 ID)->const FCharacterData &
+	auto GetMyCharacterData = [&](const TArray< FCharacterData*> &Datas, int32 ID)->const FCharacterData *
 	{
 		for (const auto &Tmp : Datas)
 		{
 			if (Tmp->ID == ID)
 			{
-				return *Tmp;
+				return Tmp;
 			}
 		}
-		return CharacterDataNULL;
+		return nullptr;
 	};
 
 	switch (Type)
@@ -109,7 +109,7 @@ const FCharacterData & ATowersDefenceGameState::GetCharacterDataByID(int32 ID, E
 		return GetMyCharacterData(Datas, ID);
 	}
 	}
-	return CharacterDataNULL;
+	return nullptr;
 }
 
 const TArray<FCharacterData*> & ATowersDefenceGameState::GetTowerDataFromTable()
@@ -135,11 +135,6 @@ FGameInstanceDatas & ATowersDefenceGameState::GetGameData()
 	return GetSaveData()->GamerDatas;
 }
 
-FCharacterData & ATowersDefenceGameState::GetCharacterDataNULL()
-{
-	return CharacterDataNULL;
-}
-
 const TArray<FSkillData*> & ATowersDefenceGameState::GetSkillDataFromTable()
 {
 	if (!CacheSkillDatas.Num())
@@ -150,43 +145,46 @@ const TArray<FSkillData*> & ATowersDefenceGameState::GetSkillDataFromTable()
 	return CacheSkillDatas;
 }
 
-FSkillData & ATowersDefenceGameState::AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data)
+FSkillData * ATowersDefenceGameState::AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data)
 {
-	FCharacterData &InCharacterData = GetCharacterData(CharacterID);
-	
-		if (InCharacterData.IsValid())
-		{
-			return InCharacterData.AdditionalSkillData.Add(SkillID, Data);
-		}
-	
+	if (FCharacterData *InCharacterData = GetCharacterData(CharacterID))
+	{
 
-	return SkillDataNULL;
+		if (InCharacterData->IsValid())
+		{
+			return &InCharacterData->AdditionalSkillData.Add(SkillID, Data);
+		}
+
+	}
+	return nullptr;
 }
 
-FSkillData & ATowersDefenceGameState::GetSkillData(const FGuid &SkillID)
+FSkillData * ATowersDefenceGameState::GetSkillData(const FGuid &SkillID)
 {
 	for (auto &Tmp : GetSaveData()->CharacterDatas)
 	{
 		if (Tmp.Value.AdditionalSkillData.Contains(SkillID))
 		{
-			return Tmp.Value.AdditionalSkillData[SkillID];
+			return &Tmp.Value.AdditionalSkillData[SkillID];
 		}
 	}
-	return SkillDataNULL;
+
+	return nullptr;
 }
 
-FSkillData & ATowersDefenceGameState::GetSkillData(const FGuid &CharacterID, const FGuid &SkillID)
+FSkillData * ATowersDefenceGameState::GetSkillData(const FGuid &CharacterID, const FGuid &SkillID)
 {
-	FCharacterData &InCharacterData = GetCharacterData(CharacterID);
-		if (InCharacterData.IsValid())
+	if (FCharacterData *InCharacterData = GetCharacterData(CharacterID))
+	{
+		if (InCharacterData->IsValid())
 		{
-			if (InCharacterData.AdditionalSkillData.Contains(SkillID))
+			if (InCharacterData->AdditionalSkillData.Contains(SkillID))
 			{
-				return InCharacterData.AdditionalSkillData[SkillID];
+				return &InCharacterData->AdditionalSkillData[SkillID];
 			}
 		}
-	
-	return SkillDataNULL;
+	}
+	return nullptr;
 }
 
 const FSkillData * ATowersDefenceGameState::GetSkillData(const int32 &SkillID)
@@ -231,12 +229,13 @@ void ATowersDefenceGameState::AddSkillDataTemplateToCharacterData(const FGuid &C
 
 bool ATowersDefenceGameState::IsVerificationSkillTemplate(const FGuid &CharacterID, int32 SkillID)
 {
-	const FCharacterData &InData = GetCharacterData(CharacterID);
-		if (InData.IsValid())
+	if (const FCharacterData *InData = GetCharacterData(CharacterID))
+	{
+		if (InData->IsValid())
 		{
-			return IsVerificationSkillTemplate(InData, SkillID);
+			return IsVerificationSkillTemplate(*InData, SkillID);
 		}
-	
+	}
 
 	return false;
 }
@@ -269,15 +268,20 @@ bool ATowersDefenceGameState::IsVerificationSkill(const FCharacterData &Characte
 
 bool ATowersDefenceGameState::IsVerificationSkill(const FGuid &CharacterID, int32 SkillID)
 {
-	const FCharacterData &InData = GetCharacterData(CharacterID);
-	
-		if (InData.IsValid())
+	if (const FCharacterData *InData = GetCharacterData(CharacterID))
+	{
+		if (InData->IsValid())
 		{
-			return IsVerificationSkill(InData, SkillID);
+			return IsVerificationSkill(*InData, SkillID);
 		}
-	
+	}
 
 	return false;
+}
+
+const TMap<FGuid, FCharacterData> & ATowersDefenceGameState::GetCharacterDatas()
+{
+	return GetSaveData()->CharacterDatas;
 }
 
 void ATowersDefenceGameState::AddSkill(const FGuid &CharacterGUID, int32 InSkillID)
@@ -303,11 +307,11 @@ void ATowersDefenceGameState::AddSkill(TPair<FGuid, FCharacterData> &InOwner, co
 
 bool ATowersDefenceGameState::SetSubmissionDataType(FGuid CharacterID, int32 Skill, ESubmissionSkillRequestType Type)
 {
-	FCharacterData &InCharacterData = GetCharacterData(CharacterID);
-	
-		if (InCharacterData.IsValid())
+	if (FCharacterData *InCharacterData = GetCharacterData(CharacterID))
+	{
+		if (InCharacterData->IsValid())
 		{
-			for (auto &Tmp : InCharacterData.CharacterSkill)
+			for (auto &Tmp : InCharacterData->CharacterSkill)
 			{
 				if (Skill == Tmp.ID)
 				{
@@ -316,7 +320,7 @@ bool ATowersDefenceGameState::SetSubmissionDataType(FGuid CharacterID, int32 Ski
 				}
 			}
 		}
-	
+	}
 
 	return false;
 }

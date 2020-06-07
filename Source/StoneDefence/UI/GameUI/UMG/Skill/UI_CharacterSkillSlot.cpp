@@ -17,13 +17,13 @@ void UUI_CharacterSkillSlot::NativeTick(const FGeometry& MyGeometry, float InDel
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	FSkillData &SkillData = GetSkillData();
-	
-		if (SkillData.IsValid())
+	if (FSkillData *SkillData = GetSkillData())
+	{
+		if (SkillData->IsValid())
 		{
-			UpdateCD(SkillData.GetDurationPercent());
+			UpdateCD(SkillData->GetDurationPercent());
 		}
-	
+	}
 }
 
 void UUI_CharacterSkillSlot::SetTexture(UTexture2D *InTexture)
@@ -50,7 +50,7 @@ void UUI_CharacterSkillSlot::UpdateCD(float SkillCD)
 	}
 }
 
-FSkillData &UUI_CharacterSkillSlot::GetSkillData()
+FSkillData *UUI_CharacterSkillSlot::GetSkillData()
 {
 	return GetGameState()->GetSkillData(GUID);
 }

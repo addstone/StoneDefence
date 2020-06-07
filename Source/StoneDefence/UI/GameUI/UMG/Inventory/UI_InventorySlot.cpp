@@ -57,12 +57,14 @@ UWidget * UUI_InventorySlot::GetTowerTip()
 	{
 		if (UUI_TowerTip *TowerTip = CreateWidget<UUI_TowerTip>(GetWorld(), TowerTipClass))
 		{
-			const FCharacterData &TowerDataInfo = GetGameState()->GetCharacterDataByID(GetBuildingTower().TowerID);
-			if (TowerDataInfo.IsValid())
+			if (const FCharacterData *TowerDataInfo = GetGameState()->GetCharacterDataByID(GetBuildingTower().TowerID))
 			{
-				TowerTip->InitTip(TowerDataInfo);
+				if (TowerDataInfo->IsValid())
+				{
+					TowerTip->InitTip(*TowerDataInfo);
 
-				return TowerTip;
+					return TowerTip;
+				}
 			}
 		}
 	}

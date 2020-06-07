@@ -51,11 +51,11 @@ void UUI_MainScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	//显示角色信息
 	if (ARuleOfTheCharacter *InCharacter = Cast<ARuleOfTheCharacter>(GetPlayerController()->GetHitResult().GetActor()))
 	{
-		const FCharacterData &CharacterData = GetGameState()->GetCharacterData(InCharacter->GUID);
-		
-			if (CharacterData.IsValid())
+		if (const FCharacterData *CharacterData = GetGameState()->GetCharacterData(InCharacter->GUID))
+		{
+			if (CharacterData->IsValid())
 			{
-				CharacterTip->InitTip(CharacterData);
+				CharacterTip->InitTip(*CharacterData);
 				CharacterTip->SetVisibility(ESlateVisibility::HitTestInvisible);
 				if (UCanvasPanelSlot* NewPanelSlot = Cast<UCanvasPanelSlot>(CharacterTip->Slot))
 				{
@@ -72,7 +72,7 @@ void UUI_MainScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			{
 				CharacterTip->SetVisibility(ESlateVisibility::Hidden);
 			}
-		
+		}
 	}
 	else
 	{

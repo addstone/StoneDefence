@@ -109,7 +109,7 @@ public:
 	virtual float GetMaxHealth();
 	virtual ETeam GetTeamType();
 
-	virtual FCharacterData &GetCharacterData();
+	virtual FCharacterData *GetCharacterData();
 
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Test")
 		UStaticMesh *GetDollMesh(FTransform &Transform, int32 MeshID);
@@ -137,9 +137,4 @@ public:
 public:
 	UFUNCTION(Blueprintable, BlueprintPure, Category = "Towers|Attrubute")
 		bool IsActive() { return !IsDeath(); }
-
-#if WITH_EDITOR
-private:
-	FCharacterData NULLData;
-#endif
 };

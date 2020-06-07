@@ -27,7 +27,7 @@ void AMonsters::Tick(float DeltaTime)
 
 void AMonsters::RegisterTeam()
 {
-	GetCharacterData().Team = ETeam::BLUE;
+	GetCharacterData()->Team = ETeam::BLUE;
 }
 
 void AMonsters::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)

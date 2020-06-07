@@ -16,11 +16,13 @@ void ARuleOfTheAIController::Tick(float DeltaTime)
 	{
 		if (ARuleOfTheCharacter *InCharacter = Cast<ARuleOfTheCharacter>(GetPawn()))
 		{
-			FCharacterData &Data = InCharacter->GetCharacterData();
-			if (Data.IsValid())
+			if (FCharacterData *Data = InCharacter->GetCharacterData())
 			{
-				Data.Location = InCharacter->GetActorLocation();
-				Data.Rotator = InCharacter->GetActorRotation();
+				if (Data->IsValid())
+				{
+					Data->Location = InCharacter->GetActorLocation();
+					Data->Rotator = InCharacter->GetActorRotation();
+				}
 			}
 		}
 	}
