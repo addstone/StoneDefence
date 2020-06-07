@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "StoneDefenceType.generated.h"
 
+DECLARE_DELEGATE_OneParam(FSimpleOneInt32Delegate, int32)
 
 enum EGameSaveType
 {
