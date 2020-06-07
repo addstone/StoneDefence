@@ -13,18 +13,19 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "../../../Global/RuleOfTheGlobal.h"
 #include "../../../Global/Blueprint/GlobalConfiguration.h"
+#include "../../../Core/RuleOfTheGameUserSettings.h"
 
 void UUI_MiniMapSystem::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	//float Life = 0.0f;
-	//if (!URuleOfTheGameUserSettings::GetRuleOfTheGameUserSettings()->GetRealisticMap())
-	//{
-	//	Life = 0.03f;
-	//}
+	float Life = 0.0f;
+	if (!URuleOfTheGameUserSettings::GetRuleOfTheGameUserSettings()->GetRealisticMap())
+	{
+		Life = 0.03f;
+	}
 
-	if (ASceneCapture2D *SceneCapture2D = RenderingUtils::SpawnSceneCapture2D(GetWorld(), CaptureClass, MapSize, 0.03f))
+	if (ASceneCapture2D *SceneCapture2D = RenderingUtils::SpawnSceneCapture2D(GetWorld(), CaptureClass, MapSize, Life))
 	{
 		MiniMapImage->SetBrushFromMaterial(Cast<UMaterialInterface>(MiniMapMat.GetObject()));
 	}
@@ -71,8 +72,8 @@ void UUI_MiniMapSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 			ImagePanelSlot->SetPosition(MinImageMapOffset);
 		}
 
-		//if (!URuleOfTheGameUserSettings::GetRuleOfTheGameUserSettings()->GetRealisticMap())
-		//{
+		if (!URuleOfTheGameUserSettings::GetRuleOfTheGameUserSettings()->GetRealisticMap())
+		{
 			//场景中的角色
 			for (auto& Tmp : CharacterDatas)
 			{
@@ -131,7 +132,7 @@ void UUI_MiniMapSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 			{
 				CharacterIcons.Remove(Tmp3);
 			}
-		//}
+		}
 	}
 }
 
