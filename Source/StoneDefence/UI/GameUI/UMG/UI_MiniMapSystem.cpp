@@ -11,6 +11,8 @@
 #include "Materials/MaterialInterface.h"
 #include "../../../Core/GameCore/TowerDefenceGameCamera.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "../../../Global/RuleOfTheGlobal.h"
+#include "../../../Global/Blueprint/GlobalConfiguration.h"
 
 void UUI_MiniMapSystem::NativeConstruct()
 {
@@ -22,18 +24,18 @@ void UUI_MiniMapSystem::NativeConstruct()
 	//	Life = 0.03f;
 	//}
 
-	if (ASceneCapture2D *SceneCapture2D = RenderingUtils::SpawnSceneCapture2D(GetWorld(), CaptureClass, MapSize, 0.3f))
+	if (ASceneCapture2D *SceneCapture2D = RenderingUtils::SpawnSceneCapture2D(GetWorld(), CaptureClass, MapSize, 0.03f))
 	{
 		MiniMapImage->SetBrushFromMaterial(Cast<UMaterialInterface>(MiniMapMat.GetObject()));
 	}
 
-	//if (MiniMapImage)
-	//{
-	//	if (UCanvasPanelSlot *ImagePanelSlot = Cast<UCanvasPanelSlot>(MiniMapImage->Slot))
-	//	{
-	//		ImagePanelSlot->SetSize(FVector2D(GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxMiniMapSize));
-	//	}
-	//}
+	if (MiniMapImage)
+	{
+		if (UCanvasPanelSlot *ImagePanelSlot = Cast<UCanvasPanelSlot>(MiniMapImage->Slot))
+		{
+			ImagePanelSlot->SetSize(FVector2D(GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxMiniMapSize));
+		}
+	}
 }
 
 //Tick
@@ -45,32 +47,32 @@ void UUI_MiniMapSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 
 	if (UCanvasPanelSlot *ImagePanelSlot = Cast<UCanvasPanelSlot>(MiniMapImage->Slot))
 	{
-		//const float MaxMiniMapSize = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxMiniMapSize;
-		//const float MaxTargetArmLength = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxTargetArmLength;
+		const float MaxMiniMapSize = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxMiniMapSize;
+		const float MaxTargetArmLength = GLOBAL_MANAGEMENT_MACRO()->GetGlobalConfiguration()->MaxTargetArmLength;
 
-		//FVector2D LocalSize2D = MyGeometry.GetDrawSize();
+		FVector2D LocalSize2D = MyGeometry.GetDrawSize();
 
-		////地图缩放
-		//FVector2D ZoomSize;
+		//地图缩放
+		FVector2D ZoomSize;
+		{
+			float TargetArmLength = Cast<ATowerDefenceGameCamera>(GetWorld()->GetFirstPlayerController()->GetPawn())->GetTargetArmLength();
+			ZoomSize = FVector2D((MaxMiniMapSize / MaxTargetArmLength) * TargetArmLength);
+
+			ImagePanelSlot->SetSize(ZoomSize);
+		}
+
+		//地图位置
+		FVector2D MinImageMapOffset;
+		{
+			FVector Location = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+			MinImageMapOffset.Y = -(ZoomSize.X - (ZoomSize.X / MapSize.BigMapRealSize.X) * Location.X);
+			MinImageMapOffset.X = -(ZoomSize.Y / MapSize.BigMapRealSize.Y) * Location.Y;
+
+			ImagePanelSlot->SetPosition(MinImageMapOffset);
+		}
+
+		//if (!URuleOfTheGameUserSettings::GetRuleOfTheGameUserSettings()->GetRealisticMap())
 		//{
-		//	float TargetArmLength = Cast<ATowerDefenceGameCamera>(GetWorld()->GetFirstPlayerController()->GetPawn())->GetTargetArmLength();
-		//	ZoomSize = FVector2D((MaxMiniMapSize / MaxTargetArmLength) * TargetArmLength);
-
-		//	ImagePanelSlot->SetSize(ZoomSize);
-		//}
-
-	//	//地图位置
-	//	FVector2D MinImageMapOffset;
-	//	{
-	//		FVector Location = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	//		MinImageMapOffset.Y = -(ZoomSize.X - (ZoomSize.X / MapSize.BigMapRealSize.X) * Location.X);
-	//		MinImageMapOffset.X = -(ZoomSize.Y / MapSize.BigMapRealSize.Y) * Location.Y;
-
-	//		ImagePanelSlot->SetPosition(MinImageMapOffset);
-	//	}
-
-	//	if (!URuleOfTheGameUserSettings::GetRuleOfTheGameUserSettings()->GetRealisticMap())
-	//	{
 			//场景中的角色
 			for (auto& Tmp : CharacterDatas)
 			{
@@ -82,8 +84,8 @@ void UUI_MiniMapSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 						{
 							if (UCanvasPanelSlot* PanelSlot = MiniMap->AddChildToCanvas(Point))
 							{
-								//PanelSlot->SetZOrder(1.0f);
-								//PanelSlot->SetAnchors(0.5f);
+								PanelSlot->SetZOrder(1.0f);
+								PanelSlot->SetAnchors(0.5f);
 								Point->SetBrushFromTexture(Tmp.Value.Icon.LoadSynchronous());
 								PanelSlot->SetSize(FVector2D(32.f));
 								PanelSlot->SetAlignment(FVector2D(.5f));
@@ -96,17 +98,17 @@ void UUI_MiniMapSystem::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 						if (UCanvasPanelSlot* PanelSlot = CharacterIcons[Tmp.Key].Get())
 						{
 							FVector2D MiniMapPos;
-							//MinMapPos.Y = ZoomSize.X - (ZoomSize.X / MapSize.BigMapRealSize.X) * Tmp.Value.Location.X + MinImageMapOffset.Y;
-							//MinMapPos.X = (ZoomSize.Y / MapSize.BigMapRealSize.Y) * Tmp.Value.Location.Y + MinImageMapOffset.X;
+							MiniMapPos.Y = ZoomSize.X - (ZoomSize.X / MapSize.BigMapRealSize.X) * Tmp.Value.Location.X + MinImageMapOffset.Y;
+							MiniMapPos.X = (ZoomSize.Y / MapSize.BigMapRealSize.Y) * Tmp.Value.Location.Y + MinImageMapOffset.X;
 							
-							float MiniSizeX = MyGeometry.GetLocalSize().X;
-							float MiniSizeY = MyGeometry.GetLocalSize().Y;
+							//float MiniSizeX = MyGeometry.GetLocalSize().X;
+							//float MiniSizeY = MyGeometry.GetLocalSize().Y;
 
-							MiniMapPos.Y = MiniSizeY - (MiniSizeX / MapSize.BigMapRealSize.X)*Tmp.Value.Location.X;
-							MiniMapPos.X = (MiniSizeY / MapSize.BigMapRealSize.Y)*Tmp.Value.Location.Y;
+							//MiniMapPos.Y = MiniSizeY - (MiniSizeX / MapSize.BigMapRealSize.X)*Tmp.Value.Location.X;
+							//MiniMapPos.X = (MiniSizeY / MapSize.BigMapRealSize.Y)*Tmp.Value.Location.Y;
 
-							PanelSlot->SetPosition(MiniMapPos);
-							//ResetLocation(PanelSlot, MinMapPos, LocalSize2D);
+							//PanelSlot->SetPosition(MiniMapPos);
+							ResetLocation(PanelSlot, MiniMapPos, LocalSize2D);
 						}
 					}
 				}
@@ -148,53 +150,53 @@ bool UUI_MiniMapSystem::IsExistence(const FGuid &ID)
 
 void UUI_MiniMapSystem::ResetLocation(UCanvasPanelSlot* PanelSlot, const FVector2D &MinMapPos, const FVector2D &LocalSize2D)
 {
-	//FVector2D IconSize = PanelSlot->GetSize() / 2;
+	FVector2D IconSize = PanelSlot->GetSize() / 2;
 
-	//auto IsRange = [&](const float &CompareValue, const float &Value)->bool
-	//{
-	//	return Value > -CompareValue && Value < CompareValue;
-	//};
+	auto IsRange = [&](const float &CompareValue, const float &Value)->bool
+	{
+		return Value > -CompareValue && Value < CompareValue;
+	};
 
-	//FVector2D NewPos = MinMapPos;
-	//if (MinMapPos.X <= LocalSize2D.X &&
-	//	MinMapPos.Y <= LocalSize2D.Y &&
-	//	MinMapPos.X >= -LocalSize2D.X &&
-	//	MinMapPos.Y >= -LocalSize2D.Y)
-	//{
+	FVector2D NewPos = MinMapPos;
+	if (MinMapPos.X <= LocalSize2D.X &&
+		MinMapPos.Y <= LocalSize2D.Y &&
+		MinMapPos.X >= -LocalSize2D.X &&
+		MinMapPos.Y >= -LocalSize2D.Y)
+	{
 
-	//}
-	//else if (MinMapPos.Y < -LocalSize2D.Y && IsRange(LocalSize2D.X, MinMapPos.X))//上
-	//{
-	//	NewPos = FVector2D(MinMapPos.X, -LocalSize2D.Y + IconSize.Y);
-	//}
-	//else if (MinMapPos.X < -LocalSize2D.X && IsRange(LocalSize2D.Y, MinMapPos.Y))//左
-	//{
-	//	NewPos = FVector2D(-LocalSize2D.X + IconSize.Y, MinMapPos.Y);
-	//}
-	//else if (MinMapPos.Y > LocalSize2D.Y && IsRange(LocalSize2D.X, MinMapPos.X))//下
-	//{
-	//	NewPos = FVector2D(MinMapPos.X, LocalSize2D.Y - IconSize.Y);
-	//}
-	//else if (MinMapPos.X > LocalSize2D.X && IsRange(LocalSize2D.Y, MinMapPos.Y))//右
-	//{
-	//	NewPos = FVector2D(LocalSize2D.X - IconSize.X, MinMapPos.Y);
-	//}
-	//else if (MinMapPos.X < -LocalSize2D.X && MinMapPos.Y < -LocalSize2D.Y)//左上
-	//{
-	//	NewPos = -LocalSize2D + IconSize;
-	//}
-	//else if (MinMapPos.X < -LocalSize2D.X && MinMapPos.Y > LocalSize2D.Y)//左下
-	//{
-	//	NewPos = FVector2D(-LocalSize2D.X + IconSize.X, LocalSize2D.Y - IconSize.Y);
-	//}
-	//else if (MinMapPos.X > LocalSize2D.X && MinMapPos.Y > LocalSize2D.Y)//右下
-	//{
-	//	NewPos = LocalSize2D - IconSize;
-	//}
-	//else if (MinMapPos.X > LocalSize2D.X && MinMapPos.Y < -LocalSize2D.Y)//右上
-	//{
-	//	NewPos = FVector2D(LocalSize2D.X - IconSize.X, -LocalSize2D.Y + IconSize.Y);
-	//}
+	}
+	else if (MinMapPos.Y < -LocalSize2D.Y && IsRange(LocalSize2D.X, MinMapPos.X))//上
+	{
+		NewPos = FVector2D(MinMapPos.X, -LocalSize2D.Y + IconSize.Y);
+	}
+	else if (MinMapPos.X < -LocalSize2D.X && IsRange(LocalSize2D.Y, MinMapPos.Y))//左
+	{
+		NewPos = FVector2D(-LocalSize2D.X + IconSize.Y, MinMapPos.Y);
+	}
+	else if (MinMapPos.Y > LocalSize2D.Y && IsRange(LocalSize2D.X, MinMapPos.X))//下
+	{
+		NewPos = FVector2D(MinMapPos.X, LocalSize2D.Y - IconSize.Y);
+	}
+	else if (MinMapPos.X > LocalSize2D.X && IsRange(LocalSize2D.Y, MinMapPos.Y))//右
+	{
+		NewPos = FVector2D(LocalSize2D.X - IconSize.X, MinMapPos.Y);
+	}
+	else if (MinMapPos.X < -LocalSize2D.X && MinMapPos.Y < -LocalSize2D.Y)//左上
+	{
+		NewPos = -LocalSize2D + IconSize;
+	}
+	else if (MinMapPos.X < -LocalSize2D.X && MinMapPos.Y > LocalSize2D.Y)//左下
+	{
+		NewPos = FVector2D(-LocalSize2D.X + IconSize.X, LocalSize2D.Y - IconSize.Y);
+	}
+	else if (MinMapPos.X > LocalSize2D.X && MinMapPos.Y > LocalSize2D.Y)//右下
+	{
+		NewPos = LocalSize2D - IconSize;
+	}
+	else if (MinMapPos.X > LocalSize2D.X && MinMapPos.Y < -LocalSize2D.Y)//右上
+	{
+		NewPos = FVector2D(LocalSize2D.X - IconSize.X, -LocalSize2D.Y + IconSize.Y);
+	}
 
-	//PanelSlot->SetPosition(NewPos);
+	PanelSlot->SetPosition(NewPos);
 }
