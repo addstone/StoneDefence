@@ -219,3 +219,16 @@ Developed with Unreal Engine 4
 |第九节：模型的缓存池设计|:heavy_check_mark:|
 |第十节：ToolBar波段数代理|:heavy_check_mark:|
 |第十一节：解决游戏中存在的BUG|:heavy_check_mark:|
+---
+# 第十六章：小地图实现策略
+|||
+| --------   | -----  |
+|第一节：通过场景动态捕捉小地图|:heavy_check_mark:|
+|第二节：捕获地形贴图的数学原理|:heavy_check_mark:|
+|第三节：旧版本HUD绘制地图数学原理|:heavy_check_mark:|
+|第四节：将动态的地图截屏应用到小地图|:heavy_check_mark:|
+|第五节：地图移动原理和全局管理策略|:heavy_check_mark:|
+|第六节：全局管理架构设计布局思路|:heavy_check_mark:|
+|第七节：地图移动和缩放|:heavy_check_mark:|
+|第八节：在地图上定位敌人|:heavy_check_mark:|
+|第九节：自定义真实感地图切换策略|:heavy_check_mark:|
