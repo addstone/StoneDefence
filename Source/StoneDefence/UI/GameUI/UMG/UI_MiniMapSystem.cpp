@@ -197,6 +197,5 @@ void UUI_MiniMapSystem::ResetLocation(UCanvasPanelSlot* PanelSlot, const FVector
 	{
 		NewPos = FVector2D(LocalSize2D.X - IconSize.X, -LocalSize2D.Y + IconSize.Y);
 	}
-
 	PanelSlot->SetPosition(NewPos);
 }
