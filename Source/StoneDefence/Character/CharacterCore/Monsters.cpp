@@ -15,19 +15,19 @@ void AMonsters::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	////速度设定
-	//const FCharacterData &InCharacterData = GetCharacterData();
-	//
-	//	if (InCharacterData.IsValid())
-	//	{
-	//		GetCharacterMovement()->MaxWalkSpeed = InCharacterData.GetWalkSpeed();
-	//	}
-	
+	//速度设定
+	if (const FCharacterData *InCharacterData = GetCharacterData())
+	{
+		if (InCharacterData->IsValid())
+		{
+			GetCharacterMovement()->MaxWalkSpeed = InCharacterData->GetWalkSpeed();
+		}
+	}
 }
 
 void AMonsters::RegisterTeam()
 {
-	GetCharacterData().Team = ETeam::BLUE;
+	GetCharacterData()->Team = ETeam::BLUE;
 }
 
 void AMonsters::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)

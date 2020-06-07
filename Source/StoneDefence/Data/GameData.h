@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "../StoneDefenceType.h"
 #include "GameData.generated.h"
 
 USTRUCT()
@@ -9,6 +10,8 @@ struct FGameInstanceDatas
 	GENERATED_USTRUCT_BODY()
 
 	FGameInstanceDatas();
+
+	FSimpleOneInt32Delegate CallClientUpdate;
 
 	void Init();
 

@@ -21,7 +21,7 @@ ATowers::ATowers()
 
 void ATowers::RegisterTeam()
 {
-	GetCharacterData().Team = ETeam::RED;
+	GetCharacterData()->Team = ETeam::RED;
 }
 
 float ATowers::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

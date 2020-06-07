@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class StoneToolClass : ModuleRules
+public class SimpleScreenMove : ModuleRules
 {
-	public StoneToolClass(ReadOnlyTargetRules Target) : base(Target)
+	public SimpleScreenMove(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

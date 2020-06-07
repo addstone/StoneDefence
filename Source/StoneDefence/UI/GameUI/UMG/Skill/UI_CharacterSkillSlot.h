@@ -37,5 +37,5 @@ public:
 
 	void UpdateCD(float SkillCD);
 
-	FSkillData &GetSkillData();
+	FSkillData *GetSkillData();
 };

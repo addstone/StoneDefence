@@ -19,6 +19,7 @@
 #include "../../StoneDefenceMacro.h"
 #include "../../Bullet/RuleOfTheBullet.h"
 #include "../Damage/RuleOfTheDamage.h"
+#include "../../Global/RuleOfTheGlobal.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -78,18 +79,18 @@ void ARuleOfTheCharacter::UpdateUI()
 {
 	if (Widget)
 	{
-		//if (const FCharacterData &InCharacterData = GetCharacterData())
-		//{
-			if (GetCharacterData().IsValid())
+		if (const FCharacterData *InCharacterData = GetCharacterData())
+		{
+			if (InCharacterData->IsValid())
 			{
 				if (UUI_Health *HealthUI = Cast<UUI_Health>(Widget->GetUserWidgetObject()))
 				{
-					HealthUI->SetTitle(GetCharacterData().Name.ToString());
+					HealthUI->SetTitle(InCharacterData->Name.ToString());
 					HealthUI->SetHealth(GetHealth() / GetMaxHealth());
 				}
 			}
 		}
-	//}
+	}
 }
 
 void ARuleOfTheCharacter::UpdateSkill(int32 SkillID)
@@ -155,8 +156,8 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 
 	float DamageValue = 0.f;
 
-	FCharacterData &InCharacterData = GetCharacterData();
-	
+	if (FCharacterData *InCharacterData = GetCharacterData())
+	{
 		if (URuleOfTheDamage *DamageClass = DamageEvent.DamageTypeClass->GetDefaultObject<URuleOfTheDamage>())
 		{
 			if (const FSkillData *SkillData = DamageClass->SkillData)
@@ -168,34 +169,35 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 						if (ADrawText* MyValueText = GetWorld()->SpawnActor<ADrawText>(DrawTextClass, InOwner->GetActorLocation(), FRotator::ZeroRotator))
 						{
 							FString DamageText = FString::Printf(InText, InDamageValue);
-							MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData().GetMaxHealth());
+							MyValueText->SetTextBlock(DamageText, InColor, InDamageValue / InOwner->GetCharacterData()->GetMaxHealth());
 						}
 					}
 				};
-				if (SkillData->SkillType.SkillEffectType == ESkillEffectType::SUBTRACT) 
+				if (SkillData->SkillType.SkillEffectType == ESkillEffectType::SUBTRACT)
 				{
 					DamageValue = Expression::GetDamage(Cast<ARuleOfTheCharacter>(DamageCauser), this);
 					if (DamageValue)
 					{
-						GetCharacterData().Health -= DamageValue;		
+						InCharacterData->Health -= DamageValue;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("-%0.f"), DamageValue, FLinearColor::Red);
 					}
+
 					if (SkillData->AttackSpeed)
 					{
-						GetCharacterData().AttackSpeed -= SkillData->AttackSpeed;
+						InCharacterData->AttackSpeed -= SkillData->AttackSpeed;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("-%0.f"), SkillData->AttackSpeed, FLinearColor::Black);
 					}
 					if (SkillData->PhysicalAttack)
 					{
-						GetCharacterData().PhysicalAttack -= SkillData->PhysicalAttack;
+						InCharacterData->PhysicalAttack -= SkillData->PhysicalAttack;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("-%0.f"), SkillData->PhysicalAttack, FLinearColor::Black);
 					}
 					if (SkillData->Armor)
 					{
-						GetCharacterData().Armor -= SkillData->Armor;
+						InCharacterData->Armor -= SkillData->Armor;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("-%0.f"), SkillData->Armor, FLinearColor::Black);
 					}
@@ -204,31 +206,31 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 				{
 					if (SkillData->PhysicalAttack)
 					{
-						GetCharacterData().PhysicalAttack += SkillData->PhysicalAttack;
+						InCharacterData->PhysicalAttack += SkillData->PhysicalAttack;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("+%0.f"), SkillData->PhysicalAttack, FLinearColor::Blue);
 					}
 
 					if (SkillData->Armor)
 					{
-						GetCharacterData().Armor += SkillData->Armor;
+						InCharacterData->Armor += SkillData->Armor;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("+%0.f"), SkillData->Armor, FLinearColor::White);
 					}
 
 					if (SkillData->AttackSpeed)
 					{
-						GetCharacterData().AttackSpeed += SkillData->AttackSpeed;
+						InCharacterData->AttackSpeed += SkillData->AttackSpeed;
 						//绘制受伤字体
 						DrawGameText(this, TEXT("+%0.f"), SkillData->AttackSpeed, FLinearColor::White);
 					}
 
 					if (SkillData->Health)
 					{
-						GetCharacterData().Health += SkillData->Health;
-						if (GetCharacterData().Health > GetCharacterData().MaxHealth)
+						InCharacterData->Health += SkillData->Health;
+						if (InCharacterData->Health > InCharacterData->MaxHealth)
 						{
-							GetCharacterData().Health = GetCharacterData().MaxHealth;
+							InCharacterData->Health = InCharacterData->MaxHealth;
 						}
 
 						//绘制受伤字体
@@ -243,10 +245,10 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 					//奖赏机制
 					if (GetPlayerState()->GetPlayerData().Team != GetTeamType())
 					{
-						GetPlayerState()->GetPlayerData().GameGold += GetCharacterData().Glod;
+						GetPlayerState()->GetPlayerData().GameGold += InCharacterData->Glod;
 					}
 
-					GetCharacterData().Health = 0.0f;
+					GetCharacterData()->Health = 0.0f;
 					SetLifeSpan(10.f);
 
 					Widget->SetVisibility(false);
@@ -256,12 +258,12 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 					{
 						if (CauserCharacter->IsActive())
 						{
-							if (CauserCharacter->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue))
+							if (CauserCharacter->GetCharacterData()->UpdateEP(InCharacterData->AddEmpiricalValue))
 							{
 
 							}
 
-							DrawGameText(CauserCharacter, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue, FLinearColor::Yellow);
+							DrawGameText(CauserCharacter, TEXT("+EP %0.f"), InCharacterData->AddEmpiricalValue, FLinearColor::Yellow);
 						}
 
 						//寻找范围内最近的敌人 升级
@@ -273,12 +275,12 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 							{
 								if (InEnemy->IsActive())
 								{
-									if (InEnemy->GetCharacterData().UpdateEP(GetCharacterData().AddEmpiricalValue) * 0.3)
+									if (InEnemy->GetCharacterData()->UpdateEP(InCharacterData->AddEmpiricalValue) * 0.3)
 									{
 
 									}
 
-									DrawGameText(InEnemy, TEXT("+EP %0.f"), GetCharacterData().AddEmpiricalValue * 0.3, FLinearColor::Yellow);
+									DrawGameText(InEnemy, TEXT("+EP %0.f"), InCharacterData->AddEmpiricalValue * 0.3, FLinearColor::Yellow);
 								}
 							}
 						}
@@ -290,9 +292,10 @@ float ARuleOfTheCharacter::TakeDamage(float Damage, struct FDamageEvent const& D
 				{
 					SubmissionSkillRequest(SkillData->ID);
 				}
-				
+
 			}
 		}
+	}
 	return DamageValue;
 }
 
@@ -304,30 +307,41 @@ bool ARuleOfTheCharacter::IsDeath()
 
 float ARuleOfTheCharacter::GetHealth()
 {
-	return GetCharacterData().Health;
+	if (FCharacterData *InCharacterData = GetCharacterData())
+	{
+		return InCharacterData->Health;
+	}
+	return 0.f;
 }
 
 float ARuleOfTheCharacter::GetMaxHealth()
 {
-	return GetCharacterData().GetMaxHealth();
+	if (FCharacterData *InCharacterData = GetCharacterData())
+	{
+		return InCharacterData->GetMaxHealth();
+	}
+
+	return 100.f;
 }
 
 ETeam ARuleOfTheCharacter::GetTeamType()
 {
-	return GetCharacterData().Team;
+	if (FCharacterData *InCharacterData = GetCharacterData())
+	{
+		return InCharacterData->Team;
+	}
+
+	return ETeam::MAX;
 }
 
-FCharacterData & ARuleOfTheCharacter::GetCharacterData()
+FCharacterData * ARuleOfTheCharacter::GetCharacterData()
 {
-#if WITH_EDITOR
 	if (GetGameState())
 	{
 		return GetGameState()->GetCharacterData(GUID);
 	}
-	return NULLData;
-#else
-	return GetGameState()->GetCharacterData(GUID);
-#endif
+
+	return nullptr;
 }
 
 UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 MeshID)
@@ -346,23 +360,6 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (UParticleSystemComponent *NewParticleSystemComponent = Cast<UParticleSystemComponent>(Tmp))
 		{
-			//if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
-			//{
-			//	for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
-			//	{
-			//		if (Tmp_->LODLevels[0]->bEnabled)
-			//		{
-			//			if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
-			//			{
-			//				if (MyParticleDataMesh->Mesh)
-			//				{
-			//					Transform = NewParticleSystemComponent->GetComponentTransform();
-			//					return MyParticleDataMesh->Mesh;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
 			if (UStaticMesh *NewMesh = MeshUtils::ParticleSystemCompnentToStaticMesh(NewParticleSystemComponent))
 			{
 				Transform = NewParticleSystemComponent->GetComponentTransform();
@@ -376,10 +373,23 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 			NewSkeletalMeshComponent->SetWorldTransform(FTransform::Identity);
 			NewSkeletalMeshComponent->SetRelativeRotation(Transform.GetRotation());
 
-			if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+			//if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+			//{
+
+			//	return NewMesh;
+			//}
+
+			if (UStaticMesh *InNewMesh = DOLL_MESH_POOL_MANAGE_MACRO()->GetStaticMesh(MeshID))
 			{
-				
-				return NewMesh;
+				return InNewMesh;
+			}
+			else
+			{
+				if (UStaticMesh *InNewMesh2 = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+				{
+					DOLL_MESH_POOL_MANAGE_MACRO()->Add(MeshID, InNewMesh2);
+					return InNewMesh2;
+				}
 			}
 			
 		}

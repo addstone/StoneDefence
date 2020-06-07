@@ -12,6 +12,6 @@ void UGameSaveSlotList::InitSaveGameFromArchives(UWorld *InWorld)
 {
 	for (auto &Tmp : SlotList.Slots)
 	{
-		//Tmp.Value.GameThumbnail.InitResources();
+		Tmp.Value.GameThumbnail.InitResources();
 	}
 }

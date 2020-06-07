@@ -2,12 +2,16 @@
 
 
 #include "TowerDefenceHallPawn.h"
+#include "Components/SceneComponent.h"
 
 // Sets default values
 ATowerDefenceHallPawn::ATowerDefenceHallPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+
+	NewRoot = CreateDefaultSubobject<USceneComponent>(TEXT("NewRoot"));
+	RootComponent = NewRoot;
 
 }
 

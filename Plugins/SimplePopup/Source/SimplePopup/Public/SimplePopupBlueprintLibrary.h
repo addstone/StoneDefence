@@ -28,19 +28,19 @@ class SIMPLEPOPUP_API USimplePopupBlueprintLibrary : public UBlueprintFunctionLi
 	 * @return  FPopupHandle			Returns a pop-up handle. You can customize many pop-up behaviors .@See PopupSure(...),PopupCancel(..).
 	 */
 	UFUNCTION(BlueprintCallable, Category = SimplePopup, meta = (WorldContext = WorldContextObject))
-	static FPopupHandle CreatePopup(UObject* WorldContextObject, TSubclassOf<UUI_SimplePopup> PopupClass,const FText &Content,ESimplePopupType SimplePopupType,FSimpleBlueprintDelegate SureDelegate,FSimpleBlueprintDelegate CancelDelegate,float Life = 10.f);
+		static FPopupHandle CreatePopup(UObject* WorldContextObject, TSubclassOf<UUI_SimplePopup> PopupClass,const FText &Content,ESimplePopupType SimplePopupType,FSimpleBlueprintDelegate SureDelegate,FSimpleBlueprintDelegate CancelDelegate,float Life = 10.f);
 
 	/**
 	 * Determine pop-up behavior ,Pop up window will disappear after execution .
 	 * @return  bool				   When the behavior is executed correctly, return to ture .
 	 */
 	UFUNCTION(BlueprintCallable, Category = SimplePopup)
-	static bool PopupSure(FPopupHandle PopupHandle);
+		static bool PopupSure(FPopupHandle PopupHandle);
 	
 	/**
 	 * Cancel pop-up behavior ,Pop up window will disappear after execution .
 	 * @return  bool				   When the behavior is executed correctly, return to ture .
 	 */
 	UFUNCTION(BlueprintCallable, Category = SimplePopup)
-	static bool PopupCancel(FPopupHandle PopupHandle);
+		static bool PopupCancel(FPopupHandle PopupHandle);
 };

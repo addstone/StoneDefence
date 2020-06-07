@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/SaveGame.h"
+#include "../Core/SaveGameCore.h"
 #include "../CharacterData.h"
 #include "../PlayerData.h"
 #include "../GameData.h"
@@ -15,7 +15,7 @@
  * 
  */
 UCLASS()
-class STONEDEFENCE_API UGameSaveData : public USaveGame
+class STONEDEFENCE_API UGameSaveData : public USaveGameCore
 {
 	GENERATED_BODY()
 public:

@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../../StoneDefenceUtils.h"
 #include "../RuleOfThePlayerState.h"
+#include "../../StoneDefenceMacro.h"
 
 #define LOCTEXT_NAMESPACE "TowerGameInstance"
 
@@ -44,7 +45,11 @@ bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 			InSlot->LevelName = LOCTEXT("LevelName", "TestMap");
 			InSlot->ChapterName = LOCTEXT("ChapterName", "Hello World~~");
 
-			InGameState->SaveGameData(SaveNumber);
+			InSlot->GameThumbnail.ReleaseResources();
+			InSlot->GameThumbnail.ScrPath = GAMETHUMBNAIL_SCREENSHOT(
+				400, 200,
+				InSlot->GameThumbnail.GameThumbnail,
+				GetWorld())->GetFilename();
 
 			bSave = InGameState->SaveGameData(SaveNumber);
 		}
@@ -64,11 +69,25 @@ bool UTowersDefenceGameInstance::SaveGameData(int32 SaveNumber)
 
 bool UTowersDefenceGameInstance::ClearGameData(int32 SaveNumber)
 {
+	bool bSave = false;
 	if (ARuleOfTheGameState *InGameState = GetGameState())
 	{
-		return InGameState->ClearGameData(SaveNumber);
+		if (FSaveSlot *InSlot = InGameState->GetSaveSlot(SaveNumber))
+		{
+
+		}
+		bSave = InGameState->ClearGameData(SaveNumber);
 	}
-	return false;
+
+	StoneDefenceUtils::CallUpdateAllBaseClient(GetSafeWorld(), [&](APlayerController *InPlayerController)
+	{
+		if (ARuleOfThePlayerState *InState = InPlayerController->GetPlayerState<ARuleOfThePlayerState>())
+		{
+			bSave = InState->ClearPlayerData(SaveNumber);
+		}
+	});
+
+	return bSave;
 }
 
 bool UTowersDefenceGameInstance::ReadGameData(int32 SaveNumber)

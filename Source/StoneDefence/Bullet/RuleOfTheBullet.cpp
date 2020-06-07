@@ -429,11 +429,12 @@ void ARuleOfTheBullet::SubmissionSkillRequest()
 		{
 			if (ATowersDefenceGameState *InGameState = GetWorld()->GetGameState<ATowersDefenceGameState>())
 			{
-				const FCharacterData &CharacterData = InstigatorCharacter->GetCharacterData();
 				
-					if (CharacterData.IsValid())
+				if (const FCharacterData *CharacterData = InstigatorCharacter->GetCharacterData())
+				{
+					if (CharacterData->IsValid())
 					{
-						if (!InGameState->IsVerificationSkillTemplate(CharacterData, SkillID)) //客户都验证
+						if (!InGameState->IsVerificationSkillTemplate(*CharacterData, SkillID)) //客户都验证
 						{
 							//客户都将请求提交到服务器
 							InGameState->AddSkillDataTemplateToCharacterData(InstigatorCharacter->GUID, SkillID);
@@ -445,7 +446,7 @@ void ARuleOfTheBullet::SubmissionSkillRequest()
 							}
 						}
 					}
-				
+				}
 			}
 		}
 	}

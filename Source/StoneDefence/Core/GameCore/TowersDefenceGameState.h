@@ -56,23 +56,22 @@ protected:
 
 public:
 
-	FCharacterData &AddCharacterData(const FGuid &ID, const FCharacterData &Data);
+	FCharacterData *AddCharacterData(const FGuid &ID, const FCharacterData &Data);
 
 	bool RemoveCharacterData(const FGuid &ID);
-	FCharacterData &GetCharacterData(const FGuid &ID);
+	FCharacterData *GetCharacterData(const FGuid &ID);
 	const TArray<FCharacterData*> &GetTowerDataFromTable();
 	const TArray<FCharacterData*> &GetMonsterDataFromTable();
-	const FCharacterData &GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
+	const FCharacterData *GetCharacterDataByID(int32 ID, ECharacterType Type = ECharacterType::TOWER);
 	FGameInstanceDatas &GetGameData();
-	FCharacterData &GetCharacterDataNULL();
 
 	//模板技能
 	const TArray<FSkillData*> &GetSkillDataFromTable();
 
 	//动态技能的操作
-	FSkillData &AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data);
-	FSkillData &GetSkillData(const FGuid &SkillID);
-	FSkillData &GetSkillData(const FGuid &CharacterID, const FGuid &SkillID);
+	FSkillData *AddSkillData(const FGuid &CharacterID, const FGuid &SkillID, const FSkillData &Data);
+	FSkillData *GetSkillData(const FGuid &SkillID);
+	FSkillData *GetSkillData(const FGuid &CharacterID, const FGuid &SkillID);
 	const FSkillData *GetSkillData(const int32 &SkillID);
 	int32 RemoveSkillData(const FGuid &SkillID);
 
@@ -83,6 +82,8 @@ public:
 	bool IsVerificationSkillTemplate(const FCharacterData &CharacterData, int32 SkillID);
 	bool IsVerificationSkill(const FCharacterData &CharacterSkill, int32 SkillID);
 	bool IsVerificationSkill(const FGuid &CharacterID, int32 SkillID);
+
+	const TMap<FGuid, FCharacterData> &GetCharacterDatas();
 
 	void AddSkill(const FGuid &CharacterGUID, int32 InSkillID);
 	void AddSkill(TPair<FGuid, FCharacterData> &Owner, const FSkillData &InSkill);
@@ -101,7 +102,4 @@ private:
 	TArray<FCharacterData*> CacheTowerDatas;
 	TArray<FCharacterData*> CacheMonsterDatas;
 	TArray<FSkillData*> CacheSkillDatas;
-
-	FCharacterData CharacterDataNULL;
-	FSkillData SkillDataNULL;
 };

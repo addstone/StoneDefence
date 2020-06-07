@@ -11,6 +11,8 @@ class STONEDEFENCE_API ATowerDefenceHallPawn : public APawn
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HallPawn, meta = (AllowPrivateAccess = "true"))
+		class USceneComponent *NewRoot;
 public:
 	// Sets default values for this pawn's properties
 	ATowerDefenceHallPawn();

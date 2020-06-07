@@ -140,9 +140,9 @@ int32 GetMonsterLevel(UWorld *InWorld)
 			if (Tmp->IsActive())
 			{
 				//拿到等级
-				DifficultyDetermination.Level += (float)Tmp->GetCharacterData().Lv;
-				DifficultyDetermination.Attack += Tmp->GetCharacterData().GetAttack();
-				DifficultyDetermination.Defense += Tmp->GetCharacterData().GetArmor();
+				DifficultyDetermination.Level += (float)Tmp->GetCharacterData()->Lv;
+				DifficultyDetermination.Attack += Tmp->GetCharacterData()->GetAttack();
+				DifficultyDetermination.Defense += Tmp->GetCharacterData()->GetArmor();
 				Index++;
 			}
 		}
@@ -155,7 +155,7 @@ int32 GetMonsterLevel(UWorld *InWorld)
 		{
 			if (Tmp->IsActive())
 			{
-				float InValue = (float)Tmp->GetCharacterData().Lv - DifficultyDetermination.Level;
+				float InValue = (float)Tmp->GetCharacterData()->Lv - DifficultyDetermination.Level;
 				DifficultyDetermination.Variance += InValue * InValue;
 			}
 		}
@@ -309,21 +309,24 @@ ARuleOfTheCharacter *AStoneDefenceGameMode::SpawnCharacter(
 						if (InCharacterGuid == FGuid())//新出来的对象
 						{
 							RuleOfTheCharacter->ResetGUID();
-							FCharacterData &CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData);
-							CharacterDataInst.UpdateHealth();
-
-
-							if (CharacterLevel > 1)
+							if (FCharacterData *CharacterDataInst = InGameState->AddCharacterData(RuleOfTheCharacter->GUID, *CharacterData))
 							{
-								for (int32 i = 0; i < CharacterLevel; i++)
+								CharacterDataInst->UpdateHealth();
+
+								if (CharacterLevel > 1)
 								{
-									CharacterDataInst.UpdateLevel();
+									for (int32 i = 0; i < CharacterLevel; i++)
+									{
+										CharacterDataInst->UpdateLevel();
+									}
 								}
+
+								//初始化被动技能
+								RuleOfTheCharacter->InitSkill();
+
+								//注册相应的队伍
+								RuleOfTheCharacter->RegisterTeam();
 							}
-							//初始化被动技能
-							RuleOfTheCharacter->InitSkill();
-							//注册相应的队伍
-							RuleOfTheCharacter->RegisterTeam();
 						}
 						else//还原的对象
 						{

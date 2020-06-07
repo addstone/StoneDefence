@@ -7,7 +7,7 @@ FGameInstanceDatas::FGameInstanceDatas()
 
 void FGameInstanceDatas::Init()
 {
-	MaxMonsters = 100;
+	MaxMonsters = 20;
 	GameDifficulty = 0;
 	bAllMainTowerDie = false;
 	bGameOver =false;
@@ -16,7 +16,7 @@ void FGameInstanceDatas::Init()
 	TimeInterval = 4.f;
 	CurrentSpawnMosnterTime = 0.f;
 	MaxStagesAreMonsters = 4;
-	GameCount = 6000;
+	GameCount = 1000;
 	MaxGameCount = 0;
 	GoldGrowthTime = 1.f;
 	GoldGrowthMaxTime = 1.5f;
@@ -64,6 +64,7 @@ void FGameInstanceDatas::StageDecision()
 		else
 		{
 			PerNumberOfMonsters.RemoveAt(CurrentStagesAreMonsters);
+			CallClientUpdate.ExecuteIfBound(CurrentStagesAreMonsters);
 		}
 	}
 	else
@@ -112,4 +113,7 @@ void FGameInstanceDatas::AssignedMonsterAmount()
 	{
 		PerNumberOfMonsters.Add(CurrentAssignedNum);
 	}
+
+	//开始更新
+	CallClientUpdate.ExecuteIfBound(MaxStagesAreMonsters);
 }

@@ -21,23 +21,23 @@ class UUI_SimplePopup : public UUserWidget
 	friend struct FPopupHandle;
 
 	UPROPERTY(meta = (BindWidget))
-	UMultiLineEditableTextBox* IntroductionBox;
+		UMultiLineEditableTextBox* IntroductionBox;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* ButtonListBox;
+		UHorizontalBox* ButtonListBox;
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Popup")
-	ESimplePopupType SimplePopupType;
+		ESimplePopupType SimplePopupType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Popup")
-	float Delay;
+		float Delay;
 
 	UPROPERTY()
-	FSimpleBlueprintDelegate SimpleBlueprintSureDelegate;
+		FSimpleBlueprintDelegate SimpleBlueprintSureDelegate;
 	FSimpleDelegate SimpleSureDelegate;
 
 	UPROPERTY()
-	FSimpleBlueprintDelegate SimpleBlueprintCancelDelegate;
+		FSimpleBlueprintDelegate SimpleBlueprintCancelDelegate;
 	FSimpleDelegate SimpleCancelDelegate;
 public:
 	UUI_SimplePopup(const FObjectInitializer& ObjectInitializer);
@@ -51,8 +51,8 @@ public:
 
 protected:
 	UFUNCTION()
-	void Cancel();
+		void Cancel();
 
 	UFUNCTION()
-	void Sure();
+		void Sure();
 };

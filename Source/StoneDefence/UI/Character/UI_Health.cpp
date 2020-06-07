@@ -29,9 +29,9 @@ void UUI_Health::AddSkillSlot(FGuid SkillID)
 		if (UUI_CharacterSkillSlot *SkillSlot = CreateWidget<UUI_CharacterSkillSlot>(GetWorld(), CharacterSkillSlotClass))
 		{
 			SkillSlot->GUID = SkillID;
-			if (SkillSlot->GetSkillData().IsValid())
+			if (SkillSlot->GetSkillData()->IsValid())
 			{
-				UTexture2D *ICONTexture = SkillSlot->GetSkillData().Icon.LoadSynchronous();
+				UTexture2D *ICONTexture = SkillSlot->GetSkillData()->Icon.LoadSynchronous();
 				SkillSlot->SetTexture(ICONTexture);
 				SkillList->AddChild(SkillSlot);
 			}
