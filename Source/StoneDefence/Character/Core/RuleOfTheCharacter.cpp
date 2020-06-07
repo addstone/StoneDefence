@@ -19,6 +19,7 @@
 #include "../../StoneDefenceMacro.h"
 #include "../../Bullet/RuleOfTheBullet.h"
 #include "../Damage/RuleOfTheDamage.h"
+#include "../../Global/RuleOfTheGlobal.h"
 
 // Sets default values
 ARuleOfTheCharacter::ARuleOfTheCharacter()
@@ -359,23 +360,6 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 		}
 		else if (UParticleSystemComponent *NewParticleSystemComponent = Cast<UParticleSystemComponent>(Tmp))
 		{
-			//if (NewParticleSystemComponent->Template && NewParticleSystemComponent->Template->Emitters.Num() > 0)
-			//{
-			//	for (const UParticleEmitter *Tmp_ : NewParticleSystemComponent->Template->Emitters)
-			//	{
-			//		if (Tmp_->LODLevels[0]->bEnabled)
-			//		{
-			//			if (UParticleModuleTypeDataMesh* MyParticleDataMesh = Cast<UParticleModuleTypeDataMesh>(Tmp_->LODLevels[0]->TypeDataModule))
-			//			{
-			//				if (MyParticleDataMesh->Mesh)
-			//				{
-			//					Transform = NewParticleSystemComponent->GetComponentTransform();
-			//					return MyParticleDataMesh->Mesh;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
 			if (UStaticMesh *NewMesh = MeshUtils::ParticleSystemCompnentToStaticMesh(NewParticleSystemComponent))
 			{
 				Transform = NewParticleSystemComponent->GetComponentTransform();
@@ -389,10 +373,23 @@ UStaticMesh * ARuleOfTheCharacter::GetDollMesh(FTransform &Transform, int32 Mesh
 			NewSkeletalMeshComponent->SetWorldTransform(FTransform::Identity);
 			NewSkeletalMeshComponent->SetRelativeRotation(Transform.GetRotation());
 
-			if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+			//if (UStaticMesh *NewMesh = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+			//{
+
+			//	return NewMesh;
+			//}
+
+			if (UStaticMesh *InNewMesh = DOLL_MESH_POOL_MANAGE_MACRO()->GetStaticMesh(MeshID))
 			{
-				
-				return NewMesh;
+				return InNewMesh;
+			}
+			else
+			{
+				if (UStaticMesh *InNewMesh2 = MeshUtils::SkeletalMeshComponentToStaticMesh(NewSkeletalMeshComponent))
+				{
+					DOLL_MESH_POOL_MANAGE_MACRO()->Add(MeshID, InNewMesh2);
+					return InNewMesh2;
+				}
 			}
 			
 		}

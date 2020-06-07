@@ -37,6 +37,7 @@ protected:
 
 	void SpawnTowersDollPressed();
 	void SpawnTowersDollReleased();
+	void CallInventorySlotBreak(TFunction<bool(UUI_InventorySlot*)>);
 private:
 	TArray<UUI_InventorySlot*> InventorySlotArray;
 };

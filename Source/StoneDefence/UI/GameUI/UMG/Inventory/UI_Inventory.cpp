@@ -105,7 +105,21 @@ void UUI_Inventory::SpawnTowersDollReleased()
 			{
 				if (/*AActor*/ATowers *CharacterActor = GetPlayerController()->SpawnTower(GetBuildingTower().TowerID, 1, TowerDoll->GetActorLocation(), TowerDoll->GetActorRotation()))
 				{
-					GetBuildingTower().TowersConstructionNumber--;
+					//GetBuildingTower().TowersConstructionNumber--;
+					//通知服务器 更新构建塔的数量
+					GetPlayerState()->TowersConstructionNumber(TowerICOGUID);
+
+					//通知客户端更新
+					CallInventorySlotBreak([&](UUI_InventorySlot* InInventorySlot)
+					{
+						if (InInventorySlot->GUID == TowerICOGUID)
+						{
+							InInventorySlot->UpdateTowersBuildingInfo();
+							return true;
+						}
+
+						return false;
+					});
 				}
 			}
 
@@ -116,4 +130,15 @@ void UUI_Inventory::SpawnTowersDollReleased()
 
 	bLockGUID = false;
 	TowerICOGUID = FGuid();
+}
+
+void UUI_Inventory::CallInventorySlotBreak(TFunction<bool(UUI_InventorySlot*)> InventorySlotLamada)
+{
+	for (auto &TmpSlot : InventorySlotArray)
+	{
+		if (InventorySlotLamada(TmpSlot))
+		{
+			break;
+		}
+	}
 }
