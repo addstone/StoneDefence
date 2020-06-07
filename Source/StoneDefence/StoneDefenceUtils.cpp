@@ -28,6 +28,7 @@
 #include "Landscape.h"
 #include "Misc/FileHelper.h"
 #include "IImageWrapperModule.h"
+#include "Engine/SceneCapture2D.h"
 
 #if PLATFORM_WINDOWS
 #pragma optimize("",off) 
@@ -531,7 +532,11 @@ void RenderingUtils::FScreenShot::OnScreenshotCapturedInternal(
 	delete this;
 }
 
-ASceneCapture2D * RenderingUtils::SpawnSceneCapture2D(UWorld *World, UClass *SceneCaptureClass, FMapSize &MapSize, float Life)
+ASceneCapture2D * RenderingUtils::SpawnSceneCapture2D(
+	UWorld *World, 
+	UClass *SceneCaptureClass, 
+	FMapSize &MapSize, 
+	float Life)
 {
 	if (SceneCaptureClass)
 	{
