@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StoneDefenceType.h"
+#include "../StoneDefenceType.h"
 #include "GameData.generated.h"
 
 USTRUCT()

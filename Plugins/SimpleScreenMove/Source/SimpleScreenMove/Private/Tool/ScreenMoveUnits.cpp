@@ -1,8 +1,8 @@
-#include "Tool/ScreenMove.h"
+#include "Tool/ScreenMoveUnits.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 
-bool FScreenMoveUnits::ListenScreenMove(APlayerController *PlayerController, const float &ScreenMoveSpeed)
+bool FScreenMoveUnits::ListenScreenMove(APlayerController *PlayerController, float ScreenMoveSpeed /*= 100.f*/)
 {
 	return MoveDirection(PlayerController, CursorMove(PlayerController), ScreenMoveSpeed);
 }
@@ -28,9 +28,9 @@ EScreenMoveState FScreenMoveUnits::CursorMove(const APlayerController *PlayerCon
 		if (MousePostionX >= 0 && MousePostionX <= SizeX &&
 			MousePostionY >= 0 && MousePostionY <= SizeY)
 		{
-			if (FMath::IsNearlyEqual(MousePostionX, 0.0f, 5.0f) && FMath::IsNearlyEqual(MousePostionY, 0.0f, 5.0f))
+			if (FMath::IsNearlyEqual(MousePostionX,0.0f,5.0f) && FMath::IsNearlyEqual(MousePostionY, 0.0f, 5.0f))
 			{
-				return EScreenMoveState::Screen_LeftAndUP;
+				return EScreenMoveState::Screen_LeftAndUP; 
 			}
 			else if (FMath::IsNearlyEqual(MousePostionX, SizeX, 5.0f) && FMath::IsNearlyEqual(MousePostionY, SizeY, 5.0f))
 			{
@@ -66,7 +66,7 @@ EScreenMoveState FScreenMoveUnits::CursorMove(const APlayerController *PlayerCon
 	return EScreenMoveState::Screen_None;
 }
 
-bool FScreenMoveUnits::MoveDirection(APlayerController *PlayerController, EScreenMoveState ScreenMoveState, const float &ScreenMoveSpeed)
+bool FScreenMoveUnits::MoveDirection(APlayerController *PlayerController, EScreenMoveState ScreenMoveState, float ScreenMoveSpeed /*= 100.f*/)
 {
 	FVector OffsetValue = FVector::ZeroVector;
 

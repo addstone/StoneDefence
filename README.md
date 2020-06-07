@@ -204,3 +204,18 @@ Developed with Unreal Engine 4
 |第九节：测试游戏数据存储和还原|:heavy_check_mark:|
 |第十节：游戏存储流程测试|:heavy_check_mark:|
 |第十一节：解决流程测试中的BUG|:heavy_check_mark:|
+---
+# 第十五章：游戏弹窗插件和游戏存档
+|||
+| --------   | -----  |
+|第一节：游戏缩略图智能读取|:heavy_check_mark:|
+|第二节：游戏缩略图智能生成|:heavy_check_mark:|
+|第三节：编写弹窗插件|:heavy_check_mark:|
+|第四节：让弹窗自动生成控件button|:heavy_check_mark:|
+|第五节：弹窗的样式设定|:heavy_check_mark:|
+|第六节：如何正确的在两个插件之间解耦通信|:heavy_check_mark:|
+|第七节：对存档进行正确的删除操作|:heavy_check_mark:|
+|第八节：将角色数据的地址操作转为指针|:heavy_check_mark:|
+|第九节：模型的缓存池设计|:heavy_check_mark:|
+|第十节：ToolBar波段数代理|:heavy_check_mark:|
+|第十一节：解决游戏中存在的BUG|:heavy_check_mark:|
